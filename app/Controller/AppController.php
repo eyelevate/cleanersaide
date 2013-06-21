@@ -32,4 +32,32 @@ App::uses('Controller', 'Controller');
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
+	
+    public $components = array(
+    	'DebugKit.Toolbar',
+        'Acl',
+        'Auth' => array(
+            'authorize' => array(
+                'Actions' => array('actionPath' => 'controllers')
+            )
+        ),
+        'Session'
+    );
+    //Helpers
+    public $helpers = array(
+        'Form',
+        'Html',
+        'Js'=>array("Jquery"), 
+        'Session',
+    	'TB' => array(
+        	"className" => "TwitterBootstrap.TwitterBootstrap"
+    	)
+    );
+
+    public function beforeFilter() {
+        //Configure AuthComponent
+        $this->Auth->loginAction = array('controller' => 'admins', 'action' => 'login');
+        $this->Auth->logoutRedirect = array('controller' => 'admins', 'action' => 'login');
+        $this->Auth->loginRedirect = array('controller' => 'admins', 'action' => 'index');
+    }
 }
