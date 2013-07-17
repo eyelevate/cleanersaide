@@ -15,37 +15,17 @@ class AdminsController extends AppController {
 		parent::beforeFilter();
 		//set the default layout
 		$this->layout = 'admin';
-
-		//set the authorized pages
-		$this->Auth->allow('login','logout');
-		
-		$username = $this->Auth->user('username');
-		if(is_null($this->Auth->user('username'))){
-			$username = 'You are not logged in';
+		//set the navigation menu_id		
+		$menu_ids = $this->Menu->find('all',array('conditions'=>array('name'=>'Admin')));
+		if(count($menu_ids)>0){
+			$menu_id = $menu_ids[0]['Menu']['id'];	
 		} else {
-			$username = $this->Auth->user('username');
-		}
-		$this->set('username',$username);
-	
-		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
-		    // Optionally log an ACL deny message in auth.log
-		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
-		        ' tried to access ' . $this->name . '/' .
-		        $this->request->params['action'] . '.'
-		    );
-		
-		    // Render the forbidden page instead of the current requested page
-		    $this->Session->setFlash(__('You are not authorized to view this page. Please log in.'),'default',array(),'error');
-		    echo $this->redirect(array('controller'=>'admins','action'=>'index'));
-		
-		    /**
-		     * Make sure we halt here, otherwise the forbidden message
-		     * is just shown above the content.
-		     */
-
-		
+			$menu_id = null;
 		}	
-	
+		$this->Session->write('Admin.menu_id',$menu_id);
+		//set the authorized pages
+		$this->Auth->allow('logout','login');
+
 	}
 
 
@@ -57,11 +37,12 @@ class AdminsController extends AppController {
  */
 	public function login()
 	{
+
+		$this->layout = 'admin';
 		//No admin navigation here
-		
+
 		//set autherror to page
 		$this->set('authError',$this->Auth->authError);
-		
 		
 		//set the title
  		if ($this->request->is('post')) {
@@ -106,59 +87,26 @@ class AdminsController extends AppController {
 		$this->set('username',$username);
 		//set the action levels
 		$group_id = $this->Auth->user('group_id');
-		
-//paginate the users and send to view
-		$this->paginate = array(
-		    'limit' => 10, // this was the option which you forgot to mention
-		    'order' => array(
-		        'Reservation.created' => 'DESC')
-		);	
 
-		$reservations = $this->Reservation->fixLargeData($this->paginate('Reservation'));	
-		$this->Reservation->recursive = 0;
-		$this->set('reservations', $reservations);	
-		
-		
-			//get special instructions
-			$get_instructions = $this->Attraction_ticket->read('instructions',52);
-			if(!empty($get_instructions)>0){
-				foreach ($get_instructions as $gi) {
-					$instructions = $gi['instructions'];
-				}
-			} else {
-				$instructions = '';
-			}	
-		
-		
-		//date ranges
-		$today_start = date('Y-m-d').' 00:00:00';
-		$today_end = date('Y-m-d').' 23:59:59';
-		$this_week = $this->Admin->returnWeekDates();
-		
-		//search queries
-		$reservation_today = $this->Reservation->find('all',array('conditions'=>array('Reservation.created BETWEEN ? AND ?'=>array($today_start, $today_end))));
-		
-		//get total count for today
-		$ferry_today = $this->Admin->ferry_count($reservation_today);
-		$hotel_today = $this->Admin->hotel_count($reservation_today);
-		$attraction_today = $this->Admin->attraction_count($reservation_today);
-		$package_today = $this->Admin->package_count($reservation_today);
-		
-		/**
-		 * return weekly values
-		 * @return array
-		 */
-
-		$weekly_count = $this->Admin->weekly_count($this_week);
-		
-		//render values to view
-		$this->set('ferry_today',$ferry_today);
-		$this->set('hotel_today',$hotel_today);
-		$this->set('attraction_today',$attraction_today);
-		$this->set('package_today',$package_today);
-		$this->set('weekly_count',$weekly_count);
 
 	}
 
-
+	public function dropoff()
+	{
+		//set the admin navigation
+		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
+		$page_url = '/admins/dropoff';
+		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
+		$this->set('admin_nav',$admin_nav);
+		$this->set('admin_pages',$page_url);
+		$this->set('admin_check',$admin_check);		
+		
+		//if no customer phone number was entered
+		
+		
+		//if customer phone number was entered
+		if($this->request->is('post')){
+			
+		}
+	}
 }

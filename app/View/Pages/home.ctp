@@ -1,227 +1,345 @@
 <?php
+
 /**
- *
- * PHP 5
- *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.View.Pages
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * HOME PAGE
  */
+ 
+//load scripts to layout
+//CSS Files
+$this->Html->css(array(
+	'../js/frontend/plugins/jquery-ui/css/ui-lightness/jquery-ui-1.10.1.custom', //generic jquery-ui css file (lightness)
+	'frontend/bootstrap-form'
+	),
+	'stylesheet',
+	array('inline'=>false)
+);
+//JS Files
+echo $this->Html->script(array(
+	'frontend/plugins/jquery-ui/js/jquery-ui-1.10.1.custom.js', //jquery-ui js file
+	'frontend/home.js',
+	'frontend/bootstrap-tabs.min.js'
+	),
+	FALSE
+);
 
-if (!Configure::read('debug')):
-	throw new NotFoundException();
-endif;
-App::uses('Debugger', 'Utility');
+//displays a message bar if the user has not logged in, before accessing. Uses auth->authError variable set in controller
+echo $this->TwitterBootstrap->flashes(array(
+    "auth" => true,
+    "closable"=>false
+    )
+);
+
+
+$contents = json_decode($contents[0]['Page_content']['html'], TRUE);
+
 ?>
-<h2><?php echo __d('cake_dev', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
-<p>
-	<a href="http://cakephp.org/changelogs/<?php echo Configure::version(); ?>"><?php echo __d('cake_dev', 'Read the changelog'); ?> </a>
-</p>
-<?php
-if (Configure::read('debug') > 0):
-	Debugger::checkSecurityKeys();
-endif;
-?>
-<p id="url-rewriting-warning" style="background-color:#e32; color:#fff;">
-	<?php echo __d('cake_dev', 'URL rewriting is not properly configured on your server.'); ?>
-	1) <a target="_blank" href="http://book.cakephp.org/2.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
-	2) <a target="_blank" href="http://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
-</p>
-<p>
-<?php
-	if (version_compare(PHP_VERSION, '5.2.8', '>=')):
-		echo '<span class="notice success">';
-			echo __d('cake_dev', 'Your version of PHP is 5.2.8 or higher.');
-		echo '</span>';
-	else:
-		echo '<span class="notice">';
-			echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.2.8 or higher to use CakePHP.');
-		echo '</span>';
-	endif;
-?>
-</p>
-<p>
-	<?php
-		if (is_writable(TMP)):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Your tmp directory is writable.');
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your tmp directory is NOT writable.');
-			echo '</span>';
-		endif;
-	?>
-</p>
-<p>
-	<?php
-		$settings = Cache::settings();
-		if (!empty($settings)):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/core.php ', '<em>'. $settings['engine'] . 'Engine</em>');
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in APP/Config/core.php');
-			echo '</span>';
-		endif;
-	?>
-</p>
-<p>
-	<?php
-		$filePresent = null;
-		if (file_exists(APP . 'Config' . DS . 'database.php')):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Your database configuration file is present.');
-				$filePresent = true;
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your database configuration file is NOT present.');
-				echo '<br/>';
-				echo __d('cake_dev', 'Rename APP/Config/database.php.default to APP/Config/database.php');
-			echo '</span>';
-		endif;
-	?>
-</p>
-<?php
-if (isset($filePresent)):
-	App::uses('ConnectionManager', 'Model');
-	try {
-		$connected = ConnectionManager::getDataSource('default');
-	} catch (Exception $connectionError) {
-		$connected = false;
-		$errorMsg = $connectionError->getMessage();
-		if (method_exists($connectionError, 'getAttributes')) {
-			$attributes = $connectionError->getAttributes();
-			if (isset($errorMsg['message'])) {
-				$errorMsg .= '<br />' . $attributes['message'];
-			}
+<script>
+$(document).ready(function() {
+	$('#myTab a').click(function (e) {
+	  e.preventDefault();
+	  $(this).tab('show');
+	})
+	
+	$('.tripRadio').change(function(){
+    	if($('#oneway').is(':checked')) { 
+			$('#ReservationReturns').prop('disabled', true);
+			$('#onewaydiv').hide();
+		} else {
+			$('#ReservationReturns').prop('disabled', false);
+			$('#onewaydiv').show();
 		}
-	}
-?>
-<p>
-	<?php
-		if ($connected && $connected->isConnected()):
-			echo '<span class="notice success">';
-	 			echo __d('cake_dev', 'Cake is able to connect to the database.');
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'Cake is NOT able to connect to the database.');
-				echo '<br /><br />';
-				echo $errorMsg;
-			echo '</span>';
-		endif;
-	?>
-</p>
-<?php endif; ?>
-<?php
-	App::uses('Validation', 'Utility');
-	if (!Validation::alphaNumeric('cakephp')) {
-		echo '<p><span class="notice">';
-			echo __d('cake_dev', 'PCRE has not been compiled with Unicode support.');
-			echo '<br/>';
-			echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
-		echo '</span></p>';
-	}
-?>
+	});
+});
+	
+</script>
 
-<p>
-	<?php
-		if (CakePlugin::loaded('DebugKit')):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'DebugKit plugin is present');
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'DebugKit is not installed. It will help you inspect and debug different aspects of your application.');
-				echo '<br/>';
-				echo __d('cake_dev', 'You can install it from %s', $this->Html->link('github', 'https://github.com/cakephp/debug_kit'));
-			echo '</span>';
-		endif;
-	?>
-</p>
 
-<h3><?php echo __d('cake_dev', 'Editing this Page'); ?></h3>
-<p>
-<?php
-echo __d('cake_dev', 'To change the content of this page, edit: APP/View/Pages/home.ctp.<br />
-To change its layout, edit: APP/View/Layouts/default.ctp.<br />
-You can also add some CSS styles for your pages at: APP/webroot/css.');
-?>
-</p>
+	<div class="row no_bm">
+		<div id="slider_holder" class="sixteen columns">
 
-<h3><?php echo __d('cake_dev', 'Getting Started'); ?></h3>
-<p>
-	<?php
-		echo $this->Html->link(
-			sprintf('<strong>%s</strong> %s', __d('cake_dev', 'New'), __d('cake_dev', 'CakePHP 2.0 Docs')),
-			'http://book.cakephp.org/2.0/en/',
-			array('target' => '_blank', 'escape' => false)
-		);
-	?>
-</p>
-<p>
-	<?php
-		echo $this->Html->link(
-			__d('cake_dev', 'The 15 min Blog Tutorial'),
-			'http://book.cakephp.org/2.0/en/tutorials-and-examples/blog/blog.html',
-			array('target' => '_blank', 'escape' => false)
-		);
-	?>
-</p>
+				<div id="trip_planner">
+					<div class="trip_planner_title">Plan your trip</div>
+											
+						<ul class="nav nav-pills" id="myTab">
+						  <li class="active"><a href="#ferry">Ferry Reservation</a></li>
+						  <li><a href="#package">Package Deal</a></li>
+						</ul>
 
-<h3><?php echo __d('cake_dev', 'Official Plugins'); ?></h3>
-<p>
-<ul>
-	<li>
-		<?php echo $this->Html->link('DebugKit', 'https://github.com/cakephp/debug_kit') ?>:
-		<?php echo __d('cake_dev', 'provides a debugging toolbar and enhanced debugging tools for CakePHP applications.'); ?>
-	</li>
-	<li>
-		<?php echo $this->Html->link('Localized', 'https://github.com/cakephp/localized') ?>:
-		<?php echo __d('cake_dev', 'contains various localized validation classes and translations for specific countries'); ?>
-	</li>
-</ul>
-</p>
+						<div class="tab-content">
+		  					<div class="tab-pane active" id="ferry">
+							<form action="/reservations/ferry" method="post" style="display: block;">
+								
+								<!-- <legend>Is this a roundtrip or a one-way trip?</legend> -->
+								<div class="row-fluid">
+									<div class="control-group span4">
+										<label for="roundtrip"><input id="roundtrip" class="tripRadio" type="radio" name="data[Reservation][trip_type]" value="roundtrip" checked="checked"/> <span>Roundtrip</span></label>
+										<label for="oneway"><input id="oneway" class="tripRadio" type="radio" name="data[Reservation][trip_type]" value="oneway"/> <span>One way</span></label>
+									</div>
+									<div class="control-group span8">
+										<label class="sub-label" for="ReservationDepartPort">Departing from:</label>
+										<select name="data[Reservation][depart_port]" id="ReservationDepartPort">
+											<option value="Port Angeles" selected="selected">Port Angeles</option>
+											<option value="Victoria">Victoria</option>
+										</select>
+									</div>
+								</div>
+									
+								<div class="row-fluid">
+									<div class="control-group span6">
+										<label class="sub-label">Departing:</label>
+										<input name="data[Reservation][departs]" class="datepicker" type="text" id="ReservationDeparts">
+									</div>
+									
+									<div id="onewaydiv" class="control-group span6">
+										<label class="sub-label">Returning:</label>
+										<input name="data[Reservation][returns]" class="datepicker" type="text" id="ReservationReturns">
+									</div>
+									
+								</div>
+								
+								<!-- <label>How many passengers? </label> -->
+								<div class="row-fluid">
+									<div class="control-group span4">
+										<label class="sub-label">Adult (12+)</label>
+										<input class="adults" type="text" value="0" name="data[Reservation][adults]">
+									</div>
+									<div class="control-group span4">
+										<label class="sub-label">Youth (5-11)</label>
+										<input class="children" type="text" value="0" name="data[Reservation][children]">
+									</div>
+									<div class="control-group span4">
+										<label class="sub-label">Child (0-4)</label>
+										<input class="infants" type="text" value="0" name="data[Reservation][infants]">
+									</div>
+								</div>
+										
+							<?php
+							echo $this->Form->submit(__('Search'),array(
+								'class'=>'btn btn-bbfl pull-right',
+								'id'=>'',
+							)); 
+							?>
+							</form>
+							</div>
+							  <div class="tab-pane" id="package">
+								<form action="/packages/home" method="post" style="display: block;">
+									
+									<!-- <legend>Is this a roundtrip or a one-way trip?</legend> -->
+									<div class="row-fluid">
+										<div class="control-group span12">
+											<label class="sub-label" for="PackageDepartPort">Departing from:</label>
+											<select name="package[Reservation][depart_port]" id="PackageDepartPort">
+												<option value="Port Angeles" selected="selected">Port Angeles</option>
+												<option value="Victoria">Victoria</option>
+											</select>
+										</div>
+									</div>
+										
+									<div class="row-fluid">
+										<div class="control-group span12">
+											<label class="sub-label">Departing:</label>
+											<input name="package[Reservation][departs]" class="datepicker" type="text" id="PackageDeparts">
+										</div>
+										
+									</div>
+									
+									<!-- <label>How many passengers? </label> -->
+<!-- 									<div class="row-fluid">
+										<div class="control-group span4">
+											<label class="sub-label">Adult (12+)</label>
+											<input class="adults" type="text" value="0" name="package[Reservation][adults]">
+										</div>
+										<div class="control-group span4">
+											<label class="sub-label">Youth (5-11)</label>
+											<input class="children" type="text" value="0" name="package[Reservation][children]">
+										</div>
+										<div class="control-group span4">
+											<label class="sub-label">Child (0-4)</label>
+											<input class="infants" type="text" value="0" name="package[Reservation][infants]">
+										</div>
+									</div> -->
+											
+								<?php
+								echo $this->Form->submit(__('Search'),array(
+									'class'=>'btn btn-bbfl pull-right',
+									'id'=>'',
+								)); 
+								?>
+								</form>
+							  </div>
+						</div>
+				</div>
 
-<h3><?php echo __d('cake_dev', 'More about Cake'); ?></h3>
-<p>
-<?php echo __d('cake_dev', 'CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
-</p>
-<p>
-<?php echo __d('cake_dev', 'Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.'); ?>
-</p>
+				<div id="sequence" class="nomobile">
+	
+					<ul>
+						<li>
+							<img class="slider_bgr animate-in" src="/img/frontend/CohoBanner.jpg"/>
+							<img class="slider_img animate-in" src="/img/frontend/1_1.png"/>
+						</li>
+						<li>
+							<img class="slider_bgr" src="/img/frontend/SeattleBanner.jpg" />
+							<img class="slider_img" src="/img/frontend/1_1.png"/>
+						</li>
+						<li>
+							<img class="slider_bgr" src="/img/frontend/OlympicPeninsula.jpg" />
+							<img class="slider_img" src="/img/frontend/1_1.png"/>
+						</li>
+						<li>
+							<img class="slider_bgr" src="/img/frontend/VictoriaBanner.jpg" />
+							<img class="slider_img" src="/img/frontend/1_1.png"/>
+						</li>
+										
+					</ul>
+ 
+				<div class="slider_nav_holder">
+					<span class="slider_nav"></span>
+					<span class="slider_nav"></span>
+					<span class="slider_nav"></span>
+					<span class="slider_nav"></span>
+				</div>
 
-<ul>
-	<li><a href="http://cakefoundation.org/"><?php echo __d('cake_dev', 'Cake Software Foundation'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Promoting development related to CakePHP'); ?></li></ul></li>
-	<li><a href="http://www.cakephp.org"><?php echo __d('cake_dev', 'CakePHP'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'The Rapid Development Framework'); ?></li></ul></li>
-	<li><a href="http://book.cakephp.org"><?php echo __d('cake_dev', 'CakePHP Documentation'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Your Rapid Development Cookbook'); ?></li></ul></li>
-	<li><a href="http://api.cakephp.org/"><?php echo __d('cake_dev', 'CakePHP API'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Quick Reference'); ?></li></ul></li>
-	<li><a href="http://bakery.cakephp.org"><?php echo __d('cake_dev', 'The Bakery'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Everything CakePHP'); ?></li></ul></li>
-	<li><a href="http://plugins.cakephp.org"><?php echo __d('cake_dev', 'CakePHP plugins repo'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'A comprehensive list of all CakePHP plugins created by the community'); ?></li></ul></li>
-	<li><a href="http://groups.google.com/group/cake-php"><?php echo __d('cake_dev', 'CakePHP Google Group'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Community mailing list'); ?></li></ul></li>
-	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
-	<ul><li><?php echo __d('cake_dev', 'Live chat about CakePHP'); ?></li></ul></li>
-	<li><a href="http://github.com/cakephp/"><?php echo __d('cake_dev', 'CakePHP Code'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'For the Development of CakePHP Git repository, Downloads'); ?></li></ul></li>
-	<li><a href="http://cakephp.lighthouseapp.com/"><?php echo __d('cake_dev', 'CakePHP Lighthouse'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'CakePHP Tickets, Wiki pages, Roadmap'); ?></li></ul></li>
-</ul>
+			</div>
+		</div>
+		<!-- Sequence Slider::END-->
+	</div>
+
+	<div class="container">
+
+		<div class="row">
+			<!-- Featured packages Section -->
+			<h2 class="sixteen columns title"><span>Package Deals</span></h2>
+			<div class="clear"></div>
+					
+				<div class="section_featured_packages sixteen columns alpha">
+					<div class='carousel_arrows_bgr'></div>
+					<ul id="featured_packages_carousel">
+						
+						<?php
+
+						foreach ($packages as $key => $value) {
+							$packages_id = $packages[$key]['Package']['id'];
+							$packages_location = $packages[$key]['Package']['location'];
+							$packages_url_location = strtolower($packages_location);
+							$packages_url_location = str_replace(array(' ','%20','%26',"'",'&'),array('-','','','','and'),$packages_url_location);
+							$packages_name = $packages[$key]['Package']['name'];
+							$packages_url_name = strtolower($packages_name);
+							$packages_url_name = str_replace(array(' ','%20','%26',"'",'&'),array('-','','','','and'),$packages_url_name);
+							$packages_url_display = $packages[$key]['Package']['url'];
+							$packages_image_main = $packages[$key]['Package']['image_main'];
+							if($packages[$key]['Package']['image_main'] ==''){
+								$packages_primary_image = 'http://placehold.it/250x250';
+							} else {
+								$packages_primary_image = '/img/packages/'.$packages_image_main;
+							}
+							$packages_starting_price = $packages[$key]['Package']['starting_price'];
+							$packages_inventory = $packages[$key]['Package']['inventory'];
+							
+							$packages_transportation = json_decode($packages[$key]['Package']['transportation'],true);
+							$check_walkon = 0;
+							
+							if(count($packages_transportation)>0){
+								foreach ($packages_transportation as $pkey => $pvalue) {
+									if($pkey == 19){
+										$check_walkon++;
+									}
+								}
+							}
+							$packages_rt_walkon = sprintf('%.2f',round($packages[$key]['Package']['rtWalkon'] / 2,2)); 
+							$packages_rt_vehicle = sprintf('%.2f',round($packages[$key]['Package']['rtVehicle']/2,2));		
+							
+							if($check_walkon > 0){
+								$package_base_price = $packages_rt_walkon;
+							} else {
+								$package_base_price = $packages_rt_vehicle;
+							}	
+								
+							?>
+										
+						<li class="four columns">
+							<div class="pic" style="background-size:cover; -moz-border-radius: 3px; -webkit-border-radius: 3px; -khtml-border-radius: 3px; border-radius: 3px;height: 215px; background-image:url(<?php echo $packages_primary_image;?> );" >
+								<a class="packageDetailsLink" package_id="<?php echo $packages_id;?>" href="/packages/details<?php echo $packages_url_display;?>" style="width:100%; height:100%; display: block; cursor:pointer" ><!-- <img src="<?php echo $packages_primary_image;?>"/> --><div class="img_overlay"></div></a>
+							</div>
+							<h3><? echo $packages_location; ?></h3>						
+								<h4><a class="packageDetailsLink" package_id="<?php echo $packages_id;?>" href="/packages/details<?php echo $packages_url_display;?>" style="cursor:pointer"><? echo $packages_name?> </a></h4>
+							<!-- <p>Includes round trip ferry fare and 1 night hotel stay at Hotel Name.</p> -->
+							<a class="packageDetailsLink" package_id="<?php echo $packages_id;?>" href="/packages/details<?php echo $packages_url_display;?>" style="cursor:pointer">From $<?php echo round($package_base_price); ?> per person</a>
+						</li>
+			
+		<?php
+		}
+		?>		
+						
+				
+					</ul>
+				</div>			
+				
+			<script type="text/javascript">
+			$(document).ready(function() {
+				// Reload carousels on window resize to scroll only 1 item if viewport is small
+			    $(window).resize(function() {
+			    	 var el = $("#featured_packages_carousel"), carousel = el.data('jcarousel'), win_width = $(window).width();
+			    	   var visibleItems = (win_width > 767 ? 4 : 1);
+			    	   carousel.options.visible = visibleItems;
+			    	   carousel.options.scroll = visibleItems;
+			    	   carousel.reload();
+			    });
+			 });
+			    
+			</script>
+			<!-- Featured packages section::END -->
+		</div>
+		
+		<!-- Tertiary Section -->
+		<div class="row" style="padding: 30px 0;">	
+			<div class="nine columns alpha nomobile">
+				<? if ($contents['secondary_promo']) { echo $contents['secondary_promo'];} else { ?>
+					<a href="/You-Wont-Be-Sorry"><img src="/img/frontend/home_promo.png" /></a>
+				<? } ?>
+			</div>
+			
+			
+			<div class="seven columns omega">
+				<div class="home-feature-boxes passport">
+					<? if ($contents['secondary_info_1']) { echo $contents['secondary_info_1'];} else { ?>
+						<h3>Travel Information</h3>
+						<p>Click here to get the latest travel and passport information.</p>
+						<a href="/ID-Requirements">Click here</a>
+					<? } ?>
+				</div>
+				<div class="home-feature-boxes newsletter">	
+					<? if ($contents['secondary_info_2']) { echo $contents['secondary_info_2'];} else { ?>
+						<h3>Sign up for our e-newsletter</h3>
+						<p>And get the latest on last-minute deals, contests, updates, and more.</p>
+						<a href="http://visitor.r20.constantcontact.com/manage/optin/ea?v=001g9Qimy9ZAK10-Z9fR7E1IHMVfbX562TjIoHCMrwqmX3VdUUlEBEoD0XB4orRHtT3BaEew3-6xmROIpq0WEDsyg%3D%3D">Click here</a>
+					<? } ?>
+				</div>
+			</div>
+		</div>	
+		
+		<!-- Featured Texts Section -->
+		<div class="row">
+			<div class="section_featured_text">
+				<div class="columns five " style="padding-right: 20px; border-right: 1px dotted #bbb;">
+					<? if ($contents['tertiary_1']) { echo $contents['tertiary_1'];} else { ?>
+						<h3>Festivals + Events</h3>
+						<p>Whether you’re looking for a delicious taste of Dungeness Crab, a weekend filled with great music, or a celebration of local craft brews, we’ve got some great suggestions on the best events happening in the Pacific Northwest.</p>
+						<a href="/Festivals-Events">Find out more</a>
+					<? } ?>
+				</div>
+				<div class="columns five" style="padding-right: 20px; border-right: 1px dotted #bbb;">
+					<? if ($contents['tertiary_2']) { echo $contents['tertiary_2'];} else { ?>
+						<h3>Travel Free on your Birthday</h3>
+						<p>Looking for a unique way to celebrate? We’ll give you free round-trip walk-on ferry fare on the MV Coho if you depart on your birthday. </p>
+						<a href="/birthdayfare">Find out more</a>
+					<? } ?>
+				</div>
+				<div class="columns five omega">
+					<? if ($contents['tertiary_3']) { echo $contents['tertiary_3'];} else { ?>
+						<h3>About the Ship</h3>
+						<p>The MV Coho travels between downtown Victoria and downtown Port Angeles and has provided safe and reliable transportation for more than 21 million passengers and over 5 million vehicles since beginning operation in 1959.</p>
+						<a href="/MV-Coho">Find out more</a>
+					<? } ?>
+				</div>
+			</div>
+		</div>	

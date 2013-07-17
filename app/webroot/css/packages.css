@@ -1,0 +1,57 @@
+/**
+ * 	ALl Package styles outside of twitter bootstrap
+ */
+
+/*********** Packages *******************/
+
+.formSep {
+	padding:0px;
+}
+.summaryTh{
+	width:30%; 
+	border-left:1px solid #dddddd;
+}
+.borderlessTr{
+	border:none;
+}
+.borderBottom{
+	border:1px solid #dddddd;
+}
+.borderTopNone{
+	border-top:none;
+}
+
+.markupInput{
+	width:85px;
+}
+
+h3{
+	color:#8e8e8e;
+}
+.hotelTripUl{
+	font-weight:normal;
+}
+
+.inputWidth{
+	width:75px;
+}
+
+#inventoryItemSelected, #attractionTicketsSelected{
+	margin-top:3px;
+}
+
+#peopleCountDiv{
+	margin-bottom:7px;
+}
+
+#peopleCountDiv tbody tr{
+	height:45px;
+}
+#hotelSummaryP{
+	font-size:13px;
+	height:26px;
+	margin-left:0px; 
+	margin-right:0px; 
+	font-weight:bold; 
+	padding:4px 5px;
+}

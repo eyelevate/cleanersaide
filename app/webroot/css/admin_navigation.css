@@ -1,0 +1,94 @@
+/**
+ * 	Navigation Content Only - Admin Sections
+ */
+
+
+/************* ADMINS CONTROLLER ****************/
+.admin-navigation{
+	position: relative;
+	width:100%;
+	margin:0px;
+	padding:0px;
+}
+#navigationUl-admin{
+	position: relative;
+	width:100%;
+	height:35px;
+	background:#9097c6;
+}
+#navigationUl-admin li{
+	float:left;
+	width:150px;
+	height:30px;
+	line-height:30px;
+	text-align:center;
+	margin-top:5px;
+	cursor:pointer;
+}
+#navigationUl-admin .active{
+	background-color:#405876;
+	color:#ffffff;
+}
+#navigationUl-admin .notactive{
+	background-color:#9097c6;
+	color:#000000;
+}
+#navigationUl-admin .notactive:hover{
+	background-color:#9dc9ff;
+}
+#navigationUlContent-admin{
+	position: relative;
+	width:100%;
+	height:35px;
+	clear:both;
+	background-color:#405876;
+}
+.navigationLiContent[name='active']{
+	display:block;
+}
+.navigationLiContent[name='notactive']{
+	display:none;
+}
+.navigationUlSubcontent{
+	position: relative;
+	width:100%;
+	clear:both;
+}
+.navigationUlSubcontent li{
+	float:left;
+	height:30px;
+	line-height:30px;
+	margin-top:5px;
+	text-align:center;
+	cursor:pointer;
+	width:200px;
+}
+.navigationUlSubcontent li a{
+	display:block;
+	position: relative;
+	height:30px;
+	line-height:30px;
+	width:200px;
+	text-decoration:none;	
+	color:#ffffff;
+}
+.navigationUlSubcontent li a:hover{
+	font-weight:bold;
+	text-decoration:underline;
+}
+.navigationLiSubcontent[name='active']{
+	background-color:#ffffff;
+} 
+.navigationLiSubcontent[name='active'] a{
+	color:#000000;
+}
+.navigationLiAdmin-admin[name='notactive'] a{
+
+	display:block;
+	width:150px;
+	height:30px;
+	text-decoration:none;
+	cursor:pointer;
+}
+
+

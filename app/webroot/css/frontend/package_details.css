@@ -1,0 +1,15 @@
+/**
+ * 	Style for package details
+ */
+
+legend {
+	font-size:100%;
+}
+
+.pointer {
+	background-color:#ffffff;
+}
+
+.selected {
+	background-color: #d6ffd3;
+}

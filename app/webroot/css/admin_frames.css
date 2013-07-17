@@ -1,0 +1,25 @@
+/**
+ * 	Frames Contents Across all Admin Section
+ */
+
+/********** GENERAL FRAMES ACROSS ALL ADMIN PAGES ************/
+.admin-body-content{
+	border:1px solid #e5e5e5;
+	border-radius:6px;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	margin:15px;
+}
+
+/**
+ * 	Pages Controller
+ */
+	/****************add*****************/
+#urlCreation{
+    clear: both;
+    margin-bottom: 1em;
+    padding: 0.5em;
+    vertical-align: text-top;
+    width:95%;	
+}
+

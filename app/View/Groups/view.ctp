@@ -40,9 +40,10 @@
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php echo __('Id'); ?></th>
+		<th><?php echo __('Group Id'); ?></th>
 		<th><?php echo __('Username'); ?></th>
 		<th><?php echo __('Password'); ?></th>
-		<th><?php echo __('Group Id'); ?></th>
+		<th><?php echo __('Email'); ?></th>
 		<th><?php echo __('Created'); ?></th>
 		<th><?php echo __('Modified'); ?></th>
 		<th class="actions"><?php echo __('Actions'); ?></th>
@@ -52,9 +53,10 @@
 		foreach ($group['User'] as $user): ?>
 		<tr>
 			<td><?php echo $user['id']; ?></td>
+			<td><?php echo $user['group_id']; ?></td>
 			<td><?php echo $user['username']; ?></td>
 			<td><?php echo $user['password']; ?></td>
-			<td><?php echo $user['group_id']; ?></td>
+			<td><?php echo $user['email']; ?></td>
 			<td><?php echo $user['created']; ?></td>
 			<td><?php echo $user['modified']; ?></td>
 			<td class="actions">
@@ -67,9 +69,4 @@
 	</table>
 <?php endif; ?>
 
-	<div class="actions">
-		<ul>
-			<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> </li>
-		</ul>
-	</div>
 </div>

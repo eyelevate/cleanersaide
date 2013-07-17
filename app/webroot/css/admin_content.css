@@ -1,0 +1,84 @@
+/**
+ * 	Admin Controller
+ */
+
+
+/**
+ * 	Pages Controller
+ */
+	/********add.ctp**********/
+#urlCreation input{
+	padding:1%;
+	width:98%;
+}
+#urlCreation a {
+	text-decoration:none;
+}
+#createParentSpan{
+	background-color:#9eb3ff;
+}
+#createUrlSpan{
+	background-color:#ff7f7f;
+}
+
+/**
+ * 	Menus Controller
+ */
+	/******add.ctp********/
+.radio {
+	float:left;
+	padding-right:20px;
+}
+#addMenuRowIconDiv{
+	clear:both;
+}
+#addMenuRowActionDiv{
+	position: relative;
+	clear:both;
+	padding-top:20px;
+	border-top:1px solid #e5e5e5;
+	margin-top:25px;
+}
+#addMenuRowIconDiv[name='dark']{
+	display:none;
+}
+#iconDropDownMenuUl-dark{
+	background-color:#000000;
+	color:#ffffff;
+}
+#iconDropDownMenuUl-dark a{
+	color:#ffffff;
+}
+#icon_move_menu{
+	position: relative;
+	margin-left:10px;
+	margin-right:10px;
+}
+.divisionUp{
+	border-left:1px solid #e5e5e5;
+	height:100%;
+	padding-left:10px;
+}
+	/*********view.ctp*******/
+
+/*********Ferries Controller***********/
+	/*********add.ctp********/
+
+.selectRegionsDiv[status='notactive']{
+	display:none;
+}
+.selectRegionsDiv[status='active']{
+	display:block;
+}
+.selectStatesDiv[status='notactive']{
+	display:none;
+}
+.selectProvinceDiv[status='notactive']{
+	display:none;
+}
+.selectStatesDiv[status='active']{
+	display:block;
+}
+.selectProvinceDiv[status='active']{
+	display:block;
+}

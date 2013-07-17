@@ -1,0 +1,23 @@
+/**
+ * 	ALl Hotel styles outside of twitter bootstrap
+ */
+
+/*********** HOTEL ADD PAGE *******************/
+
+#hotelAddTitle{
+	text-align:center;
+}
+
+#hotelAddOnTitle{
+	width:95%;
+}
+#hotelAddOnTh-price{
+	width:100px;
+}
+#hotelAddOnPrice{
+	width:100px;
+}
+#hotelAddOnPerBasisLabel1{
+	margin-right:15px;
+}
+
