@@ -7,17 +7,16 @@
  * PHP 5
  *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.6
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -63,7 +62,7 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
- * Setup a mock that has out mocked. Normally this is not used as it makes $this->at() really tricky.
+ * Setup a mock that has out mocked.  Normally this is not used as it makes $this->at() really tricky.
  *
  * @return void
  */
@@ -174,7 +173,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(99, 1));
 		$this->Task->expects($this->once())->method('err');
 
-		$this->Task->getName('test');
+		$result = $this->Task->getName('test');
 	}
 
 /**
@@ -190,7 +189,7 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
- * test getting a custom table name.
+ * test gettting a custom table name.
  *
  * @return void
  */
@@ -316,7 +315,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
 		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('24', 'y', '18', 'n'));
+			->will($this->onConsecutiveCalls('23', 'y', '17', 'n'));
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('notempty' => 'notempty', 'maxlength' => 'maxlength');
@@ -334,7 +333,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->interactive = true;
 
 		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('999999', '24', 'n'));
+			->will($this->onConsecutiveCalls('999999', '23', 'n'));
 
 		$this->Task->expects($this->at(10))->method('out')
 			->with($this->stringContains('make a valid'));
@@ -959,7 +958,7 @@ STRINGEND;
 	}
 
 /**
- * test that odd tablenames aren't inflected back from modelname
+ * test that odd tablenames arent inflected back from modelname
  *
  * @return void
  */
@@ -1014,7 +1013,7 @@ STRINGEND;
 	}
 
 /**
- * test that odd tablenames aren't inflected back from modelname
+ * test that odd tablenames arent inflected back from modelname
  *
  * @return void
  */

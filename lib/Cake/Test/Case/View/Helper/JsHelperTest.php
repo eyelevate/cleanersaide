@@ -7,19 +7,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.3
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('JsHelper', 'View/Helper');
 App::uses('JsBaseEngineHelper', 'View/Helper');
@@ -27,26 +25,14 @@ App::uses('FormHelper', 'View/Helper');
 App::uses('View', 'View');
 App::uses('ClassRegistry', 'Utility');
 
-/**
- * Class JsEncodingObject
- *
- * @package       Cake.Test.Case.View.Helper
- */
 class JsEncodingObject {
 
 	protected $_title = 'Old thing';
 
-	//@codingStandardsIgnoreStart
 	private $__noshow = 'Never ever';
-	//@codingStandardsIgnoreEnd
 
 }
 
-/**
- * Class OptionEngineHelper
- *
- * @package       Cake.Test.Case.View.Helper
- */
 class OptionEngineHelper extends JsBaseEngineHelper {
 
 	protected $_optionMap = array(
@@ -60,7 +46,6 @@ class OptionEngineHelper extends JsBaseEngineHelper {
 /**
  * test method for testing option mapping
  *
- * @param array $options
  * @return array
  */
 	public function testMap($options = array()) {
@@ -70,8 +55,6 @@ class OptionEngineHelper extends JsBaseEngineHelper {
 /**
  * test method for option parsing
  *
- * @param $options
- * @param array $safe
  * @return void
  */
 	public function testParseOptions($options, $safe = array()) {
@@ -140,8 +123,7 @@ class JsHelperTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		parent::setUp();
-
+		$this->_asset = Configure::read('Asset.timestamp');
 		Configure::write('Asset.timestamp', false);
 
 		$controller = null;
@@ -164,7 +146,7 @@ class JsHelperTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		parent::tearDown();
+		Configure::write('Asset.timestamp', $this->_asset);
 		unset($this->Js);
 	}
 
@@ -334,7 +316,7 @@ class JsHelperTest extends CakeTestCase {
 			->method('append')
 			->with('script', $this->matchesRegularExpression('#<script type="text\/javascript">window.app \= \{"foo"\:1\}\;<\/script>#'));
 
-		$this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'safe' => false));
+		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'safe' => false));
 	}
 
 /**
@@ -353,7 +335,7 @@ class JsHelperTest extends CakeTestCase {
 
 		$this->Js->buffer('alert("test");');
 		$this->Js->TestJsEngine->expects($this->never())->method('domReady');
-		$this->Js->writeBuffer();
+		$result = $this->Js->writeBuffer();
 
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 		if ($requestWith !== null) {
@@ -369,7 +351,6 @@ class JsHelperTest extends CakeTestCase {
 	public function testWriteScriptsInFile() {
 		$this->skipIf(!is_writable(JS), 'webroot/js is not Writable, script caching test has been skipped.');
 
-		Configure::write('Cache.disable', false);
 		$this->Js->request->webroot = '/';
 		$this->Js->JsBaseEngine = new TestJsEngineHelper($this->View);
 		$this->Js->buffer('one = 1;');
@@ -383,16 +364,8 @@ class JsHelperTest extends CakeTestCase {
 		$this->assertTrue(file_exists(WWW_ROOT . $filename[1]));
 		$contents = file_get_contents(WWW_ROOT . $filename[1]);
 		$this->assertRegExp('/one\s=\s1;\ntwo\s=\s2;/', $contents);
-		if (file_exists(WWW_ROOT . $filename[1])) {
-			unlink(WWW_ROOT . $filename[1]);
-		}
 
-		Configure::write('Cache.disable', true);
-		$this->Js->buffer('one = 1;');
-		$this->Js->buffer('two = 2;');
-		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'cache' => true));
-		$this->assertRegExp('/one\s=\s1;\ntwo\s=\s2;/', $result);
-		$this->assertFalse(file_exists(WWW_ROOT . $filename[1]));
+		@unlink(WWW_ROOT . $filename[1]);
 	}
 
 /**
@@ -923,7 +896,7 @@ class JsBaseEngineTest extends CakeTestCase {
 	public function testOptionMapping() {
 		$JsEngine = new OptionEngineHelper($this->View);
 		$result = $JsEngine->testMap();
-		$this->assertSame(array(), $result);
+		$this->assertEquals(array(), $result);
 
 		$result = $JsEngine->testMap(array('foo' => 'bar', 'baz' => 'sho'));
 		$this->assertEquals(array('foo' => 'bar', 'baz' => 'sho'), $result);

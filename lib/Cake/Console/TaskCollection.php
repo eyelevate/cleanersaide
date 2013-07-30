@@ -4,22 +4,21 @@
  * and constructing task class objects.
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ObjectCollection', 'Utility');
 
 /**
- * Collection object for Tasks. Provides features
+ * Collection object for Tasks.  Provides features
  * for lazily loading tasks, and firing callbacks on loaded tasks.
  *
  * @package       Cake.Console
@@ -50,7 +49,7 @@ class TaskCollection extends ObjectCollection {
 	}
 
 /**
- * Loads/constructs a task. Will return the instance in the collection
+ * Loads/constructs a task.  Will return the instance in the collection
  * if it already exists.
  *
  * @param string $task Task name to load
@@ -64,15 +63,14 @@ class TaskCollection extends ObjectCollection {
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
 		}
-
 		$taskClass = $name . 'Task';
 		App::uses($taskClass, $plugin . 'Console/Command/Task');
-
-		$exists = class_exists($taskClass);
-		if (!$exists) {
-			throw new MissingTaskException(array(
-				'class' => $taskClass
-			));
+		if (!class_exists($taskClass)) {
+			if (!class_exists($taskClass)) {
+				throw new MissingTaskException(array(
+					'class' => $taskClass
+				));
+			}
 		}
 
 		$this->_loaded[$name] = new $taskClass(

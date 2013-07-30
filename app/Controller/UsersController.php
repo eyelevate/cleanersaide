@@ -17,13 +17,61 @@ class UsersController extends AppController {
 	    parent::beforeFilter();
 		$this->set('username',AuthComponent::user('username'));
 		//deny all public users to this controller
+		//$this->Auth->deny('*');
+		$this->Auth->allow('forgot','reset','convert_users');
+		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
+		    // Optionally log an ACL deny message in auth.log
+		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
+		        ' tried to access ' . $this->name . '/' .
+		        $this->request->params['action'] . '.'
+		    );
+		
+		    // Render the forbidden page instead of the current requested page
+		    $this->Session->setFlash(__('You do not have access to this page.'),'default',array(),'error');
+		    echo $this->redirect(array('controller'=>'admins','action'=>'index'));
+		
+		    /**
+		     * Make sure we halt here, otherwise the forbidden message
+		     * is just shown above the content.
+		     */
 
-		$this->Auth->allow('*');
-		//$this->Auth->allow('forgot','reset','convert_users');
-
+		
+		}	
 		$this->layout='admin';
 		
-
+		//layout setup
+		$ha_locations = $this->Location->find('all');
+		$this->set('ha_locations',$ha_locations);
+		
+				//set shopping cart
+		$ferry_session = $this->Session->read('Reservation_ferry');
+		if(!empty($ferry_session['Reservation'])){
+			$ferry_sidebar = $this->Reservation->sidebar_ferry($ferry_session);
+		} else {
+			$ferry_sidebar = array();
+		}
+		$hotel_session = $this->Session->read('Reservation_hotel');
+		if(!empty($hotel_session)){
+			$hotel_sidebar = $this->Reservation->sidebar_hotel($hotel_session);
+		} else {
+			$hotel_sidebar = array();
+		}
+		$attraction_session = $this->Session->read('Reservation_attraction');
+		if(!empty($attraction_session)){
+			$attraction_sidebar = $this->Reservation->sidebar_attraction($attraction_session);
+		} else {
+			$attraction_sidebar = array();
+		}
+		$package_session = $this->Session->read('Reservation_package');
+		if($this->Session->check('Reservation_package')==true){
+			$package_sidebar = $this->Reservation->sidebar_package($package_session);
+		} else {
+			$package_sidebar = array();
+		}
+		$this->set('package_sidebar',$package_sidebar);
+		$this->set('ferry_sidebar',$ferry_sidebar);
+		$this->set('hotel_sidebar',$hotel_sidebar);
+		$this->set('attraction_sidebar',$attraction_sidebar);
 	}
 	// public function convert_users()
 	// {

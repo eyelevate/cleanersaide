@@ -7,18 +7,23 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Config
  * @since         CakePHP(tm) v 2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+/**
+ * In this file you set up your send email details.
  *
+ * @package       cake.config
+ */
+/**
  * Email configuration class.
  * You can specify multiple configurations for production, development and testing.
  *
@@ -28,7 +33,7 @@
  *		Debug		- Do not send the email, just return the result
  *
  * You can add custom transports (or override existing transports) by adding the
- * appropriate file to app/Network/Email. Transports should be named 'YourTransport.php',
+ * appropriate file to app/Network/Email.  Transports should be named 'YourTransport.php',
  * where 'Your' is the name of the transport.
  *
  * from =>
@@ -37,26 +42,56 @@
  */
 class EmailConfig {
 
+	// public $gmail = array(
+        // 'transport' => 'Smtp',
+        // 'host' => 'ssl://mail.cohoferry.com',
+        // 'port' => 465,
+        // 'from' => array('reservations@cohoferry.com' => 'Coho Ferry Reservations'),
+        // //'timeout' => 30000,
+        // 'username' => 'reservations@cohoferry.com',
+        // 'password' => 'cat3dog!e',
+        // //'client' => null,
+        // //'log' => true
+        // //'charset' => 'utf-8',
+        // //'headerCharset' => 'utf-8',
+    // );
+	public $gmail = array(
+        'transport' => 'Smtp',
+        'host' => 'ssl://mail.cohoferry.com',
+        'port' => 465,
+        'from' => array('reservations@cohoferry.com' => 'Coho Ferry Reservations'),
+        //'timeout' => 30000,
+        'username' => 'reservations@cohoferry.com',
+        'password' => 'cat3dog!emmm',
+        //'client' => null,
+        //'log' => true
+        //'charset' => 'utf-8',
+        //'headerCharset' => 'utf-8',
+    );
 	public $default = array(
-		'transport' => 'Mail',
-		'from' => 'you@localhost',
-		//'charset' => 'utf-8',
-		//'headerCharset' => 'utf-8',
+        'transport' => 'Smtp',
+        'host' => 'ssl://murena.websitewelcome.com',
+        'port' => 465,
+        'from' => array('reservations@cohoferryemail.com' => 'Coho Ferry Reservations'),
+        'username' => 'reservations@cohoferryemail.com',
+        'password' => 'backup',
+
 	);
 
 	public $smtp = array(
 		'transport' => 'Smtp',
-		'from' => array('site@localhost' => 'My Site'),
-		'host' => 'localhost',
+		'from' => array('reservations@cohoferry.com' => 'Coho Ferry Reservations'),
+		'host' => 'ssl://mail.cohoferry.com',
 		'port' => 25,
-		'timeout' => 30,
-		'username' => 'user',
-		'password' => 'secret',
-		'client' => null,
-		'log' => false,
-		//'charset' => 'utf-8',
-		//'headerCharset' => 'utf-8',
+		//'timeout' => 30,
+		'username' => 'reservations@cohoferry.com',
+		'password' => 'cat3dog!e',
+		//'client' => null,
+		//'log' => false,
+
 	);
+	
+
 
 	public $fast = array(
 		'from' => 'you@localhost',
@@ -88,5 +123,7 @@ class EmailConfig {
 		//'charset' => 'utf-8',
 		//'headerCharset' => 'utf-8',
 	);
+
+
 
 }

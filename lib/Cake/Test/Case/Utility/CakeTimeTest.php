@@ -5,19 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('CakeTime', 'Utility');
 
 /**
@@ -40,10 +38,8 @@ class CakeTimeTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		parent::setUp();
 		$this->Time = new CakeTime();
 		$this->_systemTimezoneIdentifier = date_default_timezone_get();
-		Configure::write('Config.language', 'eng');
 	}
 
 /**
@@ -344,14 +340,14 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals(date('Y-d-m', $time), $this->Time->nice($time));
 		$this->assertEquals('%Y-%d-%m', $this->Time->niceFormat);
 
-		CakeTime::$niceFormat = '%Y-%d-%m %H:%M';
-		$this->assertEquals(date('Y-d-m H:i', $time), $this->Time->nice($time));
-		$this->assertEquals('%Y-%d-%m %H:%M', $this->Time->niceFormat);
+		CakeTime::$niceFormat = '%Y-%d-%m %H:%M:%S';
+		$this->assertEquals(date('Y-d-m H:i:s', $time), $this->Time->nice($time));
+		$this->assertEquals('%Y-%d-%m %H:%M:%S', $this->Time->niceFormat);
 
 		date_default_timezone_set('UTC');
 		$result = $this->Time->nice(null, 'America/New_York');
 		$expected = $this->Time->nice(time(), 'America/New_York');
-		$this->assertEquals(substr($expected, 0, -1), substr($result, 0, -1));
+		$this->assertEquals($expected, $result);
 
 		$this->_restoreSystemTimezone();
 	}
@@ -370,12 +366,6 @@ class CakeTimeTest extends CakeTestCase {
 
 		$time = time() + DAY;
 		$this->assertEquals('Tomorrow, ' . date('H:i', $time), $this->Time->niceShort($time));
-
-		$time = strtotime('+6 days');
-		$this->assertEquals('On ' . date('l F d, H:i', $time), $this->Time->niceShort($time));
-
-		$time = strtotime('-6 days');
-		$this->assertEquals(date('l F d, H:i', $time), $this->Time->niceShort($time));
 
 		date_default_timezone_set('Europe/London');
 		$result = $this->Time->niceShort('2005-01-15 10:00:00', new DateTimeZone('Europe/Brussels'));
@@ -484,7 +474,7 @@ class CakeTimeTest extends CakeTestCase {
 
 		date_default_timezone_set('UTC');
 
-		$serverTime = new DateTime('2012-12-11 14:15:20');
+		$serverTime = new DateTime('now');
 
 		$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
 		foreach ($timezones as $timezone) {
@@ -519,18 +509,17 @@ class CakeTimeTest extends CakeTestCase {
  * @return void
  */
 	public function testToRss() {
-		$date = '2012-08-12 12:12:45';
-		$time = strtotime($date);
-		$this->assertEquals(date('r', $time), $this->Time->toRss($time));
+		$this->assertEquals(date('r'), $this->Time->toRss(time()));
 
-		$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
-		foreach ($timezones as $timezone) {
-			$yourTimezone = new DateTimeZone($timezone);
-			$yourTime = new DateTime($date, $yourTimezone);
-			$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
-			$time = $yourTime->format('U');
-			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $userOffset), "Failed on $timezone");
-			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
+		if (!$this->skipIf(!class_exists('DateTimeZone'), '%s DateTimeZone class not available.')) {
+			$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
+			foreach ($timezones as $timezone) {
+				$yourTimezone = new DateTimeZone($timezone);
+				$yourTime = new DateTime('now', $yourTimezone);
+				$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
+				$this->assertEquals($yourTime->format('r'), $this->Time->toRss(time(), $userOffset));
+				$this->assertEquals($yourTime->format('r'), $this->Time->toRss(time(), $timezone));
+			}
 		}
 	}
 
@@ -790,17 +779,17 @@ class CakeTimeTest extends CakeTestCase {
 
 		$expected = time();
 		$result = $this->Time->fromString(time(), $yourTimezone);
-		$this->assertWithinMargin($expected, $result, 1);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->fromString(time(), $timezoneServer->getName());
-		$this->assertWithinMargin($expected, $result, 1);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->fromString(time(), $timezoneServer);
-		$this->assertWithinMargin($expected, $result, 1);
+		$this->assertEquals($expected, $result);
 
 		Configure::write('Config.timezone', $timezoneServer->getName());
 		$result = $this->Time->fromString(time());
-		$this->assertWithinMargin($expected, $result, 1);
+		$this->assertEquals($expected, $result);
 		Configure::delete('Config.timezone');
 	}
 
@@ -818,17 +807,17 @@ class CakeTimeTest extends CakeTestCase {
 
 		$result = $this->Time->fromString('+1 hour');
 		$expected = strtotime('+1 hour');
-		$this->assertWithinMargin($expected, $result, 1);
+		$this->assertEquals($expected, $result);
 
 		$timezone = date('Z', time());
 		$result = $this->Time->fromString('+1 hour', $timezone);
 		$expected = $this->Time->convert(strtotime('+1 hour'), $timezone);
-		$this->assertWithinMargin($expected, $result, 1);
+		$this->assertEquals($expected, $result);
 
 		$timezone = date_default_timezone_get();
 		$result = $this->Time->fromString('+1 hour', $timezone);
 		$expected = $this->Time->convert(strtotime('+1 hour'), $timezone);
-		$this->assertWithinMargin($expected, $result, 1);
+		$this->assertEquals($expected, $result);
 
 		date_default_timezone_set('UTC');
 		$date = new DateTime('now', new DateTimeZone('Europe/London'));
@@ -851,30 +840,17 @@ class CakeTimeTest extends CakeTestCase {
 		$date->setTimezone(new DateTimeZone('UTC'));
 		$expected = $date->format('U') + $date->getOffset();
 
-		$this->assertWithinMargin($expected, $result, 1);
+		$this->assertEquals($expected, $result);
 
 		date_default_timezone_set('Australia/Melbourne');
 
 		$date = new DateTime('+1 hour', new DateTimeZone('America/New_York'));
 		$result = $this->Time->fromString($date, 'Asia/Kuwait');
-
 		$date->setTimezone(new DateTimeZone('Asia/Kuwait'));
 		$expected = $date->format('U') + $date->getOffset();
-		$this->assertWithinMargin($expected, $result, 1);
+		$this->assertEquals($expected, $result);
 
 		$this->_restoreSystemTimezone();
-	}
-
-/**
- * Test that datetimes in the default timezone are not modified.
- *
- * @return void
- */
-	public function testFromStringWithDateTimeNoConversion() {
-		Configure::write('Config.timezone', date_default_timezone_get());
-		$date = new DateTime('2013-04-09');
-		$result = $this->Time->fromString($date);
-		$this->assertEquals($result, $date->format('U'));
 	}
 
 /**
@@ -1071,21 +1047,6 @@ class CakeTimeTest extends CakeTestCase {
 			$this->assertTrue(isset($return['Pacific/Honolulu']));
 			$this->assertFalse(isset($return['Asia/Bangkok']));
 		}
-	}
-
-/**
- * Tests that using CakeTime::format() with the correct sytax actually converts
- * from one timezone to the other correctly
- *
- * @return void
- */
-	public function testCorrectTimezoneConversion() {
-		date_default_timezone_set('UTC');
-		$date = '2012-01-01 10:00:00';
-		$converted = CakeTime::format($date, '%Y-%m-%d %H:%M', '', 'Europe/Copenhagen');
-		$expected = new DateTime($date);
-		$expected->setTimezone(new DateTimeZone('Europe/Copenhagen'));
-		$this->assertEquals($expected->format('Y-m-d H:i'), $converted);
 	}
 
 }

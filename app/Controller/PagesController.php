@@ -44,7 +44,7 @@ class PagesController extends AppController {
  *
  * @var array
  */
-	public $uses = array('User','Menu','Menu_item','Page','Page_content','Image','Tax','Inventory','Inventory_item');
+	public $uses = array('Reservation','Package','PackageAddOn','Attraction','Attraction_ticket','User','Menu','Menu_item','Ferry','Page','Page_content','Image','Location','Exchange','Tax','Schedule','Hotel','Hotel_room','Inventory','Inventory_item');
 
 	public $components = array(
 		'Auth'=>array(
@@ -77,8 +77,42 @@ class PagesController extends AppController {
 	public function beforeFilter() {
 	    parent::beforeFilter();
 		$this->set('username',AuthComponent::user('username'));
-		$this->Auth->allow('home','login','url','test','marketing');
+		$this->Auth->allow('home','login','url','test','hotels_attractions','marketing');
 
+		
+		//layout setup
+		$ha_locations = $this->Location->find('all');
+		$this->set('ha_locations',$ha_locations);
+		
+				//set shopping cart
+		$ferry_session = $this->Session->read('Reservation_ferry');
+		if(!empty($ferry_session['Reservation'])){
+			$ferry_sidebar = $this->Reservation->sidebar_ferry($ferry_session);
+		} else {
+			$ferry_sidebar = array();
+		}
+		$hotel_session = $this->Session->read('Reservation_hotel');
+		if(!empty($hotel_session)){
+			$hotel_sidebar = $this->Reservation->sidebar_hotel($hotel_session);
+		} else {
+			$hotel_sidebar = array();
+		}
+		$attraction_session = $this->Session->read('Reservation_attraction');
+		if(!empty($attraction_session)){
+			$attraction_sidebar = $this->Reservation->sidebar_attraction($attraction_session);
+		} else {
+			$attraction_sidebar = array();
+		}
+		$package_session = $this->Session->read('Reservation_package');
+		if($this->Session->check('Reservation_package')==true){
+			$package_sidebar = $this->Reservation->sidebar_package($package_session);
+		} else {
+			$package_sidebar = array();
+		}
+		$this->set('package_sidebar',$package_sidebar);
+		$this->set('ferry_sidebar',$ferry_sidebar);
+		$this->set('hotel_sidebar',$hotel_sidebar);
+		$this->set('attraction_sidebar',$attraction_sidebar);
 	}
 /**
  * 

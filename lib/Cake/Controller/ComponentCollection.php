@@ -4,17 +4,16 @@
  * and constructing component class objects.
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller
  * @since         CakePHP(tm) v 2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ObjectCollection', 'Utility');
@@ -57,16 +56,16 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
 /**
  * Get the controller associated with the collection.
  *
- * @return Controller Controller instance
+ * @return Controller.
  */
 	public function getController() {
 		return $this->_Controller;
 	}
 
 /**
- * Loads/constructs a component. Will return the instance in the registry if it already exists.
+ * Loads/constructs a component.  Will return the instance in the registry if it already exists.
  * You can use `$settings['enabled'] = false` to disable callbacks on a component when loading it.
- * Callbacks default to on. Disabled component methods work as normal, only callbacks are disabled.
+ * Callbacks default to on.  Disabled component methods work as normal, only callbacks are disabled.
  *
  * You can alias your component as an existing component by setting the 'className' key, i.e.,
  * {{{

@@ -7,17 +7,16 @@
  * PHP 5
  *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP v 1.2.0.7726
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -546,7 +545,7 @@ class ShellTest extends CakeTestCase {
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
 
-		new Folder($path, true);
+		$Folder = new Folder($path, true);
 
 		$this->Shell->interactive = false;
 
@@ -573,7 +572,7 @@ class ShellTest extends CakeTestCase {
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
-		new Folder($path, true);
+		$Folder = new Folder($path, true);
 
 		$this->Shell->interactive = true;
 
@@ -664,6 +663,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testRunCommandMain() {
+		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('main', 'startup'), array(), '', false);
 
 		$Mock->expects($this->once())->method('main')->will($this->returnValue(true));
@@ -677,6 +677,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testRunCommandWithMethod() {
+		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('hit_me', 'startup'), array(), '', false);
 
 		$Mock->expects($this->once())->method('hit_me')->will($this->returnValue(true));
@@ -699,7 +700,7 @@ class ShellTest extends CakeTestCase {
 		$Mock->expects($this->never())->method('hr');
 		$Mock->expects($this->once())->method('out');
 
-		$Mock->runCommand('hr', array());
+		$result = $Mock->runCommand('hr', array());
 	}
 
 /**
@@ -708,6 +709,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testRunCommandMissingMethod() {
+		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
 		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
 
@@ -760,7 +762,7 @@ class ShellTest extends CakeTestCase {
 
 		$Shell->RunCommand = $task;
 
-		$Shell->runCommand('run_command', array('run_command', 'one', 'value'));
+		$result = $Shell->runCommand('run_command', array('run_command', 'one', 'value'));
 	}
 
 /**
@@ -846,7 +848,7 @@ TEXT;
  * Tests that _useLogger works properly
  *
  * @return void
- */
+ **/
 	public function testProtectedUseLogger() {
 		CakeLog::drop('stdout');
 		CakeLog::drop('stderr');

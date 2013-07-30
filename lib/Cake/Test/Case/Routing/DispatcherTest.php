@@ -5,19 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Routing
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('Dispatcher', 'Routing');
 
 if (!class_exists('AppController', false)) {
@@ -97,18 +95,12 @@ class TestDispatcher extends Dispatcher {
 class MyPluginAppController extends AppController {
 }
 
-/**
- * Abstract Class DispatcherTestAbstractController
- */
 abstract class DispatcherTestAbstractController extends Controller {
 
 	abstract public function index();
 
 }
 
-/**
- * Interface DispatcherTestInterfaceController
- */
 interface DispatcherTestInterfaceController {
 
 	public function index();
@@ -121,6 +113,13 @@ interface DispatcherTestInterfaceController {
  * @package       Cake.Test.Case.Routing
  */
 class MyPluginController extends MyPluginAppController {
+
+/**
+ * name property
+ *
+ * @var string 'MyPlugin'
+ */
+	public $name = 'MyPlugin';
 
 /**
  * uses property
@@ -167,6 +166,13 @@ class MyPluginController extends MyPluginAppController {
 class SomePagesController extends AppController {
 
 /**
+ * name property
+ *
+ * @var string 'SomePages'
+ */
+	public $name = 'SomePages';
+
+/**
  * uses property
  *
  * @var array
@@ -201,16 +207,6 @@ class SomePagesController extends AppController {
 		return new CakeResponse(array('body' => 'new response'));
 	}
 
-/**
- * Test file sending
- *
- * @return CakeResponse
- */
-	public function sendfile() {
-		$this->response->file(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css');
-		return $this->response;
-	}
-
 }
 
 /**
@@ -219,6 +215,13 @@ class SomePagesController extends AppController {
  * @package       Cake.Test.Case.Routing
  */
 class OtherPagesController extends MyPluginAppController {
+
+/**
+ * name property
+ *
+ * @var string 'OtherPages'
+ */
+	public $name = 'OtherPages';
 
 /**
  * uses property
@@ -254,6 +257,13 @@ class OtherPagesController extends MyPluginAppController {
  * @package       Cake.Test.Case.Routing
  */
 class TestDispatchPagesController extends AppController {
+
+/**
+ * name property
+ *
+ * @var string 'TestDispatchPages'
+ */
+	public $name = 'TestDispatchPages';
 
 /**
  * uses property
@@ -298,6 +308,13 @@ class ArticlesTestAppController extends AppController {
 class ArticlesTestController extends ArticlesTestAppController {
 
 /**
+ * name property
+ *
+ * @var string 'ArticlesTest'
+ */
+	public $name = 'ArticlesTest';
+
+/**
  * uses property
  *
  * @var array
@@ -332,6 +349,13 @@ class ArticlesTestController extends ArticlesTestAppController {
 class SomePostsController extends AppController {
 
 /**
+ * name property
+ *
+ * @var string 'SomePosts'
+ */
+	public $name = 'SomePosts';
+
+/**
  * uses property
  *
  * @var array
@@ -351,7 +375,7 @@ class SomePostsController extends AppController {
  * @return void
  */
 	public function beforeFilter() {
-		if ($this->params['action'] === 'index') {
+		if ($this->params['action'] == 'index') {
 			$this->params['action'] = 'view';
 		} else {
 			$this->params['action'] = 'change';
@@ -385,6 +409,13 @@ class SomePostsController extends AppController {
  * @package       Cake.Test.Case.Routing
  */
 class TestCachedPagesController extends Controller {
+
+/**
+ * name property
+ *
+ * @var string 'TestCachedPages'
+ */
+	public $name = 'TestCachedPages';
 
 /**
  * uses property
@@ -421,7 +452,7 @@ class TestCachedPagesController extends Controller {
 /**
  * viewPath property
  *
- * @var string
+ * @var string 'posts'
  */
 	public $viewPath = 'Posts';
 
@@ -479,6 +510,13 @@ class TestCachedPagesController extends Controller {
  * @package       Cake.Test.Case.Routing
  */
 class TimesheetsController extends Controller {
+
+/**
+ * name property
+ *
+ * @var string 'Timesheets'
+ */
+	public $name = 'Timesheets';
 
 /**
  * uses property
@@ -579,7 +617,7 @@ class DispatcherTest extends CakeTestCase {
 		$request = new CakeRequest("/");
 		$event = new CakeEvent('DispatcherTest', $Dispatcher, array('request' => $request));
 		$Dispatcher->parseParams($event);
-		$Dispatcher->parseParams($event);
+		$test = $Dispatcher->parseParams($event);
 		$this->assertEquals("My Posted Content", $request['data']['testdata']);
 	}
 
@@ -828,40 +866,6 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
- * testDispatchActionSendsFile
- *
- * @return void
- */
-	public function testDispatchActionSendsFile() {
-		Router::connect('/:controller/:action');
-		$Dispatcher = new Dispatcher();
-		$request = new CakeRequest('some_pages/sendfile');
-		$response = $this->getMock('CakeResponse', array(
-			'header',
-			'type',
-			'download',
-			'_sendHeader',
-			'_setContentType',
-			'_isActive',
-			'_clearBuffer',
-			'_flushBuffer'
-		));
-
-		$response->expects($this->never())
-			->method('body');
-
-		$response->expects($this->exactly(1))
-			->method('_isActive')
-			->will($this->returnValue(true));
-
-		ob_start();
-		$Dispatcher->dispatch($request, $response);
-		$result = ob_get_clean();
-
-		$this->assertEquals("/* this is the test asset css file */\n", $result);
-	}
-
-/**
  * testAdminDispatch method
  *
  * @return void
@@ -870,7 +874,7 @@ class DispatcherTest extends CakeTestCase {
 		$_POST = array();
 		$Dispatcher = new TestDispatcher();
 		Configure::write('Routing.prefixes', array('admin'));
-		Configure::write('App.baseUrl', '/cake/repo/branches/1.2.x.x/index.php');
+		Configure::write('App.baseUrl','/cake/repo/branches/1.2.x.x/index.php');
 		$url = new CakeRequest('admin/test_dispatch_pages/index/param:value/param2:value2');
 		$response = $this->getMock('CakeResponse');
 
@@ -1079,7 +1083,7 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
- * test plugin shortcut URLs with controllers that need to be loaded,
+ * test plugin shortcut urls with controllers that need to be loaded,
  * the above test uses a controller that has already been included.
  *
  * @return void
@@ -1191,7 +1195,7 @@ class DispatcherTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testDispatcherFilterSubscriber() {
+	public function testDispatcherFilterSuscriber() {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
@@ -1570,7 +1574,7 @@ class DispatcherTest extends CakeTestCase {
 
 		$this->assertTextEquals($out, $cached);
 
-		$filename = $this->_cachePath($request->here());
+		$filename = $this->__cachePath($request->here());
 		unlink($filename);
 	}
 
@@ -1654,14 +1658,80 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
+ * backupEnvironment method
+ *
+ * @return void
+ */
+	protected function __backupEnvironment() {
+		return array(
+			'App' => Configure::read('App'),
+			'GET' => $_GET,
+			'POST' => $_POST,
+			'SERVER' => $_SERVER
+		);
+	}
+
+/**
+ * reloadEnvironment method
+ *
+ * @return void
+ */
+	protected function __reloadEnvironment() {
+		foreach ($_GET as $key => $val) {
+			unset($_GET[$key]);
+		}
+		foreach ($_POST as $key => $val) {
+			unset($_POST[$key]);
+		}
+		foreach ($_SERVER as $key => $val) {
+			unset($_SERVER[$key]);
+		}
+		Configure::write('App', array());
+	}
+
+/**
+ * loadEnvironment method
+ *
+ * @param array $env
+ * @return void
+ */
+	protected function __loadEnvironment($env) {
+		if ($env['reload']) {
+			$this->__reloadEnvironment();
+		}
+
+		if (isset($env['App'])) {
+			Configure::write('App', $env['App']);
+		}
+
+		if (isset($env['GET'])) {
+			foreach ($env['GET'] as $key => $val) {
+				$_GET[$key] = $val;
+			}
+		}
+
+		if (isset($env['POST'])) {
+			foreach ($env['POST'] as $key => $val) {
+				$_POST[$key] = $val;
+			}
+		}
+
+		if (isset($env['SERVER'])) {
+			foreach ($env['SERVER'] as $key => $val) {
+				$_SERVER[$key] = $val;
+			}
+		}
+	}
+
+/**
  * cachePath method
  *
  * @param string $here
  * @return string
  */
-	protected function _cachePath($here) {
+	protected function __cachePath($here) {
 		$path = $here;
-		if ($here === '/') {
+		if ($here == '/') {
 			$path = 'home';
 		}
 		$path = strtolower(Inflector::slug($path));

@@ -44,7 +44,6 @@ class AppController extends Controller {
 	
 	//components
 	public $components = array(
-		'DebugKit.Toolbar',
 		'Acl',
 		'Session',
 		'Cookie',
@@ -68,10 +67,10 @@ class AppController extends Controller {
         	)
 		)	
 	);	
-	// public function isAuthorized($user)
-	// {
-		// return true;
-	// }
+	public function isAuthorized($user)
+	{
+		return true;
+	}
 	
 	// public function beforeFilter()
 	// {

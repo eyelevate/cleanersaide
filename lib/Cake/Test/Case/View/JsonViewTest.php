@@ -5,17 +5,16 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View
  * @since         CakePHP(tm) v 2.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Controller', 'Controller');
@@ -76,8 +75,7 @@ class JsonViewTest extends CakeTestCase {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
-		$Request = new CakeRequest(null, false);
-		$Request->params['named'] = array('page' => 2);
+		$Request = new CakeRequest();
 		$Response = new CakeResponse();
 		$Controller = new Controller($Request, $Response);
 		$Controller->name = $Controller->viewPath = 'Posts';
@@ -93,10 +91,9 @@ class JsonViewTest extends CakeTestCase {
 		);
 		$Controller->set('user', $data);
 		$View = new JsonView($Controller);
-		$View->helpers = array('Paginator');
 		$output = $View->render('index');
 
-		$expected = json_encode(array('user' => 'fake', 'list' => array('item1', 'item2'), 'paging' => array('page' => 2)));
+		$expected = json_encode(array('user' => 'fake', 'list' => array('item1', 'item2')));
 		$this->assertSame($expected, $output);
 		$this->assertSame('application/json', $Response->type());
 	}

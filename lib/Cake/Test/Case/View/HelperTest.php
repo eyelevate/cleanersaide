@@ -5,17 +5,16 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('View', 'View');
@@ -160,19 +159,9 @@ class HelperTestPostsTag extends Model {
 class TestHelper extends Helper {
 
 /**
- * Settings for this helper.
- *
- * @var array
- */
-	public $settings = array(
-		'key1' => 'val1',
-		'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'val2.2')
-	);
-
-/**
  * Helpers for this helper.
  *
- * @var array
+ * @var string
  */
 	public $helpers = array('Html', 'TestPlugin.OtherHelper');
 
@@ -273,24 +262,6 @@ class HelperTest extends CakeTestCase {
 				'min'
 			)
 		);
-	}
-
-/**
- * Test settings merging
- *
- * @return void
- */
-	public function testSettingsMerging() {
-		$Helper = new TestHelper($this->View, array(
-			'key3' => 'val3',
-			'key2' => array('key2.2' => 'newval')
-		));
-		$expected = array(
-			'key1' => 'val1',
-			'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'newval'),
-			'key3' => 'val3'
-		);
-		$this->assertEquals($expected, $Helper->settings);
 	}
 
 /**
@@ -557,7 +528,7 @@ class HelperTest extends CakeTestCase {
 	}
 
 /**
- * Ensure HTML escaping of url params. So link addresses are valid and not exploited
+ * Ensure HTML escaping of url params.  So link addresses are valid and not exploited
  *
  * @return void
  */
@@ -605,10 +576,6 @@ class HelperTest extends CakeTestCase {
 
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', 0);
-
-		$result = $this->Helper->assetTimestamp('/%3Cb%3E/cake.generic.css');
-		$this->assertEquals('/%3Cb%3E/cake.generic.css', $result);
-
 		$result = $this->Helper->assetTimestamp(CSS_URL . 'cake.generic.css');
 		$this->assertEquals(CSS_URL . 'cake.generic.css', $result);
 
@@ -655,26 +622,8 @@ class HelperTest extends CakeTestCase {
 		$result = $this->Helper->assetUrl('style', array('ext' => '.css'));
 		$this->assertEquals('style.css', $result);
 
-		$result = $this->Helper->assetUrl('dir/sub dir/my image', array('ext' => '.jpg'));
-		$this->assertEquals('dir/sub%20dir/my%20image.jpg', $result);
-
 		$result = $this->Helper->assetUrl('foo.jpg?one=two&three=four');
 		$this->assertEquals('foo.jpg?one=two&amp;three=four', $result);
-	}
-
-/**
- * Test assetUrl with no rewriting.
- *
- * @return void
- */
-	public function testAssetUrlNoRewrite() {
-		$this->Helper->request->addPaths(array(
-			'base' => '/cake_dev/index.php',
-			'webroot' => '/cake_dev/app/webroot/',
-			'here' => '/cake_dev/index.php/tasks',
-		));
-		$result = $this->Helper->assetUrl('img/cake.icon.png', array('fullBase' => true));
-		$this->assertEquals('http://localhost/cake_dev/app/webroot/img/cake.icon.png', $result);
 	}
 
 /**

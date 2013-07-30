@@ -83,16 +83,12 @@ if (!isset($username)) {
 				<div class="navbar navbar-fixed-top">
 					<div class="navbar-inner">
 						<div class="container-fluid">
-							<a class="brand" href="/admins" style="line-height: 40px;">Black Ball Ferry Line</a>
+							<a class="brand" href="/admins" style="line-height: 40px;">Cleanersaide</a>
 							<ul class="nav user_menu pull-right">
 								<li class="hidden-phone hidden-tablet">
 									<div class="nb_boxes clearfix"></div>
 								</li>
-								<li class="divider-vertical hidden-phone hidden-tablet"></li>
-								<li class="dropdown"> 
-								<!-- reward points go here -->	
-
-								</li>
+								
 								<li class="divider-vertical hidden-phone hidden-tablet"></li>
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $username;?> <? if ($username != "You are not logged in.") {echo '<b class="caret"></b>';} ?></a>
@@ -136,7 +132,7 @@ if (!isset($username)) {
 							<div class="sidebar_inner">
 								<? if(isset($admin_nav)){ ?>
 								<form id="searchForm" action="/reservations/reservation_search" class="input-append" method="post" >
-									<input autocomplete="off" name="query" placeholder="Confirmation Number" class="search_query input-medium" size="16" type="text" placeholder="Search..." />
+									<input autocomplete="off" name="query" placeholder="Phone Number" class="search_query input-medium" size="16" type="text" placeholder="Search..." />
 									<button id="searchButton" type="submit" class="btn">
 										<i class="icon-search"></i>
 									</button>
@@ -242,22 +238,14 @@ if (!isset($username)) {
 	'admin/jquery.imagesloaded.min.js', 'admin/jquery.wookmark.js', //multi-column layout
 	'admin/jquery.mediaTable.min.js', //responsive table
 	'admin/jquery.peity.min.js', //small charts
-	//'admin/plugins/flot/jquery.flot.min.js', 'admin/plugins/flot/jquery.flot.resize.min.js', 'admin/plugins/flot/jquery.flot.pie.min.js', //charts
 	'admin/plugins/visualize/jquery.visualize.js', //charts
 	'admin/plugins/fullcalendar/fullcalendar.min.js', //calendar
 	'admin/plugins/list_js/list.min.js', 'admin/plugins/list_js/plugins/paging/list.paging.js', //sortable/filterable lists
-
 	'admin/plugins/tiny_mce/jquery.tinymce.js', //tinymce and the file uploader
 	'admin/plugins/plupload/js/plupload.full.js',
 	'admin/plugins/plupload/js/jquery.plupload.queue/jquery.plupload.queue.full.js',
-	
-	
 	'admin/plugins/datepicker/bootstrap-datepicker.min.js',
 	'admin/plugins/stepy/js/jquery.stepy.min.js', 
-
-
-	//'admin/plugins/datepicker/bootstrap-timepicker.min.js', 
-	
 	'admin/dashboard.js', //global JS functions	
 	'admin/forms.js', //global JS functions
 	'admin/common.js' //global JS functions

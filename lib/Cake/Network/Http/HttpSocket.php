@@ -5,22 +5,19 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network.Http
  * @since         CakePHP(tm) v 1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('CakeSocket', 'Network');
 App::uses('Router', 'Routing');
-App::uses('Hash', 'Utility');
 
 /**
  * Cake network socket connection class.
@@ -67,7 +64,7 @@ class HttpSocket extends CakeSocket {
 		),
 		'raw' => null,
 		'redirect' => false,
-		'cookies' => array(),
+		'cookies' => array()
 	);
 
 /**
@@ -82,7 +79,7 @@ class HttpSocket extends CakeSocket {
  *
  * @var string
  */
-	public $responseClass = 'HttpSocketResponse';
+	public $responseClass = 'HttpResponse';
 
 /**
  * Configuration settings for the HttpSocket and the requests
@@ -95,9 +92,6 @@ class HttpSocket extends CakeSocket {
 		'protocol' => 'tcp',
 		'port' => 80,
 		'timeout' => 30,
-		'ssl_verify_peer' => true,
-		'ssl_verify_depth' => 5,
-		'ssl_verify_host' => true,
 		'request' => array(
 			'uri' => array(
 				'scheme' => array('http', 'https'),
@@ -105,7 +99,7 @@ class HttpSocket extends CakeSocket {
 				'port' => array(80, 443)
 			),
 			'redirect' => false,
-			'cookies' => array(),
+			'cookies' => array()
 		)
 	);
 
@@ -133,7 +127,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Build an HTTP Socket using the specified configuration.
  *
- * You can use an URL string to set the URL and use default configurations for
+ * You can use a url string to set the url and use default configurations for
  * all other options:
  *
  * `$http = new HttpSocket('http://cakephp.org/');`
@@ -149,7 +143,7 @@ class HttpSocket extends CakeSocket {
  *
  * See HttpSocket::$config for options that can be used.
  *
- * @param string|array $config Configuration information, either a string URL or an array of options.
+ * @param string|array $config Configuration information, either a string url or an array of options.
  */
 	public function __construct($config = array()) {
 		if (is_string($config)) {
@@ -167,7 +161,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Set authentication settings.
  *
- * Accepts two forms of parameters. If all you need is a username + password, as with
+ * Accepts two forms of parameters.  If all you need is a username + password, as with
  * Basic authentication you can do the following:
  *
  * {{{
@@ -252,7 +246,7 @@ class HttpSocket extends CakeSocket {
  * method and provide a more granular interface.
  *
  * @param string|array $request Either an URI string, or an array defining host/uri
- * @return mixed false on error, HttpSocketResponse on success
+ * @return mixed false on error, HttpResponse on success
  * @throws SocketException
  */
 	public function request($request = array()) {
@@ -324,14 +318,12 @@ class HttpSocket extends CakeSocket {
 
 		if (isset($this->request['uri']['user'], $this->request['uri']['pass'])) {
 			$this->configAuth('Basic', $this->request['uri']['user'], $this->request['uri']['pass']);
-		} elseif (isset($this->request['auth'], $this->request['auth']['method'], $this->request['auth']['user'], $this->request['auth']['pass'])) {
-			$this->configAuth($this->request['auth']['method'], $this->request['auth']['user'], $this->request['auth']['pass']);
 		}
 		$this->_setAuth();
 		$this->request['auth'] = $this->_auth;
 
 		if (is_array($this->request['body'])) {
-			$this->request['body'] = http_build_query($this->request['body'], '', '&');
+			$this->request['body'] = http_build_query($this->request['body']);
 		}
 
 		if (!empty($this->request['body']) && !isset($this->request['header']['Content-Type'])) {
@@ -355,8 +347,6 @@ class HttpSocket extends CakeSocket {
 		if ($this->quirksMode === false && $this->request['line'] === false) {
 			return false;
 		}
-
-		$this->_configContext($this->request['uri']['host']);
 
 		$this->request['raw'] = '';
 		if ($this->request['line'] !== false) {
@@ -405,7 +395,6 @@ class HttpSocket extends CakeSocket {
 			throw new SocketException(__d('cake_dev', 'Class %s not found.', $this->responseClass));
 		}
 		$this->response = new $responseClass($response);
-
 		if (!empty($this->response->cookies)) {
 			if (!isset($this->config['request']['cookies'][$Host])) {
 				$this->config['request']['cookies'][$Host] = array();
@@ -414,7 +403,7 @@ class HttpSocket extends CakeSocket {
 		}
 
 		if ($this->request['redirect'] && $this->response->isRedirect()) {
-			$request['uri'] = trim(urldecode($this->response->getHeader('Location')), '=');
+			$request['uri'] = $this->response->getHeader('Location');
 			$request['redirect'] = is_int($this->request['redirect']) ? $this->request['redirect'] - 1 : $this->request['redirect'];
 			$this->response = $this->request($request);
 		}
@@ -463,7 +452,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Issues a POST request to the specified URI, query, and request.
  *
- * `post()` can be used to post simple data arrays to an URL:
+ * `post()` can be used to post simple data arrays to a url:
  *
  * {{{
  * $response = $http->post('http://example.com', array(
@@ -509,14 +498,14 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * Normalizes URLs into a $uriTemplate. If no template is provided
- * a default one will be used. Will generate the URL using the
+ * Normalizes urls into a $uriTemplate. If no template is provided
+ * a default one will be used. Will generate the url using the
  * current config information.
  *
  * ### Usage:
  *
  * After configuring part of the request parameters, you can use url() to generate
- * URLs.
+ * urls.
  *
  * {{{
  * $http = new HttpSocket('http://www.cakephp.org');
@@ -531,9 +520,9 @@ class HttpSocket extends CakeSocket {
  *
  * Would return `/search?q=socket`.
  *
- * @param string|array Either a string or array of URL options to create an URL with.
- * @param string $uriTemplate A template string to use for URL formatting.
- * @return mixed Either false on failure or a string containing the composed URL.
+ * @param string|array Either a string or array of url options to create a url with.
+ * @param string $uriTemplate A template string to use for url formatting.
+ * @return mixed Either false on failure or a string containing the composed url.
  */
 	public function url($url = null, $uriTemplate = null) {
 		if (is_null($url)) {
@@ -548,7 +537,7 @@ class HttpSocket extends CakeSocket {
 			if (is_array($port)) {
 				$port = $port[0];
 			}
-			if ($url{0} === '/') {
+			if ($url{0} == '/') {
 				$url = $this->config['request']['uri']['host'] . ':' . $port . $url;
 			}
 			if (!preg_match('/^.+:\/\/|\*|^\//', $url)) {
@@ -655,33 +644,6 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * Configure the socket's context. Adds in configuration
- * that can not be declared in the class definition.
- *
- * @param string $host The host you're connecting to.
- * @return void
- */
-	protected function _configContext($host) {
-		foreach ($this->config as $key => $value) {
-			if (substr($key, 0, 4) !== 'ssl_') {
-				continue;
-			}
-			$contextKey = substr($key, 4);
-			if (empty($this->config['context']['ssl'][$contextKey])) {
-				$this->config['context']['ssl'][$contextKey] = $value;
-			}
-			unset($this->config[$key]);
-		}
-		if (empty($this->_context['ssl']['cafile'])) {
-			$this->config['context']['ssl']['cafile'] = CAKE . 'Config' . DS . 'cacert.pem';
-		}
-		if (!empty($this->config['context']['ssl']['verify_host'])) {
-			$this->config['context']['ssl']['CN_match'] = $host;
-			unset($this->config['context']['ssl']['verify_host']);
-		}
-	}
-
-/**
  * Takes a $uri array and turns it into a fully qualified URL string
  *
  * @param string|array $uri Either A $uri array, or a request string. Will use $this->config if left empty.
@@ -699,7 +661,7 @@ class HttpSocket extends CakeSocket {
 		}
 
 		$uri['path'] = preg_replace('/^\//', null, $uri['path']);
-		$uri['query'] = http_build_query($uri['query'], '', '&');
+		$uri['query'] = http_build_query($uri['query']);
 		$uri['query'] = rtrim($uri['query'], '=');
 		$stripIfEmpty = array(
 			'query' => '?%query',
@@ -870,7 +832,7 @@ class HttpSocket extends CakeSocket {
 
 		if (is_string($request)) {
 			$isValid = preg_match("/(.+) (.+) (.+)\r\n/U", $request, $match);
-			if (!$this->quirksMode && (!$isValid || ($match[2] === '*' && !in_array($match[3], $asteriskMethods)))) {
+			if (!$this->quirksMode && (!$isValid || ($match[2] == '*' && !in_array($match[3], $asteriskMethods)))) {
 				throw new SocketException(__d('cake_dev', 'HttpSocket::_buildRequestLine - Passed an invalid request line string. Activate quirks mode to do this.'));
 			}
 			return $request;
@@ -880,7 +842,7 @@ class HttpSocket extends CakeSocket {
 			return false;
 		}
 
-		$request['uri'] = $this->_parseUri($request['uri']);
+		$request['uri']	= $this->_parseUri($request['uri']);
 		$request = array_merge(array('method' => 'GET'), $request);
 		if (!empty($this->_proxy['host'])) {
 			$request['uri'] = $this->_buildUri($request['uri'], '%scheme://%host:%port/%path?%query');
@@ -921,7 +883,7 @@ class HttpSocket extends CakeSocket {
 
 		$returnHeader = '';
 		foreach ($header as $field => $contents) {
-			if (is_array($contents) && $mode === 'standard') {
+			if (is_array($contents) && $mode == 'standard') {
 				$contents = implode(',', $contents);
 			}
 			foreach ((array)$contents as $content) {
@@ -937,21 +899,14 @@ class HttpSocket extends CakeSocket {
 /**
  * Builds cookie headers for a request.
  *
- * Cookies can either be in the format returned in responses, or
- * a simple key => value pair.
- *
  * @param array $cookies Array of cookies to send with the request.
  * @return string Cookie header string to be sent with the request.
+ * @todo Refactor token escape mechanism to be configurable
  */
 	public function buildCookies($cookies) {
 		$header = array();
 		foreach ($cookies as $name => $cookie) {
-			if (is_array($cookie)) {
-				$value = $this->_escapeToken($cookie['value'], array(';'));
-			} else {
-				$value = $this->_escapeToken($cookie, array(';'));
-			}
-			$header[] = $name . '=' . $value;
+			$header[] = $name . '=' . $this->_escapeToken($cookie['value'], array(';'));
 		}
 		return $this->_buildHeader(array('Cookie' => implode('; ', $header)), 'pragmatic');
 	}
@@ -962,6 +917,7 @@ class HttpSocket extends CakeSocket {
  * @param string $token Token to escape
  * @param array $chars
  * @return string Escaped token
+ * @todo Test $chars parameter
  */
 	protected function _escapeToken($token, $chars = null) {
 		$regex = '/([' . implode('', $this->_tokenEscapeChars(true, $chars)) . '])/';
@@ -975,6 +931,7 @@ class HttpSocket extends CakeSocket {
  * @param boolean $hex true to get them as HEX values, false otherwise
  * @param array $chars
  * @return array Escape chars
+ * @todo Test $chars parameter
  */
 	protected function _tokenEscapeChars($hex = true, $chars = null) {
 		if (!empty($chars)) {
@@ -987,7 +944,7 @@ class HttpSocket extends CakeSocket {
 			$escape[] = chr(127);
 		}
 
-		if (!$hex) {
+		if ($hex == false) {
 			return $escape;
 		}
 		foreach ($escape as $key => $char) {

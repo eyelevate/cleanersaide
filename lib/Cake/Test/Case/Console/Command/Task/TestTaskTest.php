@@ -7,17 +7,16 @@
  * PHP 5
  *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.0.7726
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -33,8 +32,16 @@ App::uses('Model', 'Model');
  * Test Article model
  *
  * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskArticle extends Model {
+
+/**
+ * Model name
+ *
+ * @var string
+ */
+	public $name = 'TestTaskArticle';
 
 /**
  * Table name to use
@@ -99,8 +106,16 @@ class TestTaskArticle extends Model {
  * Tag Testing Model
  *
  * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskTag extends Model {
+
+/**
+ * Model name
+ *
+ * @var string
+ */
+	public $name = 'TestTaskTag';
 
 /**
  * Table name
@@ -128,6 +143,7 @@ class TestTaskTag extends Model {
  * Simulated plugin
  *
  * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskAppModel extends Model {
 }
@@ -136,8 +152,16 @@ class TestTaskAppModel extends Model {
  * Testing AppMode (TaskComment)
  *
  * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskComment extends TestTaskAppModel {
+
+/**
+ * Model name
+ *
+ * @var string
+ */
+	public $name = 'TestTaskComment';
 
 /**
  * Table name
@@ -163,8 +187,16 @@ class TestTaskComment extends TestTaskAppModel {
  * Test Task Comments Controller
  *
  * @package       Cake.Test.Case.Console.Command.Task
+ * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskCommentsController extends Controller {
+
+/**
+ * Controller Name
+ *
+ * @var string
+ */
+	public $name = 'TestTaskComments';
 
 /**
  * Models to use
@@ -317,7 +349,7 @@ class TestTaskTest extends CakeTestCase {
 		));
 		$keys = ClassRegistry::keys();
 		$this->assertTrue(in_array('test_task_comment', $keys));
-		$this->Task->buildTestSubject('Model', 'TestTaskComment');
+		$object = $this->Task->buildTestSubject('Model', 'TestTaskComment');
 
 		$keys = ClassRegistry::keys();
 		$this->assertFalse(in_array('random', $keys));
@@ -393,7 +425,7 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
- * test baking files. The conditionally run tests are known to fail in PHP4
+ * test baking files.  The conditionally run tests are known to fail in PHP4
  * as PHP4 classnames are all lower case, breaking the plugin path inflection.
  *
  * @return void
@@ -459,8 +491,6 @@ class TestTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Component', 'Example');
 
-		$this->assertContains("App::uses('Component', 'Controller')", $result);
-		$this->assertContains("App::uses('ComponentCollection', 'Controller')", $result);
 		$this->assertContains("App::uses('ExampleComponent', 'Controller/Component')", $result);
 		$this->assertContains('class ExampleComponentTest extends CakeTestCase', $result);
 
@@ -662,7 +692,7 @@ class TestTaskTest extends CakeTestCase {
 	public function testTestCaseFileNamePlugin() {
 		$this->Task->path = DS . 'my' . DS . 'path' . DS . 'tests' . DS;
 
-		CakePlugin::load('TestTest', array('path' => APP . 'Plugin' . DS . 'TestTest' . DS));
+		CakePlugin::load('TestTest', array('path' => APP . 'Plugin' . DS . 'TestTest' . DS ));
 		$this->Task->plugin = 'TestTest';
 		$result = $this->Task->testCaseFileName('Model', 'Post');
 		$expected = APP . 'Plugin' . DS . 'TestTest' . DS . 'Test' . DS . 'Case' . DS . 'Model' . DS . 'PostTest.php';

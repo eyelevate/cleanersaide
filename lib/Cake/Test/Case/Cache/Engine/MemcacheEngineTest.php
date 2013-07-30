@@ -5,27 +5,21 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Cache.Engine
  * @since         CakePHP(tm) v 1.2.0.5434
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Cache', 'Cache');
 App::uses('MemcacheEngine', 'Cache/Engine');
 
-/**
- * Class TestMemcacheEngine
- *
- * @package       Cake.Test.Case.Cache.Engine
- */
 class TestMemcacheEngine extends MemcacheEngine {
 
 /**
@@ -99,6 +93,7 @@ class MemcacheEngineTest extends CakeTestCase {
 			'persistent' => true,
 			'compress' => false,
 			'engine' => 'Memcache',
+			'persistent' => true,
 			'groups' => array()
 		);
 		$this->assertEquals($expecting, $settings);
@@ -116,11 +111,9 @@ class MemcacheEngineTest extends CakeTestCase {
 
 		foreach ($servers as $server) {
 			list($host, $port) = explode(':', $server);
-			//@codingStandardsIgnoreStart
 			if (!@$Memcache->connect($host, $port)) {
 				$available = false;
 			}
-			//@codingStandardsIgnoreEnd
 		}
 
 		$this->skipIf(!$available, 'Need memcache servers at ' . implode(', ', $servers) . ' to run this test.');
@@ -128,6 +121,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		$Memcache = new MemcacheEngine();
 		$Memcache->init(array('engine' => 'Memcache', 'servers' => $servers));
 
+		$servers = array_keys($Memcache->__Memcache->getExtendedStats());
 		$settings = $Memcache->settings();
 		$this->assertEquals($settings['servers'], $servers);
 		Cache::drop('dual_server');
@@ -236,11 +230,12 @@ class MemcacheEngineTest extends CakeTestCase {
 		$result = Cache::write('other_test', $data, 'memcache');
 		$this->assertTrue($result);
 
-		sleep(3);
+		sleep(2);
 		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);
 
 		Cache::config('memcache', array('duration' => '+1 second'));
+		sleep(2);
 
 		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);
@@ -465,7 +460,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * Test clearing a cache group
  *
  * @return void
- */
+ **/
 	public function testGroupClear() {
 		Cache::config('memcache_groups', array(
 			'engine' => 'Memcache',

@@ -5,19 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.TestSuite
  * @since         CakePHP(tm) v 1.2.0.4667
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('DboSource', 'Model/Datasource');
 App::uses('Model', 'Model');
 App::uses('CakeTestFixture', 'TestSuite/Fixture');
@@ -49,7 +47,7 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer',  'key' => 'primary'),
 		'name' => array('type' => 'string', 'length' => '255'),
 		'created' => array('type' => 'datetime')
 	);
@@ -70,6 +68,7 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
  * StringFieldsTestFixture class
  *
  * @package       Cake.Test.Case.TestSuite
+ * @subpackage    cake.cake.tests.cases.libs
  */
 class StringsTestFixture extends CakeTestFixture {
 
@@ -93,7 +92,7 @@ class StringsTestFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer',  'key' => 'primary'),
 		'name' => array('type' => 'string', 'length' => '255'),
 		'email' => array('type' => 'string', 'length' => '255'),
 		'age' => array('type' => 'integer', 'default' => 10)
@@ -152,6 +151,7 @@ class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
 /**
  * FixtureImportTestModel class
  *
+ * @package       Cake.Test.Case.TestSuite
  * @package       Cake.Test.Case.TestSuite
  */
 class FixtureImportTestModel extends Model {
@@ -227,7 +227,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 	}
 
 /**
- * test that init() correctly sets the fixture table when the connection
+ * test that init() correctly sets the fixture table when the connection 
  * or model have prefixes defined.
  *
  * @return void
@@ -352,7 +352,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 	}
 
 /**
- * test that importing with records works. Make sure to try with postgres as its
+ * test that importing with records works.  Make sure to try with postgres as its
  * handling of aliases is a workaround at best.
  *
  * @return void
@@ -435,10 +435,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->insertMulti['table'] = $table;
 		$this->insertMulti['fields'] = $fields;
 		$this->insertMulti['values'] = $values;
-		$this->insertMulti['fields_values'] = array();
-		foreach ($values as $record) {
-			$this->insertMulti['fields_values'][] = array_combine($fields, $record);
-		}
 		return true;
 	}
 
@@ -457,31 +453,13 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->assertTrue($this->criticDb->fullDebug);
 		$this->assertTrue($return);
 		$this->assertEquals('strings', $this->insertMulti['table']);
-		$this->assertEquals(array('name', 'email', 'age'), array_values($this->insertMulti['fields']));
+		$this->assertEquals(array('email', 'name', 'age'), $this->insertMulti['fields']);
 		$expected = array(
 			array('Mark Doe', 'mark.doe@email.com', null),
 			array('John Doe', 'john.doe@email.com', 20),
 			array('Jane Doe', 'jane.doe@email.com', 30),
 		);
 		$this->assertEquals($expected, $this->insertMulti['values']);
-		$expected = array(
-			array(
-				'name' => 'Mark Doe',
-				'email' => 'mark.doe@email.com',
-				'age' => null
-			),
-			array(
-				'name' => 'John Doe',
-				'email' => 'john.doe@email.com',
-				'age' => 20
-			),
-			array(
-				'name' => 'Jane Doe',
-				'email' => 'jane.doe@email.com',
-				'age' => 30
-			),
-		);
-		$this->assertEquals($expected, $this->insertMulti['fields_values']);
 	}
 
 /**

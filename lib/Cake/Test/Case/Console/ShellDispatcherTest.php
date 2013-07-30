@@ -5,17 +5,16 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Console
  * @since         CakePHP(tm) v 1.2.0.5432
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -154,7 +153,7 @@ class ShellDispatcherTest extends CakeTestCase {
 			'app' => 'new',
 			'webroot' => 'webroot',
 			'working' => str_replace('/', DS, '/var/www/htdocs/new'),
-			'root' => str_replace('/', DS, '/var/www/htdocs')
+			'root' => str_replace('/', DS,'/var/www/htdocs')
 		);
 		$Dispatcher->parseParams($params);
 		$this->assertEquals($expected, $Dispatcher->params);
@@ -380,7 +379,7 @@ class ShellDispatcherTest extends CakeTestCase {
 			'app' => 'old',
 			'webroot' => 'webroot',
 			'working' => str_replace('/', DS, '/var/www/htdocs/old'),
-			'root' => str_replace('/', DS, '/var/www/htdocs')
+			'root' => str_replace('/', DS,'/var/www/htdocs')
 		);
 		$Dispatcher->parseParams($params);
 		$this->assertEquals($expected, $Dispatcher->params);
@@ -565,7 +564,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertEquals('a', $Dispatcher->shiftArgs());
 		$this->assertSame($Dispatcher->args, array('b' => 'c', 'd'));
 
-		$Dispatcher->args = array(0 => 'a', 2 => 'b', 30 => 'c');
+		$Dispatcher->args = array(0 => 'a',  2 => 'b', 30 => 'c');
 		$this->assertEquals('a', $Dispatcher->shiftArgs());
 		$this->assertSame($Dispatcher->args, array(0 => 'b', 1 => 'c'));
 

@@ -5,19 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
 
@@ -66,39 +64,38 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	public function testBasic() {
-		$file = CAKE . DS . 'LICENSE.txt';
+		$file = __FILE__;
 
-		$this->File = new File($file, false);
+		$result = $this->File->pwd();
+		$expecting = $file;
+		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->name;
-		$expecting = basename($file);
+		$expecting = basename(__FILE__);
 		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->info();
 		$expecting = array(
-			'dirname' => dirname($file),
-			'basename' => basename($file),
-			'extension' => 'txt',
-			'filename' => 'LICENSE',
+			'dirname' => dirname(__FILE__),
+			'basename' => basename(__FILE__),
+			'extension' => 'php',
+			'filename' => 'FileTest',
 			'filesize' => filesize($file),
-			'mime' => 'text/plain'
+			'mime' => 'text/x-php'
 		);
-		if (
-			!function_exists('finfo_open') &&
-			(!function_exists('mime_content_type') ||
-			function_exists('mime_content_type') &&
-			mime_content_type($this->File->pwd()) === false)
-		) {
+		if (!function_exists('finfo_open') && (!function_exists('mime_content_type') ||
+				function_exists('mime_content_type') && false === mime_content_type($this->File->pwd()))) {
 			$expecting['mime'] = false;
 		}
+
 		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->ext();
-		$expecting = 'txt';
+		$expecting = 'php';
 		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->name();
-		$expecting = 'LICENSE';
+		$expecting = 'FileTest';
 		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->md5();
@@ -132,6 +129,8 @@ class FileTest extends CakeTestCase {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'File permissions tests not supported on Windows.');
 
 		$dir = TMP . 'tests' . DS . 'permissions' . DS;
+		$Folder = new Folder($dir);
+
 		$old = umask();
 
 		umask(0002);
@@ -304,7 +303,7 @@ class FileTest extends CakeTestCase {
  */
 	public function testPrepare() {
 		$string = "some\nvery\ncool\r\nteststring here\n\n\nfor\r\r\n\n\r\n\nhere";
-		if (DS === '\\') {
+		if (DS == '\\') {
 			$expected = "some\r\nvery\r\ncool\r\nteststring here\r\n\r\n\r\n";
 			$expected .= "for\r\n\r\n\r\n\r\n\r\nhere";
 		} else {
@@ -362,10 +361,11 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	public function testLastAccess() {
+		$ts = time();
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastAccess());
 		$this->assertTrue($someFile->open());
-		$this->assertWithinMargin($someFile->lastAccess(), time(), 2);
+		$this->assertTrue($someFile->lastAccess() >= $ts);
 		$someFile->close();
 		$someFile->delete();
 	}
@@ -376,14 +376,13 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	public function testLastChange() {
+		$ts = time();
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastChange());
 		$this->assertTrue($someFile->open('r+'));
-		$this->assertWithinMargin($someFile->lastChange(), time(), 2);
-
+		$this->assertTrue($someFile->lastChange() >= $ts);
 		$someFile->write('something');
-		$this->assertWithinMargin($someFile->lastChange(), time(), 2);
-
+		$this->assertTrue($someFile->lastChange() >= $ts);
 		$someFile->close();
 		$someFile->delete();
 	}
@@ -434,24 +433,16 @@ class FileTest extends CakeTestCase {
 		$TmpFile = new File($tmpFile);
 		$this->assertFalse(file_exists($tmpFile));
 
-		$fragments = array('CakePHP\'s', ' test suite', ' was here ...');
+		$fragments = array('CakePHP\'s', ' test suite', ' was here ...', '');
 		$data = null;
-		$size = 0;
 		foreach ($fragments as $fragment) {
 			$r = $TmpFile->append($fragment);
 			$this->assertTrue($r);
 			$this->assertTrue(file_exists($tmpFile));
 			$data = $data . $fragment;
 			$this->assertEquals($data, file_get_contents($tmpFile));
-			$newSize = $TmpFile->size();
-			$this->assertTrue($newSize > $size);
-			$size = $newSize;
 			$TmpFile->close();
 		}
-
-		$TmpFile->append('');
-		$this->assertEquals($data, file_get_contents($tmpFile));
-		$TmpFile->close();
 	}
 
 /**

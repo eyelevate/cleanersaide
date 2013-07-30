@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class AdminsController extends AppController {
 
 	public $name = 'Admins';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Attraction_ticket', 'Reservation','Admin');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin');
 
 
 	public function beforeFilter()
@@ -17,14 +17,29 @@ class AdminsController extends AppController {
 		$this->layout = 'admin';
 		//set the navigation menu_id		
 		$menu_ids = $this->Menu->find('all',array('conditions'=>array('name'=>'Admin')));
-		if(count($menu_ids)>0){
-			$menu_id = $menu_ids[0]['Menu']['id'];	
-		} else {
-			$menu_id = null;
-		}	
+		$menu_id = $menu_ids[0]['Menu']['id'];		
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
-		$this->Auth->allow('logout','login');
+		$this->Auth->allow('login','logout');
+	
+		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
+		    // Optionally log an ACL deny message in auth.log
+		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
+		        ' tried to access ' . $this->name . '/' .
+		        $this->request->params['action'] . '.'
+		    );
+		
+		    // Render the forbidden page instead of the current requested page
+		    $this->Session->setFlash(__('You are not authorized to view this page. Please log in.'),'default',array(),'error');
+		    echo $this->redirect(array('controller'=>'admins','action'=>'index'));
+		
+		    /**
+		     * Make sure we halt here, otherwise the forbidden message
+		     * is just shown above the content.
+		     */
+
+		
+		}	
 
 	}
 
@@ -37,10 +52,8 @@ class AdminsController extends AppController {
  */
 	public function login()
 	{
-
-		$this->layout = 'admin';
 		//No admin navigation here
-
+		
 		//set autherror to page
 		$this->set('authError',$this->Auth->authError);
 		
@@ -87,26 +100,10 @@ class AdminsController extends AppController {
 		$this->set('username',$username);
 		//set the action levels
 		$group_id = $this->Auth->user('group_id');
+		
 
 
 	}
 
-	public function dropoff()
-	{
-		//set the admin navigation
-		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
-		$page_url = '/admins/dropoff';
-		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
-		$this->set('admin_nav',$admin_nav);
-		$this->set('admin_pages',$page_url);
-		$this->set('admin_check',$admin_check);		
-		
-		//if no customer phone number was entered
-		
-		
-		//if customer phone number was entered
-		if($this->request->is('post')){
-			
-		}
-	}
+
 }

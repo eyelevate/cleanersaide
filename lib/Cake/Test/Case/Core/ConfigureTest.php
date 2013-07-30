@@ -7,19 +7,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Core
  * @since         CakePHP(tm) v 1.2.0.5432
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('PhpReader', 'Configure');
 
 /**
@@ -180,60 +178,6 @@ class ConfigureTest extends CakeTestCase {
 	}
 
 /**
- * testCheck method
- *
- * @return void
- */
-	public function testCheck() {
-		Configure::write('ConfigureTestCase', 'value');
-		$this->assertTrue(Configure::check('ConfigureTestCase'));
-
-		$this->assertFalse(Configure::check('NotExistingConfigureTestCase'));
-	}
-
-/**
- * testCheckingSavedEmpty method
- *
- * @return void
- */
-	public function testCheckingSavedEmpty() {
-		$this->assertTrue(Configure::write('ConfigureTestCase', 0));
-		$this->assertTrue(Configure::check('ConfigureTestCase'));
-
-		$this->assertTrue(Configure::write('ConfigureTestCase', '0'));
-		$this->assertTrue(Configure::check('ConfigureTestCase'));
-
-		$this->assertTrue(Configure::write('ConfigureTestCase', false));
-		$this->assertTrue(Configure::check('ConfigureTestCase'));
-
-		$this->assertTrue(Configure::write('ConfigureTestCase', null));
-		$this->assertFalse(Configure::check('ConfigureTestCase'));
-	}
-
-/**
- * testCheckKeyWithSpaces method
- *
- * @return void
- */
-	public function testCheckKeyWithSpaces() {
-		$this->assertTrue(Configure::write('Configure Test', "test"));
-		$this->assertTrue(Configure::check('Configure Test'));
-		Configure::delete('Configure Test');
-
-		$this->assertTrue(Configure::write('Configure Test.Test Case', "test"));
-		$this->assertTrue(Configure::check('Configure Test.Test Case'));
-	}
-
-/**
- * testCheckEmpty
- *
- * @return void
- */
-	public function testCheckEmpty() {
-		$this->assertFalse(Configure::check());
-	}
-
-/**
  * testLoad method
  *
  * @expectedException RuntimeException
@@ -241,7 +185,7 @@ class ConfigureTest extends CakeTestCase {
  */
 	public function testLoadExceptionOnNonExistantFile() {
 		Configure::config('test', new PhpReader());
-		Configure::load('non_existing_configuration_file', 'test');
+		$result = Configure::load('non_existing_configuration_file', 'test');
 	}
 
 /**
@@ -439,9 +383,7 @@ class ConfigureTest extends CakeTestCase {
 		$result = file_get_contents(TMP . 'config_test.php');
 		$this->assertContains('<?php', $result);
 		$this->assertContains('$config = ', $result);
-		if (file_exists(TMP . 'config_test.php')) {
-			unlink(TMP . 'config_test.php');
-		}
+		@unlink(TMP . 'config_test.php');
 	}
 
 /**
@@ -460,9 +402,7 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertContains('Error', $result);
 		$this->assertNotContains('debug', $result);
 
-		if (file_exists(TMP . 'config_test.php')) {
-			unlink(TMP . 'config_test.php');
-		}
+		@unlink(TMP . 'config_test.php');
 	}
 
 }

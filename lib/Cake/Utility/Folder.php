@@ -1,17 +1,16 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.2.9
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -21,30 +20,6 @@
  * @package       Cake.Utility
  */
 class Folder {
-
-/**
- * Default scheme for Folder::copy
- * Recursively merges subfolders with the same name
- *
- * @constant MERGE
- */
-	const MERGE = 'merge';
-
-/**
- * Overwrite scheme for Folder::copy
- * subfolders with the same name will be replaced
- *
- * @constant OVERWRITE
- */
-	const OVERWRITE = 'overwrite';
-
-/**
- * Skip scheme for Folder::copy
- * if a subfolder with the same name exists it will be skipped
- *
- * @constant SKIP
- */
-	const SKIP = 'skip';
 
 /**
  * Path to Folder.
@@ -212,7 +187,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::find
  */
 	public function find($regexpPattern = '.*', $sort = false) {
-		list(, $files) = $this->read($sort);
+		list($dirs, $files) = $this->read($sort);
 		return array_values(preg_grep('/^' . $regexpPattern . '$/i', $files));
 	}
 
@@ -267,7 +242,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isWindowsPath
  */
 	public static function isWindowsPath($path) {
-		return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\');
+		return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
 	}
 
 /**
@@ -278,7 +253,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isAbsolute
  */
 	public static function isAbsolute($path) {
-		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\');
+		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
 	}
 
 /**
@@ -379,9 +354,7 @@ class Folder {
 		}
 
 		if ($recursive === false && is_dir($path)) {
-			//@codingStandardsIgnoreStart
 			if (@chmod($path, intval($mode, 8))) {
-				//@codingStandardsIgnoreEnd
 				$this->_messages[] = __d('cake_dev', '%s changed to %s', $path, $mode);
 				return true;
 			}
@@ -394,7 +367,7 @@ class Folder {
 			$paths = $this->tree($path);
 
 			foreach ($paths as $type) {
-				foreach ($type as $fullpath) {
+				foreach ($type as $key => $fullpath) {
 					$check = explode(DS, $fullpath);
 					$count = count($check);
 
@@ -402,9 +375,7 @@ class Folder {
 						continue;
 					}
 
-					//@codingStandardsIgnoreStart
 					if (@chmod($fullpath, intval($mode, 8))) {
-						//@codingStandardsIgnoreEnd
 						$this->_messages[] = __d('cake_dev', '%s changed to %s', $fullpath, $mode);
 					} else {
 						$this->_errors[] = __d('cake_dev', '%s NOT changed to %s', $fullpath, $mode);
@@ -430,7 +401,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::tree
  */
 	public function tree($path = null, $exceptions = false, $type = null) {
-		if (!$path) {
+		if ($path == null) {
 			$path = $this->path;
 		}
 		$files = array();
@@ -460,7 +431,7 @@ class Folder {
 		foreach ($iterator as $itemPath => $fsIterator) {
 			if ($skipHidden) {
 				$subPathName = $fsIterator->getSubPathname();
-				if ($subPathName{0} === '.' || strpos($subPathName, DS . '.') !== false) {
+				if ($subPathName{0} == '.' || strpos($subPathName, DS . '.') !== false) {
 					continue;
 				}
 			}
@@ -588,17 +559,13 @@ class Folder {
 			foreach ($iterator as $item) {
 				$filePath = $item->getPathname();
 				if ($item->isFile() || $item->isLink()) {
-					//@codingStandardsIgnoreStart
 					if (@unlink($filePath)) {
-						//@codingStandardsIgnoreEnd
 						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
 					} else {
 						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
 					}
 				} elseif ($item->isDir() && !$item->isDot()) {
-					//@codingStandardsIgnoreStart
 					if (@rmdir($filePath)) {
-						//@codingStandardsIgnoreEnd
 						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
 					} else {
 						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
@@ -608,9 +575,7 @@ class Folder {
 			}
 
 			$path = rtrim($path, DS);
-			//@codingStandardsIgnoreStart
 			if (@rmdir($path)) {
-				//@codingStandardsIgnoreEnd
 				$this->_messages[] = __d('cake_dev', '%s removed', $path);
 			} else {
 				$this->_errors[] = __d('cake_dev', '%s NOT removed', $path);
@@ -629,13 +594,12 @@ class Folder {
  * - `from` The directory to copy from, this will cause a cd() to occur, changing the results of pwd().
  * - `mode` The mode to copy the files/directories with.
  * - `skip` Files/directories to skip.
- * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
  *
  * @param array|string $options Either an array of options (see above) or a string of the destination directory.
  * @return boolean Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::copy
  */
-	public function copy($options) {
+	public function copy($options = array()) {
 		if (!$this->pwd()) {
 			return false;
 		}
@@ -644,7 +608,7 @@ class Folder {
 			$to = $options;
 			$options = array();
 		}
-		$options = array_merge(array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array(), 'scheme' => Folder::MERGE), $options);
+		$options = array_merge(array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array()), $options);
 
 		$fromDir = $options['from'];
 		$toDir = $options['to'];
@@ -665,13 +629,11 @@ class Folder {
 		}
 
 		$exceptions = array_merge(array('.', '..', '.svn'), $options['skip']);
-		//@codingStandardsIgnoreStart
 		if ($handle = @opendir($fromDir)) {
-			//@codingStandardsIgnoreEnd
-			while (($item = readdir($handle)) !== false) {
-				$to = Folder::addPathElement($toDir, $item);
-				if (($options['scheme'] != Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions)) {
+			while (false !== ($item = readdir($handle))) {
+				if (!in_array($item, $exceptions)) {
 					$from = Folder::addPathElement($fromDir, $item);
+					$to = Folder::addPathElement($toDir, $item);
 					if (is_file($from)) {
 						if (copy($from, $to)) {
 							chmod($to, intval($mode, 8));
@@ -680,10 +642,6 @@ class Folder {
 						} else {
 							$this->_errors[] = __d('cake_dev', '%s NOT copied to %s', $from, $to);
 						}
-					}
-
-					if (is_dir($from) && file_exists($to) && $options['scheme'] == Folder::OVERWRITE) {
-						$this->delete($to);
 					}
 
 					if (is_dir($from) && !file_exists($to)) {
@@ -699,9 +657,6 @@ class Folder {
 						} else {
 							$this->_errors[] = __d('cake_dev', '%s not created', $to);
 						}
-					} elseif (is_dir($from) && $options['scheme'] == Folder::MERGE) {
-						$options = array_merge($options, array('to' => $to, 'from' => $from));
-						$this->copy($options);
 					}
 				}
 			}
@@ -725,9 +680,8 @@ class Folder {
  * - `from` The directory to copy from, this will cause a cd() to occur, changing the results of pwd().
  * - `chmod` The mode to copy the files/directories with.
  * - `skip` Files/directories to skip.
- * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
  *
- * @param array $options (to, from, chmod, skip, scheme)
+ * @param array $options (to, from, chmod, skip)
  * @return boolean Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::move
  */
@@ -753,31 +707,21 @@ class Folder {
 /**
  * get messages from latest method
  *
- * @param boolean $reset Reset message stack after reading
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::messages
  */
-	public function messages($reset = true) {
-		$messages = $this->_messages;
-		if ($reset) {
-			$this->_messages = array();
-		}
-		return $messages;
+	public function messages() {
+		return $this->_messages;
 	}
 
 /**
  * get error from latest method
  *
- * @param boolean $reset Reset error stack after reading
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::errors
  */
-	public function errors($reset = true) {
-		$errors = $this->_errors;
-		if ($reset) {
-			$this->_errors = array();
-		}
-		return $errors;
+	public function errors() {
+		return $this->_errors;
 	}
 
 /**

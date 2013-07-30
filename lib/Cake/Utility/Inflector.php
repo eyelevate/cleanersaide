@@ -1,17 +1,16 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.2.9
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -64,7 +63,6 @@ class Inflector {
 			'brother' => 'brothers',
 			'cafe' => 'cafes',
 			'child' => 'children',
-			'cookie' => 'cookies',
 			'corpus' => 'corpuses',
 			'cow' => 'cows',
 			'ganglion' => 'ganglions',
@@ -178,7 +176,7 @@ class Inflector {
 		'/Ä/' => 'Ae',
 		'/Ü/' => 'Ue',
 		'/Ö/' => 'Oe',
-		'/À|Á|Â|Ã|Å|Ǻ|Ā|Ă|Ą|Ǎ/' => 'A',
+		'/À|Á|Â|Ã|Ä|Å|Ǻ|Ā|Ă|Ą|Ǎ/' => 'A',
 		'/à|á|â|ã|å|ǻ|ā|ă|ą|ǎ|ª/' => 'a',
 		'/Ç|Ć|Ĉ|Ċ|Č/' => 'C',
 		'/ç|ć|ĉ|ċ|č/' => 'c',
@@ -271,7 +269,7 @@ class Inflector {
 			return;
 		}
 		foreach (self::$_initialState as $key => $val) {
-			if ($key !== '_initialState') {
+			if ($key != '_initialState') {
 				self::${$key} = $val;
 			}
 		}
@@ -408,8 +406,8 @@ class Inflector {
 		}
 
 		if (!isset(self::$_singular['cacheUninflected']) || !isset(self::$_singular['cacheIrregular'])) {
-			self::$_singular['cacheUninflected'] = '(?:' . implode('|', self::$_singular['merged']['uninflected']) . ')';
-			self::$_singular['cacheIrregular'] = '(?:' . implode('|', array_keys(self::$_singular['merged']['irregular'])) . ')';
+			self::$_singular['cacheUninflected'] = '(?:' . join('|', self::$_singular['merged']['uninflected']) . ')';
+			self::$_singular['cacheIrregular'] = '(?:' . join('|', array_keys(self::$_singular['merged']['irregular'])) . ')';
 		}
 
 		if (preg_match('/(.*)\\b(' . self::$_singular['cacheIrregular'] . ')$/i', $word, $regs)) {

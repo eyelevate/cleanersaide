@@ -7,19 +7,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller
  * @since         Cake v 0.10.0.1076
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('Scaffold', 'View');
 
 /**
@@ -139,7 +137,7 @@ class Scaffold {
 		$associations = $this->_associations();
 
 		$this->controller->set(compact(
-			'modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
+			'title_for_layout', 'modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 			'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'
 		));
 		$this->controller->set('title_for_layout', $title);
@@ -148,7 +146,7 @@ class Scaffold {
 			$this->controller->viewClass = 'Scaffold';
 		}
 		$this->_validSession = (
-			isset($this->controller->Session) && $this->controller->Session->valid()
+			isset($this->controller->Session) && $this->controller->Session->valid() != false
 		);
 		$this->_scaffold($request);
 	}
@@ -201,7 +199,7 @@ class Scaffold {
  * Renders an add or edit action for scaffolded model.
  *
  * @param string $action Action (add or edit)
- * @return void
+ * @return mixed A rendered view with a form to edit or add a record in the Models database table
  */
 	protected function _scaffoldForm($action = 'edit') {
 		$this->controller->viewVars['scaffoldFields'] = array_merge(
@@ -228,7 +226,7 @@ class Scaffold {
 		}
 
 		if ($this->controller->beforeScaffold($action)) {
-			if ($action === 'edit') {
+			if ($action == 'edit') {
 				if (isset($request->params['pass'][0])) {
 					$this->ScaffoldModel->id = $request['pass'][0];
 				}
@@ -238,7 +236,7 @@ class Scaffold {
 			}
 
 			if (!empty($request->data)) {
-				if ($action === 'create') {
+				if ($action == 'create') {
 					$this->ScaffoldModel->create();
 				}
 
@@ -323,7 +321,7 @@ class Scaffold {
 	}
 
 /**
- * Sends a message to the user. Either uses Sessions or flash messages depending
+ * Sends a message to the user.  Either uses Sessions or flash messages depending
  * on the availability of a session
  *
  * @param string $message Message to display
@@ -353,7 +351,7 @@ class Scaffold {
  * `public $scaffold;` is placed in the controller's class definition.
  *
  * @param CakeRequest $request Request object for scaffolding
- * @return void
+ * @return mixed A rendered view of scaffold action, or showing the error
  * @throws MissingActionException When methods are not scaffolded.
  * @throws MissingDatabaseException When the database connection is undefined.
  */
@@ -424,7 +422,7 @@ class Scaffold {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 
-		foreach ($keys as $type) {
+		foreach ($keys as $key => $type) {
 			foreach ($this->ScaffoldModel->{$type} as $assocKey => $assocData) {
 				$associations[$type][$assocKey]['primaryKey'] =
 					$this->ScaffoldModel->{$assocKey}->primaryKey;
@@ -435,16 +433,10 @@ class Scaffold {
 				$associations[$type][$assocKey]['foreignKey'] =
 					$assocData['foreignKey'];
 
-				list($plugin, $model) = pluginSplit($assocData['className']);
-				if ($plugin) {
-					$plugin = Inflector::underscore($plugin);
-				}
-				$associations[$type][$assocKey]['plugin'] = $plugin;
-
 				$associations[$type][$assocKey]['controller'] =
-					Inflector::pluralize(Inflector::underscore($model));
+					Inflector::pluralize(Inflector::underscore($assocData['className']));
 
-				if ($type === 'hasAndBelongsToMany') {
+				if ($type == 'hasAndBelongsToMany') {
 					$associations[$type][$assocKey]['with'] = $assocData['with'];
 				}
 			}

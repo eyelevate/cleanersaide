@@ -2,7 +2,7 @@
 /**
  * This file is loaded automatically by the app/webroot/index.php file after core.php
  *
- * This file should load/create any application wide configuration settings, such as
+ * This file should load/create any application wide configuration settings, such as 
  * Caching, Logging, loading additional configuration files.
  *
  * You should also use this file to include any files that provide global functions/constants
@@ -11,20 +11,91 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Config
  * @since         CakePHP(tm) v 0.10.8.2117
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-// Setup a 'default' cache configuration for use in the application.
+/**
+ * Cache Engine Configuration
+ * Default settings provided below
+ *
+ * File storage engine.
+ *
+ * 	 Cache::config('default', array(
+ *		'engine' => 'File', //[required]
+ *		'duration'=> 3600, //[optional]
+ *		'probability'=> 100, //[optional]
+ * 		'path' => CACHE, //[optional] use system tmp directory - remember to use absolute path
+ * 		'prefix' => 'cake_', //[optional]  prefix every cache file with this string
+ * 		'lock' => false, //[optional]  use file locking
+ * 		'serialize' => true, // [optional]
+ * 		'mask' => 0666, // [optional] permission mask to use when creating cache files
+ *	));
+ *
+ * APC (http://pecl.php.net/package/APC)
+ *
+ * 	 Cache::config('default', array(
+ *		'engine' => 'Apc', //[required]
+ *		'duration'=> 3600, //[optional]
+ *		'probability'=> 100, //[optional]
+ * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
+ *	));
+ *
+ * Xcache (http://xcache.lighttpd.net/)
+ *
+ * 	 Cache::config('default', array(
+ *		'engine' => 'Xcache', //[required]
+ *		'duration'=> 3600, //[optional]
+ *		'probability'=> 100, //[optional]
+ *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional] prefix every cache file with this string
+ *		'user' => 'user', //user from xcache.admin.user settings
+ *		'password' => 'password', //plaintext password (xcache.admin.pass)
+ *	));
+ *
+ * Memcache (http://memcached.org/)
+ *
+ * 	 Cache::config('default', array(
+ *		'engine' => 'Memcache', //[required]
+ *		'duration'=> 3600, //[optional]
+ *		'probability'=> 100, //[optional]
+ * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
+ * 		'servers' => array(
+ * 			'127.0.0.1:11211' // localhost, default port 11211
+ * 		), //[optional]
+ * 		'persistent' => true, // [optional] set this to false for non-persistent connections
+ * 		'compress' => false, // [optional] compress data in Memcache (slower, but uses less memory)
+ *	));
+ *
+ *  Wincache (http://php.net/wincache)
+ *
+ * 	 Cache::config('default', array(
+ *		'engine' => 'Wincache', //[required]
+ *		'duration'=> 3600, //[optional]
+ *		'probability'=> 100, //[optional]
+ *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
+ *	));
+ *
+ * Redis (http://http://redis.io/)
+ *
+ * 	 Cache::config('default', array(
+ *		'engine' => 'Redis', //[required]
+ *		'duration'=> 3600, //[optional]
+ *		'probability'=> 100, //[optional]
+ *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
+ *		'server' => '127.0.0.1' // localhost
+ *		'port' => 6379 // default port 6379
+ *		'timeout' => 0 // timeout in seconds, 0 = unlimited
+ *		'persistent' => true, // [optional] set this to false for non-persistent connections
+ *	));
+ */
 Cache::config('default', array('engine' => 'File'));
 
 /**
@@ -72,8 +143,9 @@ Cache::config('default', array('engine' => 'File'));
  *
  */
 
+
 /**
- * You can attach event listeners to the request lifecycle as Dispatcher Filter . By Default CakePHP bundles two filters:
+ * You can attach event listeners to the request lifecyle as Dispatcher Filter . By Default CakePHP bundles two filters:
  *
  * - AssetDispatcher filter will serve your asset files (css, images, js, etc) from your themes and plugins
  * - CacheDispatcher filter will read the Cache.check configure variable and try to serve cached content generated from controllers
@@ -108,9 +180,17 @@ CakeLog::config('error', array(
 	'file' => 'error',
 ));
 
-CakePlugin::load('DebugKit');
+/*
+ * ACL extras
+ */
 CakePlugin::load('AclExtras');
 /**
  * Twitter Bootstrap Helper
  */
 CakePlugin::load('TwitterBootstrap');
+
+/**
+ * Error handling
+ */
+//in app/Config/bootstrap.php
+// App::uses('AppError', 'Lib');

@@ -2,25 +2,27 @@
 /**
  * Short description for file.
  *
- * PHP 5
+ * PHP versions 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Fixture
+ * @package       cake
+ * @subpackage    cake.tests.fixtures
  * @since         CakePHP(tm) v 2.1
- * @license       http://www.opensource.org/licenses/opengroup.php Open Group Test Suite License
+ * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 
 /**
- * Class SiteFixture
+ * Short description for class.
  *
- * @package       Cake.Test.Fixture
+ * @package       cake
+ * @subpackage    cake.tests.fixtures
  */
 class SiteFixture extends CakeTestFixture {
 

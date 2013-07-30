@@ -7,19 +7,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5347
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('Controller', 'Controller');
 App::uses('EmailComponent', 'Controller/Component');
 App::uses('AbstractTransport', 'Network/Email');
@@ -94,6 +92,13 @@ class DebugCompTransport extends AbstractTransport {
 class EmailTestController extends Controller {
 
 /**
+ * name property
+ *
+ * @var string 'EmailTest'
+ */
+	public $name = 'EmailTest';
+
+/**
  * uses property
  *
  * @var mixed null
@@ -126,7 +131,7 @@ class EmailComponentTest extends CakeTestCase {
 /**
  * name property
  *
- * @var string
+ * @var string 'Email'
  */
 	public $name = 'Email';
 
@@ -591,13 +596,13 @@ HTMLBLOC;
 		$this->assertEquals($expected, $result);
 
 		$content = '<p>Some HTML content with an <a href="mailto:test@example.com">email link</a>';
-		$result = $this->Controller->EmailTest->strip($content, true);
+		$result  = $this->Controller->EmailTest->strip($content, true);
 		$expected = $content;
 		$this->assertEquals($expected, $result);
 
-		$content = '<p>Some HTML content with an ';
+		$content  = '<p>Some HTML content with an ';
 		$content .= '<a href="mailto:test@example.com,test2@example.com">email link</a>';
-		$result = $this->Controller->EmailTest->strip($content, true);
+		$result  = $this->Controller->EmailTest->strip($content, true);
 		$expected = $content;
 		$this->assertEquals($expected, $result);
 	}

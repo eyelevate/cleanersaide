@@ -5,18 +5,16 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 /**
  * Object wrapper for outputting information from a shell application.
  * Can be connected to any stream resource that can be used with fopen()
@@ -39,13 +37,12 @@
  * `$this->out('<warning>Overwrite:</warning> foo.php was overwritten.');`
  *
  * This would create orange 'Overwrite:' text, while the rest of the text would remain the normal color.
- * See ConsoleOutput::styles() to learn more about defining your own styles. Nested styles are not supported
+ * See ConsoleOutput::styles() to learn more about defining your own styles.  Nested styles are not supported
  * at this time.
  *
  * @package       Cake.Console
  */
 class ConsoleOutput {
-
 /**
  * Raw output constant - no modification of output text.
  */
@@ -76,7 +73,7 @@ class ConsoleOutput {
 /**
  * The current output type. Manipulated with ConsoleOutput::outputAs();
  *
- * @var integer
+ * @var integer.
  */
 	protected $_outputAs = self::COLOR;
 
@@ -154,7 +151,7 @@ class ConsoleOutput {
 	public function __construct($stream = 'php://stdout') {
 		$this->_output = fopen($stream, 'w');
 
-		if (DS === '\\' && !(bool)env('ANSICON')) {
+		if (DS == '\\' && !(bool)env('ANSICON')) {
 			$this->_outputAs = self::PLAIN;
 		}
 	}
@@ -272,9 +269,9 @@ class ConsoleOutput {
 	}
 
 /**
- * Get/Set the output type to use. The output type how formatting tags are treated.
+ * Get/Set the output type to use.  The output type how formatting tags are treated.
  *
- * @param integer $type The output type to use. Should be one of the class constants.
+ * @param integer $type The output type to use.  Should be one of the class constants.
  * @return mixed Either null or the value if getting.
  */
 	public function outputAs($type = null) {

@@ -5,18 +5,16 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.4433
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('CakeBaseReporter', 'TestSuite/Reporter');
 
 /**
@@ -101,7 +99,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 			$buffer .= "<strong>EMPTY</strong>";
 		}
 
-		foreach ($testCases as $testCase) {
+		foreach ($testCases as $testCaseFile => $testCase) {
 			$title = explode(DS, str_replace('.test.php', '', $testCase));
 			$title[count($title) - 1] = Inflector::camelize($title[count($title) - 1]);
 			$title = implode(' / ', $title);
@@ -171,7 +169,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
 /**
  * Paints a code coverage report.
  *
- * @param array $coverage
  * @return void
  */
 	public function paintCoverage(array $coverage) {
@@ -204,8 +201,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$show = $this->_queryString($show);
 		$query = $this->_queryString($query);
 
-		echo "<p><a href='" . $this->baseUrl() . $show . "'>Run more tests</a> | <a href='" . $this->baseUrl() . $query . "&amp;show_passes=1'>Show Passes</a> | \n";
-		echo "<a href='" . $this->baseUrl() . $query . "&amp;debug=1'>Enable Debug Output</a> | \n";
+		echo "<p><a href='" . $this->baseUrl() . $show . "'>Run more tests</a> | <a href='" . $this->baseUrl() . $query . "&show_passes=1'>Show Passes</a> | \n";
+		echo "<a href='" . $this->baseUrl() . $query . "&debug=1'>Enable Debug Output</a> | \n";
 		echo "<a href='" . $this->baseUrl() . $query . "&amp;code_coverage=true'>Analyze Code Coverage</a></p>\n";
 	}
 
@@ -245,7 +242,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
  *   the context of the other tests.
- * @param mixed $test
  * @return void
  */
 	public function paintFail($message, $test) {
@@ -253,12 +249,10 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$testName = get_class($test) . '(' . $test->getName() . ')';
 
 		$actualMsg = $expectedMsg = null;
-		if (method_exists($message, 'getComparisonFailure')) {
-			$failure = $message->getComparisonFailure();
-			if (is_object($failure)) {
-				$actualMsg = $failure->getActualAsString();
-				$expectedMsg = $failure->getExpectedAsString();
-			}
+		$failure = $message->getComparisonFailure();
+		if (is_object($failure)) {
+			$actualMsg = $message->getComparisonFailure()->getActualAsString();
+			$expectedMsg = $message->getComparisonFailure()->getExpectedAsString();
 		}
 
 		echo "<li class='fail'>\n";
@@ -298,7 +292,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * Paints a PHP exception.
  *
  * @param Exception $exception Exception to display.
- * @param mixed $test
  * @return void
  */
 	public function paintException($message, $test) {
