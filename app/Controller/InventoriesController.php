@@ -7,7 +7,7 @@ class InventoriesController extends AppController {
     //Name (should be same as the class name)
     public $name = 'Inventories';
 
-	public $uses = array('Inventory','Inventory_item','Menu','Menu_item','Incremental_unit', 'Reservation');
+	public $uses = array('Inventory','Inventory_item','Menu','Menu_item');
 /**
  * Parses this code first on all actions in this controller
  */
@@ -39,35 +39,7 @@ class InventoriesController extends AppController {
 		//setup the layout on the page
 		$this->layout = 'admin';
 		
-		//set shopping cart
-		$ferry_session = $this->Session->read('Reservation_ferry');
-		if(!empty($ferry_session['Reservation'])){
-			$ferry_sidebar = $this->Reservation->sidebar_ferry($ferry_session);
-		} else {
-			$ferry_sidebar = array();
-		}
-		$hotel_session = $this->Session->read('Reservation_hotel');
-		if(!empty($hotel_session)){
-			$hotel_sidebar = $this->Reservation->sidebar_hotel($hotel_session);
-		} else {
-			$hotel_sidebar = array();
-		}
-		$attraction_session = $this->Session->read('Reservation_attraction');
-		if(!empty($attraction_session)){
-			$attraction_sidebar = $this->Reservation->sidebar_attraction($attraction_session);
-		} else {
-			$attraction_sidebar = array();
-		}
-		$package_session = $this->Session->read('Reservation_package');
-		if($this->Session->check('Reservation_package')==true){
-			$package_sidebar = $this->Reservation->sidebar_package($package_session);
-		} else {
-			$package_sidebar = array();
-		}
-		$this->set('package_sidebar',$package_sidebar);
-		$this->set('ferry_sidebar',$ferry_sidebar);
-		$this->set('hotel_sidebar',$hotel_sidebar);
-		$this->set('attraction_sidebar',$attraction_sidebar);
+
 		
 	}
     //Actions
