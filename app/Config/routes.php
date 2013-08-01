@@ -74,82 +74,6 @@
 	Router::connect('/groups',array('controller'=>'groups','action'=>'index'));
 	Router::connect('/groups/:action',array('controller'=>'groups'));
 	Router::connect('/groups/:action/*',array('controller'=>'groups'));
-	//Attractions Controller
-	
-	// Router::connect('/attractions/:action',array('controller'=>'attractions'));
-	// Router::connect('/attractions/:action/*',array('controller'=>'attractions'));
-
-	Router::connect('/attractions/admin',array('controller'=>'attractions','action'=>'admin'));
-	Router::connect('/attractions/add',array('controller'=>'attractions','action'=>'add'));
-	Router::connect('/attractions/add/*',array('controller'=>'attractions','action'=>'add'));
-	Router::connect('/attractions/add/*/*',array('controller'=>'attractions','action'=>'add'));
-	Router::connect('/attractions/delete/*',array('controller'=>'attractions','action'=>'delete'));
-	Router::connect('/attractions/draft/*',array('controller'=>'attractions','action'=>'draft'));
-	Router::connect('/attractions/edit',array('controller'=>'attractions','action'=>'edit'));
-	Router::connect('/attractions/edit/*',array('controller'=>'attractions','action'=>'edit'));
-	Router::connect('/attractions/request',array('controller'=>'attractions','action'=>'request'));
-	Router::connect('/attractions/getCities',array('controller'=>'attractions','action'=>'getCities'));
-	Router::connect('/attractions/getJson',array('controller'=>'attractions','action'=>'getJson'));
-	Router::connect('/attractions/get_us_tour',array('controller'=>'attractions','action'=>'get_us_tour'));
-	Router::connect('/attractions/getCanTour',array('controller'=>'attractions','action'=>'getCanTour'));
-	Router::connect('/attractions/processing_frontend_attractions',array('controller'=>'attractions','action'=>'processing_frontend_attractions'));
-	Router::connect('/attractions/request_edit_check',array('controller'=>'attractions','action'=>'request_edit_check'));
-	Router::connect('/attractions/request_attraction_tours',array('controller'=>'attractions','action'=>'request_attraction_tours'));
-	Router::connect('/attractions/request_backend_attraction_tours',array('controller'=>'attractions','action'=>'request_backend_attraction_tours'));
-	Router::connect('/attractions/request_backend_age_range',array('controller'=>'attractions','action'=>'request_backend_age_range'));
-	Router::connect('/attractions/imageUpload/*',array('controller'=>'attractions','action'=>'imageUpload'));
-	Router::connect('/attractions/publish/*',array('controller'=>'attractions','action'=>'publish'));
-	Router::connect('/attractions/preview/*',array('controller'=>'attractions','action'=>'preview'));	
-	Router::connect('/attractions',array('controller'=>'attractions','action'=>'attraction_pages'));
-	Router::connect('/attractions/*',array('controller'=>'attractions','action'=>'attraction_pages'));
-	Router::connect('/attractions/*/*',array('controller'=>'attractions','action'=>'attraction_pages'));	
-	//Hotels Controller
-	Router::connect('/hotels/admin',array('controller'=>'hotels','action'=>'admin'));	
-	Router::connect('/hotels/view',array('controller'=>'hotels','action'=>'view'));
-	Router::connect('/hotels/view/*',array('controller'=>'hotels','action'=>'view'));
-	Router::connect('/hotels/add',array('controller'=>'hotels','action'=>'add'));
-	Router::connect('/hotels/add/*',array('controller'=>'hotels','action'=>'add'));
-	Router::connect('/hotels/add/*/*',array('controller'=>'hotels','action'=>'add'));
-	Router::connect('/hotels/delete/*',array('controller'=>'hotels','action'=>'delete'));
-	Router::connect('/hotels/details',array('controller'=>'hotels','action'=>'details'));
-	Router::connect('/hotels/details/*',array('controller'=>'hotels','action'=>'details'));
-	Router::connect('/hotels/draft/*',array('controller'=>'hotels','action'=>'draft'));	
-	Router::connect('/hotels/edit',array('controller'=>'hotels','action'=>'edit'));
-	Router::connect('/hotels/edit/*',array('controller'=>'hotels','action'=>'edit'));
-	Router::connect('/hotels/request',array('controller'=>'hotels','action'=>'request'));
-	Router::connect('/hotels/request_edit_check',array('controller'=>'hotels','action'=>'request_edit_check'));
-	Router::connect('/hotels/getCities',array('controller'=>'hotels','action'=>'getCities'));
-	Router::connect('/hotels/getJson',array('controller'=>'hotels','action'=>'getJson'));
-	Router::connect('/hotels/imageUpload/*',array('controller'=>'hotels','action'=>'imageUpload'));
-	Router::connect('/hotels/publish/*',array('controller'=>'hotels','action'=>'publish'));
-	Router::connect('/hotels/preview/*',array('controller'=>'hotels','action'=>'preview'));
-	
-	Router::connect('/hotels/update_confirmation',array('controller'=>'hotels','action'=>'update_confirmation'));
-	Router::connect('/hotels/update_confirmation/*',array('controller'=>'hotels','action'=>'update_confirmation'));	Router::connect('/hotels/update_confirmation/*/*',array('controller'=>'hotels','action'=>'update_confirmation'));
-	Router::connect('/hotels/update_confirmation/*/*/*',array('controller'=>'hotels','action'=>'update_confirmation'));
-	
-	Router::connect('/hotels/print_hsummary',array('controller'=>'hotels','action'=>'print_hsummary'));
-	Router::connect('/hotels/print_hsummary/*',array('controller'=>'hotels','action'=>'print_hsummary'));
-	Router::connect('/hotels/print_hsummary/*/*',array('controller'=>'hotels','action'=>'print_hsummary'));
-	Router::connect('/hotels/print_hsummary/*/*/*',array('controller'=>'hotels','action'=>'print_hsummary'));
-
-	Router::connect('/hotels',array('controller'=>'hotels','action'=>'hotel_pages'));
-	Router::connect('/hotels/*',array('controller'=>'hotels','action'=>'hotel_pages'));
-	Router::connect('/hotels/*/*',array('controller'=>'hotels','action'=>'hotel_pages'));
-	
-	
-	Router::connect('/hotels/:action',array('controller'=>'hotels'));
-	Router::connect('/hotels/:action/*',array('controller'=>'hotels'));
-
-	
-	
-
-		
-	//Exchange Rate pages
-	Router::connect('/exchanges',array('controller'=>'exchanges','action'=>'index'));
-	Router::connect('/exchanges/:action',array('controller'=>'exchanges'));
-	Router::connect('/exchanges/:action/*',array('controller'=>'exchanges'));
-	
 
 	
 	//Location pages
@@ -175,10 +99,6 @@
 	//access controller
 	Router::connect('/access',array('controller'=>'access','action'=>'index'));
 	
-	//ferries controller
-	Router::connect('/ferries',array('controller'=>'ferries','action'=>'index'));
-	Router::connect('/ferries/:action',array('controller'=>'ferries'));
-	Router::connect('/ferries/:action/*',array('controller'=>'ferries'));	
 	
 	//groups Controller
 	Router::connect('/groups',array('controller'=>'groups','action'=>'index'));
@@ -190,50 +110,11 @@
 	Router::connect('/inventories/:action',array('controller'=>'inventories'));
 	Router::connect('/inventories/:action/*',array('controller'=>'inventories'));	
 	
-	//incremental units controller
-	Router::connect('/incremental_units',array('controller'=>'incremental_units','action'=>'index'));
-	Router::connect('/incremental_units/:action',array('controller'=>'incremental_units'));
-	Router::connect('/incremental_units/:action/*',array('controller'=>'incremental_units'));
 	//inventories_item controller
 	Router::connect('/inventory_items',array('controller'=>'inventory_items','action'=>'index'));
 	Router::connect('/inventory_items/:action',array('controller'=>'inventory_items'));
 	Router::connect('/inventory_items/:action/*',array('controller'=>'inventory_items'));				
-
-	//packages Controller
-	Router::connect('/packages',array('controller'=>'packages','action'=>'details'));
-	Router::connect('/packages/:action',array('controller'=>'packages'));
-	Router::connect('/packages/:action/*',array('controller'=>'packages'));
-
-	//packages Controller
-	Router::connect('/package_add_ons',array('controller'=>'PackageAddOns','action'=>'index'));
-	Router::connect('/package_add_ons/:action',array('controller'=>'PackageAddOns'));
-	Router::connect('/package_add_ons/:action/*',array('controller'=>'PackageAddOns'));
-
 	
-	//Payment pages
-	Router::connect('/payments/processing',array('controller'=>'payments','action'=>'processing'));
-	Router::connect('/payments/:action',array('controller'=>'payments'));
-	Router::connect('/payments/:action/*',array('controller'=>'payments'));	
-
-	//Reports Controller
-	Router::connect('/reports',array('controller'=>'reports','action'=>'index'));
-	Router::connect('/reports/:action',array('controller'=>'reports'));
-	Router::connect('/reports/:action/*',array('controller'=>'reports'));		
-		
-	//reservations Controller
-	Router::connect('/reservations/thank-you',array('controller'=>'reservations','action'=>'thank_you'));
-	Router::connect('/reservations/confirmed/thank-you',array('controller'=>'reservations','action'=>'post_thank_you'));
-	Router::connect('/reservations',array('controller'=>'reservations','action'=>'index'));
-	Router::connect('/reservations/add/checkout',array('controller'=>'reservations','action'=>'backend_checkout'));
-	Router::connect('/reservations/add/done',array('controller'=>'reservations','action'=>'backend_done'));	
-	Router::connect('/reservations/:action',array('controller'=>'reservations'));
-	Router::connect('/reservations/:action/*',array('controller'=>'reservations'));	
-		
-	
-	//schedules controller
-	Router::connect('/schedules',array('controller'=>'schedules','action'=>'index'));
-	Router::connect('/schedules/:action',array('controller'=>'schedules'));
-	Router::connect('/schedules/:action/*',array('controller'=>'schedules'));	
 
 	Router::connect('/main',array('controller' => 'pages', 'action' => 'home', 'home'));
 	Router::connect('/main/*',array('controller' => 'pages', 'action' => 'home', 'home'));

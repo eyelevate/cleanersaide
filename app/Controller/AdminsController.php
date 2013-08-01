@@ -104,6 +104,69 @@ class AdminsController extends AppController {
 
 
 	}
+	public function search_customers()
+	{
+		//set the admin navigation
+		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
+		$page_url = '/admins/search_customers';
+		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
+		$this->set('admin_nav',$admin_nav);
+		$this->set('admin_pages',$page_url);
+		$this->set('admin_check',$admin_check);
+		if($this->request->is('post')){
+			$query = $this->request->data['query'];
+			if(is_numeric($query)){
+				$length = strlen($query);
+				switch($length){
+					case '4': //this is a customer id
+						$users = $this->User->find('all',array('conditions'=>array('User.id'=>$query)));
+					break;
+						
+					case '7': //this is a phone
+						$users = $this->User->find('all',array('conditions'=>array('User.contact_phone LIKE'=>'%'.$query.'%')));
+					break;
+						
+					case '10': //this is a 10 digit phone
+						$users = $this->User->find('all',array('conditions'=>array('User.contact_phone LIKE'=>'%'.$query.'%')));
+					break;
+					
+					default:
+						$users = $this->User->find('all',array('conditions'=>array('User.contact_phone LIKE'=>'%'.$query.'%')));
+					break;
+				}
+			} else {
+				$users = $this->User->find('all',array('conditions'=>array('User.last_name LIKE'=>'%'.$query.'%')));
+			}
+			
+			if(count($users) == 1){
+				foreach ($users as $u) {
+					$id = $u['User']['id'];
+				}
+				
+				
+				$this->redirect(array('controller'=>'admins','action'=>'main_menu',$id));
+			} elseif (count($users)>1) {
+				$this->set('users',$users);
+			} else {
+				$this->Session->setFlash(__('No such customer. Please try your search again'),'default',array(),'error');
+				$this->redirect(array('controller'=>'admins','action'=>'main_menu'));
+			}
+		}
+	}
+
+	public function main_menu($id = null)
+	{
+		//set the admin navigation
+		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
+		$page_url = '/admins/main_menu';
+		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
+		$this->set('admin_nav',$admin_nav);
+		$this->set('admin_pages',$page_url);
+		$this->set('admin_check',$admin_check);
+		
+		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
+		$this->set('users',$users);
+	}
 
 
 }

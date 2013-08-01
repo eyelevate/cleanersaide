@@ -25,7 +25,7 @@ if (!isset($username)) {
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Black Ball Admin</title>	
+		<title>Cleanersaide</title>	
 
 		<?php 
 		echo $this->fetch('meta');
@@ -131,8 +131,8 @@ if (!isset($username)) {
 						<div class="antiscroll-content">
 							<div class="sidebar_inner">
 								<? if(isset($admin_nav)){ ?>
-								<form id="searchForm" action="/reservations/reservation_search" class="input-append" method="post" >
-									<input autocomplete="off" name="query" placeholder="Phone Number" class="search_query input-medium" size="16" type="text" placeholder="Search..." />
+								<form id="searchForm" action="/admins/search_customers" class="input-append" method="post" >
+									<input autocomplete="on" name="query" placeholder="Phone / Last Name / ID" class="search_query input-medium" size="16" type="text" placeholder="Search..." />
 									<button id="searchButton" type="submit" class="btn">
 										<i class="icon-search"></i>
 									</button>

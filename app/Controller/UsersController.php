@@ -9,7 +9,7 @@ App::uses('CakeEmail','Network/Email'); //cakes email class
 class UsersController extends AppController {
 	public $name = 'Users';
 	
-	public $uses = array('User','Page','Menu_item','Location', 'Reservation','Aro');
+	public $uses = array('User','Page','Menu_item','Aro');
 /**
  * Parse code before page load
  */
@@ -39,39 +39,11 @@ class UsersController extends AppController {
 		}	
 		$this->layout='admin';
 		
-		//layout setup
-		$ha_locations = $this->Location->find('all');
-		$this->set('ha_locations',$ha_locations);
+		// //layout setup
+		// $ha_locations = $this->Location->find('all');
+		// $this->set('ha_locations',$ha_locations);
 		
-				//set shopping cart
-		$ferry_session = $this->Session->read('Reservation_ferry');
-		if(!empty($ferry_session['Reservation'])){
-			$ferry_sidebar = $this->Reservation->sidebar_ferry($ferry_session);
-		} else {
-			$ferry_sidebar = array();
-		}
-		$hotel_session = $this->Session->read('Reservation_hotel');
-		if(!empty($hotel_session)){
-			$hotel_sidebar = $this->Reservation->sidebar_hotel($hotel_session);
-		} else {
-			$hotel_sidebar = array();
-		}
-		$attraction_session = $this->Session->read('Reservation_attraction');
-		if(!empty($attraction_session)){
-			$attraction_sidebar = $this->Reservation->sidebar_attraction($attraction_session);
-		} else {
-			$attraction_sidebar = array();
-		}
-		$package_session = $this->Session->read('Reservation_package');
-		if($this->Session->check('Reservation_package')==true){
-			$package_sidebar = $this->Reservation->sidebar_package($package_session);
-		} else {
-			$package_sidebar = array();
-		}
-		$this->set('package_sidebar',$package_sidebar);
-		$this->set('ferry_sidebar',$ferry_sidebar);
-		$this->set('hotel_sidebar',$hotel_sidebar);
-		$this->set('attraction_sidebar',$attraction_sidebar);
+	
 	}
 	// public function convert_users()
 	// {
@@ -320,9 +292,30 @@ class UsersController extends AppController {
 				$this->redirect('/');				
 			}
 		}		
+	}
 
-		
-
-
+	public function new_customers()
+	{
+		//set the admin navigation
+		$page_url = '/users/new_customers';
+		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
+		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
+		$this->set('admin_nav',$admin_nav);
+		$this->set('admin_pages',$page_url);
+		$this->set('admin_check',$admin_check);
+		//select layout
+		$this->layout = 'admin';		
+		//if saving
+		if ($this->request->is('post')) {
+			$this->User->create();
+			if ($this->User->save($this->request->data)) {
+				$this->Session->setFlash(__('The user has been saved'));
+				$this->redirect(array('action' => 'index'));
+			} else {
+				$this->Session->setFlash(__('The user could not be saved. Please, try again.'));
+			}
+		}
+		$groups = $this->User->Group->find('list');
+		$this->set(compact('groups'));		
 	}
 }
