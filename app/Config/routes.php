@@ -99,6 +99,10 @@
 	//access controller
 	Router::connect('/access',array('controller'=>'access','action'=>'index'));
 	
+	//deliveries controller
+	Router::connect('/deliveries',array('controller'=>'deliveries','action'=>'index'));
+	Router::connect('/deliveries/:action',array('controller'=>'deliveries'));
+	Router::connect('/deliveries/:action/*',array('controller'=>'deliveries'));
 	
 	//groups Controller
 	Router::connect('/groups',array('controller'=>'groups','action'=>'index'));
@@ -118,6 +122,9 @@
 
 	Router::connect('/main',array('controller' => 'pages', 'action' => 'home', 'home'));
 	Router::connect('/main/*',array('controller' => 'pages', 'action' => 'home', 'home'));
+
+
+
 
 	/** MUST BE AT END **/
 
