@@ -1,6 +1,6 @@
 <?php
 
-
+App::uses('AppModel', 'Model');
 /**
  * app/Model/Admin.php
  */

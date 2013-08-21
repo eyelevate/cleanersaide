@@ -166,6 +166,7 @@ class AdminsController extends AppController {
 		
 		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
 		$this->set('users',$users);
+		$this->set('customer_id',$id);
 	}
 
 

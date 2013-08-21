@@ -53,11 +53,16 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 			</tbody>
 		</table>
 		<div class="formRow">
+			<?php
+			if(!is_null($customer_id)){
+			?>
 			<form action="/invoices/dropoff" method="post">
 				<input value="" name="" type="hidden"/>
 				<input class="btn btn-success" type="submit" value="Drop Off"/>
 			</form>
-			
+			<?php
+			}
+			?>
 		</div>
 	</div>
 	<div class="well well-large">
@@ -75,9 +80,15 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 					</tr>
 				</thead>
 			</table>
+			<?php
+			if(!is_null($customer_id)){
+			?>
 			<div class="formRow">
 				<button class="btn btn-primary">Pickup</button>
 			</div>	
+			<?php
+			}
+			?>
 		</form>
 	</div>
 	

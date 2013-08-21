@@ -8,7 +8,7 @@ App::uses('AppController', 'Controller');
 class GroupsController extends AppController {
 	public $name = 'Groups';
 	public $uses = array('Group','Aro','Aco','Aros_aco','Acl_permission','User','Menu','Menu_item','Page','Tax',
-		'Inventory','Inventory_item','Payment'
+		'Inventory','Inventory_item','Payment','Invoice','Invoice_lineitem'
 	);
 
 /**

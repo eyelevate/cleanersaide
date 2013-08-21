@@ -1,5 +1,5 @@
 <?php
-
+App::uses('AppModel', 'Model');
 
 /**
  * app/Model/Inventory_item.php
