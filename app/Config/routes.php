@@ -118,7 +118,12 @@
 	Router::connect('/inventory_items',array('controller'=>'inventory_items','action'=>'index'));
 	Router::connect('/inventory_items/:action',array('controller'=>'inventory_items'));
 	Router::connect('/inventory_items/:action/*',array('controller'=>'inventory_items'));				
+
 	
+	//inventories_item controller
+	Router::connect('/invoices',array('controller'=>'invoices','action'=>'index'));
+	Router::connect('/invoices/:action',array('controller'=>'invoices'));
+	Router::connect('/invoices/:action/*',array('controller'=>'invoices'));			
 
 	Router::connect('/main',array('controller' => 'pages', 'action' => 'home', 'home'));
 	Router::connect('/main/*',array('controller' => 'pages', 'action' => 'home', 'home'));

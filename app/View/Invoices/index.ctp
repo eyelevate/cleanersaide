@@ -56,7 +56,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 			<?php
 			if(!is_null($customer_id)){
 			?>
-			<form action="/invoices/dropoff" method="post">
+			<form action="/invoices/dropoff/<?php echo $customer_id;?>" method="post">
 				<input value="" name="" type="hidden"/>
 				<input class="btn btn-success" type="submit" value="Drop Off"/>
 			</form>
@@ -84,7 +84,10 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 			if(!is_null($customer_id)){
 			?>
 			<div class="formRow">
-				<button class="btn btn-primary">Pickup</button>
+				<form action="/invoices/pickup/<?php echo $customer_id;?>" method="post">
+					<input value="" name="" type="hidden"/>
+					<input class="btn btn-primary" type="submit" value="Pickup"/>
+				</form>
 			</div>	
 			<?php
 			}

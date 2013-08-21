@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class AdminsController extends AppController {
 
 	public $name = 'Admins';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','invoice','invoice_item');
 
 
 	public function beforeFilter()
@@ -144,30 +144,17 @@ class AdminsController extends AppController {
 				}
 				
 				
-				$this->redirect(array('controller'=>'admins','action'=>'main_menu',$id));
+				$this->redirect(array('controller'=>'invoices','action'=>'index',$id));
 			} elseif (count($users)>1) {
 				$this->set('users',$users);
 			} else {
 				$this->Session->setFlash(__('No such customer. Please try your search again'),'default',array(),'error');
-				$this->redirect(array('controller'=>'admins','action'=>'main_menu'));
+				$this->redirect(array('controller'=>'invoices','action'=>'index'));
 			}
 		}
 	}
 
-	public function main_menu($id = null)
-	{
-		//set the admin navigation
-		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
-		$page_url = '/admins/main_menu';
-		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
-		$this->set('admin_nav',$admin_nav);
-		$this->set('admin_pages',$page_url);
-		$this->set('admin_check',$admin_check);
-		
-		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
-		$this->set('users',$users);
-		$this->set('customer_id',$id);
-	}
+
 
 
 }

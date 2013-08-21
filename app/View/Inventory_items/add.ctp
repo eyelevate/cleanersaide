@@ -56,70 +56,27 @@ foreach ($inventories as $inventory) {
         	'placeholder'=>'Short description of vehicle'
 		)	
 	);
-	echo $this->Form->input('overlength',
+	
+	echo $this->Form->input('total',
 		array(
 	    	'div' => array('class' => 'control-group'),
 	    	'label'=>false,
-	    	'before' => '<label class="control-label">Overlength Vehicle</label><div class="controls">',
-	    	'after'=>'<span class="help-block"></span></div>',
-	    	'class' => 'overlength',
-			'options'=>array('No'=>'No','Yes'=>'Yes')
-		)
-	);
-	echo $this->Form->input('inc_units',
-		array(
-	    	'div' => array('class' => 'control-group'),
-	    	'label'=>false,
-	    	'before' => '<label class="control-label">Incremental Units</label><div class="controls">',
-	    	'after'=>'<span class="help-block"></span></div>',
-	    	'class' => 'inc_units',
-			'options'=>array('No'=>'No','Yes'=>'Yes')
-		)
-	);
-	echo $this->Form->input('towed_units',
-		array(
-	    	'div' => array('class' => 'control-group'),
-	    	'label'=>false,
-	    	'before' => '<label class="control-label">Towed Units</label><div class="controls">',
-	    	'after'=>'<span class="help-block"></span></div>',
-	    	'class' => 'towed_units',
-			'options'=>array('No'=>'No','Yes'=>'Yes')
-		)
-	);	
-	echo $this->Form->input('oneway',
-		array(
-	    	'div' => array('class' => 'control-group'),
-	    	'label'=>false,
-	    	'before' => '<label class="control-label">One Way Rate <span class="f_req">*</span></label><div class="controls"><div class="input-prepend"><span class="add-on">US$</span>',
+	    	'before' => '<label class="control-label">Price <span class="f_req">*</span></label><div class="controls"><div class="input-prepend"><span class="add-on">US$</span>',
 	    	'after'=>'</div><span class="help-block"></span></div>',
-	    	'class' => 'oneway',
-	    	'placeholder'=>'one way rate',
+	    	'class' => 'price',
+	    	'placeholder'=>'Set price of item',
 	    	'value'=>'0.00'
 		)	
 	);
-	echo $this->Form->input('surcharge',
-		array(
-	    	'div' => array('class' => 'control-group'),
-	    	'label'=>false,
-	    	'before' => '<label class="control-label">Surcharge Rate <span class="f_req">*</span></label><div class="controls"><div class="input-prepend"><span class="add-on">US$</span>',
-	    	'after'=>'</div><span class="help-block"></span></div>',
-	    	'class' => 'surcharge',
-	    	'placeholder'=>'surcharge rate',
-	    	'value'=>'0.00'
-		)	
-	);	
-	echo $this->Form->input('total_price',
-		array(
-	    	'div' => array('class' => 'control-group'),
-	    	'label'=>false,
-	    	'before' => '<label class="control-label">Total Rate <span class="f_req">*</span></label><div class="controls"><div class="input-prepend"><span class="add-on">US$</span>',
-	    	'after'=>'</div><span class="help-block"></span></div>',
-	    	'class' => 'total',
-	    	'placeholder'=>'Total rate',
-	    	'value'=>'0.00',
-		)	
-	);	
+
 	?>
+	</fieldset>
+	<fieldset class="formSep">
+		<legend>Select Image</legend>
+		<div class="well well-small">
+			
+		</div>
+		<div id="selectedImageDiv"></div>
 	</fieldset>
 	<div class="formRow">
 	<?php
