@@ -29,7 +29,7 @@ CREATE TABLE `acl_permissions` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=258 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=405 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +38,7 @@ CREATE TABLE `acl_permissions` (
 
 LOCK TABLES `acl_permissions` WRITE;
 /*!40000 ALTER TABLE `acl_permissions` DISABLE KEYS */;
-INSERT INTO `acl_permissions` VALUES (193,'controllers/Access/index',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(194,'controllers/Access/initializeAccessControl',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(195,'controllers/Access/add',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(196,'controllers/Access/edit',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(197,'controllers/Access/view',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(198,'controllers/Access/delete',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(199,'controllers/Admins/login',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(200,'controllers/Admins/logout',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(201,'controllers/Admins/index',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(202,'controllers/Admins/search_customers',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(203,'controllers/Admins/main_menu',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(204,'controllers/Admins/add',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(205,'controllers/Admins/edit',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(206,'controllers/Admins/view',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(207,'controllers/Admins/delete',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(208,'controllers/Groups/index',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(209,'controllers/Groups/view',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(210,'controllers/Groups/initializeAcl',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(211,'controllers/Groups/add',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(212,'controllers/Groups/edit',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(213,'controllers/Groups/delete',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(214,'controllers/Inventories/index',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(215,'controllers/Inventories/add',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(216,'controllers/Inventories/edit',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(217,'controllers/Inventories/view',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(218,'controllers/Inventories/delete',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(219,'controllers/InventoryItems/index',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(220,'controllers/InventoryItems/add',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(221,'controllers/InventoryItems/edit',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(222,'controllers/InventoryItems/view',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(223,'controllers/InventoryItems/delete',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(224,'controllers/Menus/index',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(225,'controllers/Menus/view',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(226,'controllers/Menus/add',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(227,'controllers/Menus/edit',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(228,'controllers/Menus/delete',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(229,'controllers/Menus/request',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(230,'controllers/Pages/index',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(231,'controllers/Pages/home',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(232,'controllers/Pages/hotels_attractions',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(233,'controllers/Pages/add',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(234,'controllers/Pages/delete',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(235,'controllers/Pages/validate_form',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(236,'controllers/Pages/view',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(237,'controllers/Pages/edit',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(238,'controllers/Pages/edit_home',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(239,'controllers/Pages/logout',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(240,'controllers/Pages/preview',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(241,'controllers/Pages/url',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(242,'controllers/Pages/publish',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(243,'controllers/Pages/test',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(244,'controllers/Taxes/index',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(245,'controllers/Taxes/add',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(246,'controllers/Taxes/edit',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(247,'controllers/Taxes/view',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(248,'controllers/Taxes/delete',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(249,'controllers/Users/index',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(250,'controllers/Users/view',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(251,'controllers/Users/add',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(252,'controllers/Users/edit',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(253,'controllers/Users/delete',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(254,'controllers/Users/forgot',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(255,'controllers/Users/reset',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(256,'controllers/Users/new_customers',1,'2013-08-01 02:09:36','2013-08-01 02:09:36'),(257,'controllers/DebugKit',1,'2013-08-01 02:09:36','2013-08-01 02:09:36');
+INSERT INTO `acl_permissions` VALUES (332,'controllers/Access/index',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(333,'controllers/Access/initializeAccessControl',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(334,'controllers/Access/add',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(335,'controllers/Access/edit',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(336,'controllers/Access/view',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(337,'controllers/Access/delete',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(338,'controllers/Admins/login',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(339,'controllers/Admins/logout',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(340,'controllers/Admins/index',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(341,'controllers/Admins/search_customers',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(342,'controllers/Admins/add',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(343,'controllers/Admins/edit',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(344,'controllers/Admins/view',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(345,'controllers/Admins/delete',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(346,'controllers/Groups/index',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(347,'controllers/Groups/view',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(348,'controllers/Groups/initializeAcl',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(349,'controllers/Groups/add',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(350,'controllers/Groups/edit',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(351,'controllers/Groups/delete',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(352,'controllers/Inventories/index',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(353,'controllers/Inventories/add',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(354,'controllers/Inventories/edit',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(355,'controllers/Inventories/view',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(356,'controllers/Inventories/delete',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(357,'controllers/InventoryItems/index',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(358,'controllers/InventoryItems/add',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(359,'controllers/InventoryItems/edit',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(360,'controllers/InventoryItems/view',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(361,'controllers/InventoryItems/delete',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(362,'controllers/Invoices/index',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(363,'controllers/Invoices/dropoff',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(364,'controllers/Invoices/pickup',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(365,'controllers/Invoices/process_dropoff',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(366,'controllers/Invoices/process_pickup',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(367,'controllers/Invoices/add',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(368,'controllers/Invoices/edit',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(369,'controllers/Invoices/view',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(370,'controllers/Invoices/delete',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(371,'controllers/Menus/index',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(372,'controllers/Menus/view',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(373,'controllers/Menus/add',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(374,'controllers/Menus/edit',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(375,'controllers/Menus/delete',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(376,'controllers/Menus/request',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(377,'controllers/Pages/index',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(378,'controllers/Pages/home',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(379,'controllers/Pages/hotels_attractions',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(380,'controllers/Pages/add',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(381,'controllers/Pages/delete',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(382,'controllers/Pages/validate_form',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(383,'controllers/Pages/view',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(384,'controllers/Pages/edit',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(385,'controllers/Pages/edit_home',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(386,'controllers/Pages/logout',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(387,'controllers/Pages/preview',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(388,'controllers/Pages/url',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(389,'controllers/Pages/publish',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(390,'controllers/Pages/test',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(391,'controllers/Taxes/index',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(392,'controllers/Taxes/add',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(393,'controllers/Taxes/edit',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(394,'controllers/Taxes/view',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(395,'controllers/Taxes/delete',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(396,'controllers/Users/index',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(397,'controllers/Users/view',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(398,'controllers/Users/add',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(399,'controllers/Users/edit',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(400,'controllers/Users/delete',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(401,'controllers/Users/forgot',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(402,'controllers/Users/reset',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(403,'controllers/Users/new_customers',1,'2013-08-21 10:15:10','2013-08-21 10:15:10'),(404,'controllers/DebugKit',1,'2013-08-21 10:15:10','2013-08-21 10:15:10');
 /*!40000 ALTER TABLE `acl_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,7 +58,7 @@ CREATE TABLE `acos` (
   `lft` int(10) DEFAULT NULL,
   `rght` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=104 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=113 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +67,7 @@ CREATE TABLE `acos` (
 
 LOCK TABLES `acos` WRITE;
 /*!40000 ALTER TABLE `acos` DISABLE KEYS */;
-INSERT INTO `acos` VALUES (1,NULL,NULL,NULL,'controllers',1,206),(2,1,NULL,NULL,'Access',2,15),(3,2,NULL,NULL,'index',3,4),(4,2,NULL,NULL,'initializeAccessControl',5,6),(5,2,NULL,NULL,'add',7,8),(6,2,NULL,NULL,'edit',9,10),(7,2,NULL,NULL,'view',11,12),(8,2,NULL,NULL,'delete',13,14),(9,1,NULL,NULL,'Admins',16,35),(10,9,NULL,NULL,'login',17,18),(11,9,NULL,NULL,'logout',19,20),(12,9,NULL,NULL,'index',21,22),(13,9,NULL,NULL,'search_customers',23,24),(14,9,NULL,NULL,'main_menu',25,26),(15,9,NULL,NULL,'add',27,28),(16,9,NULL,NULL,'edit',29,30),(17,9,NULL,NULL,'view',31,32),(18,9,NULL,NULL,'delete',33,34),(19,1,NULL,NULL,'Groups',36,49),(20,19,NULL,NULL,'index',37,38),(21,19,NULL,NULL,'view',39,40),(22,19,NULL,NULL,'initializeAcl',41,42),(23,19,NULL,NULL,'add',43,44),(24,19,NULL,NULL,'edit',45,46),(25,19,NULL,NULL,'delete',47,48),(26,1,NULL,NULL,'Inventories',50,61),(27,26,NULL,NULL,'index',51,52),(28,26,NULL,NULL,'add',53,54),(29,26,NULL,NULL,'edit',55,56),(30,26,NULL,NULL,'view',57,58),(31,26,NULL,NULL,'delete',59,60),(32,1,NULL,NULL,'InventoryItems',62,73),(33,32,NULL,NULL,'index',63,64),(34,32,NULL,NULL,'add',65,66),(35,32,NULL,NULL,'edit',67,68),(36,32,NULL,NULL,'view',69,70),(37,32,NULL,NULL,'delete',71,72),(38,1,NULL,NULL,'Locations',74,85),(39,38,NULL,NULL,'index',75,76),(40,38,NULL,NULL,'add',77,78),(41,38,NULL,NULL,'edit',79,80),(42,38,NULL,NULL,'delete',81,82),(43,38,NULL,NULL,'view',83,84),(44,1,NULL,NULL,'Menus',86,99),(45,44,NULL,NULL,'index',87,88),(46,44,NULL,NULL,'view',89,90),(47,44,NULL,NULL,'add',91,92),(48,44,NULL,NULL,'edit',93,94),(49,44,NULL,NULL,'delete',95,96),(50,44,NULL,NULL,'request',97,98),(51,1,NULL,NULL,'Pages',100,129),(52,51,NULL,NULL,'index',101,102),(53,51,NULL,NULL,'home',103,104),(54,51,NULL,NULL,'hotels_attractions',105,106),(55,51,NULL,NULL,'add',107,108),(56,51,NULL,NULL,'delete',109,110),(57,51,NULL,NULL,'validate_form',111,112),(58,51,NULL,NULL,'view',113,114),(59,51,NULL,NULL,'edit',115,116),(60,51,NULL,NULL,'edit_home',117,118),(61,51,NULL,NULL,'logout',119,120),(62,51,NULL,NULL,'preview',121,122),(63,51,NULL,NULL,'url',123,124),(64,51,NULL,NULL,'publish',125,126),(65,51,NULL,NULL,'test',127,128),(66,1,NULL,NULL,'Reports',130,161),(67,66,NULL,NULL,'daily_accounting',131,132),(68,66,NULL,NULL,'download',133,134),(69,66,NULL,NULL,'vouchers',135,136),(70,66,NULL,NULL,'request_voucher_list',137,138),(71,66,NULL,NULL,'request_voucher_pdf',139,140),(72,66,NULL,NULL,'room_nights_report',141,142),(73,66,NULL,NULL,'booking_report',143,144),(74,66,NULL,NULL,'request_bookings',145,146),(75,66,NULL,NULL,'accounting',147,148),(76,66,NULL,NULL,'request_room_nights',149,150),(77,66,NULL,NULL,'index',151,152),(78,66,NULL,NULL,'add',153,154),(79,66,NULL,NULL,'edit',155,156),(80,66,NULL,NULL,'delete',157,158),(81,66,NULL,NULL,'view',159,160),(82,1,NULL,NULL,'Taxes',162,173),(83,82,NULL,NULL,'index',163,164),(84,82,NULL,NULL,'add',165,166),(85,82,NULL,NULL,'edit',167,168),(86,82,NULL,NULL,'view',169,170),(87,82,NULL,NULL,'delete',171,172),(88,1,NULL,NULL,'Users',174,191),(89,88,NULL,NULL,'index',175,176),(90,88,NULL,NULL,'view',177,178),(91,88,NULL,NULL,'add',179,180),(92,88,NULL,NULL,'edit',181,182),(93,88,NULL,NULL,'delete',183,184),(94,88,NULL,NULL,'forgot',185,186),(95,88,NULL,NULL,'reset',187,188),(96,88,NULL,NULL,'new_customers',189,190),(97,1,NULL,NULL,'DebugKit',192,205),(98,97,NULL,NULL,'',193,204),(99,98,NULL,NULL,'add',194,195),(100,98,NULL,NULL,'edit',196,197),(101,98,NULL,NULL,'index',198,199),(102,98,NULL,NULL,'view',200,201),(103,98,NULL,NULL,'delete',202,203);
+INSERT INTO `acos` VALUES (1,NULL,NULL,NULL,'controllers',1,224),(2,1,NULL,NULL,'Access',2,15),(3,2,NULL,NULL,'index',3,4),(4,2,NULL,NULL,'initializeAccessControl',5,6),(5,2,NULL,NULL,'add',7,8),(6,2,NULL,NULL,'edit',9,10),(7,2,NULL,NULL,'view',11,12),(8,2,NULL,NULL,'delete',13,14),(9,1,NULL,NULL,'Admins',16,33),(10,9,NULL,NULL,'login',17,18),(11,9,NULL,NULL,'logout',19,20),(12,9,NULL,NULL,'index',21,22),(13,9,NULL,NULL,'search_customers',23,24),(14,9,NULL,NULL,'add',25,26),(15,9,NULL,NULL,'edit',27,28),(16,9,NULL,NULL,'view',29,30),(17,9,NULL,NULL,'delete',31,32),(18,1,NULL,NULL,'Deliveries',34,45),(19,18,NULL,NULL,'index',35,36),(20,18,NULL,NULL,'view',37,38),(21,18,NULL,NULL,'add',39,40),(22,18,NULL,NULL,'edit',41,42),(23,18,NULL,NULL,'delete',43,44),(24,1,NULL,NULL,'Groups',46,59),(25,24,NULL,NULL,'index',47,48),(26,24,NULL,NULL,'view',49,50),(27,24,NULL,NULL,'initializeAcl',51,52),(28,24,NULL,NULL,'add',53,54),(29,24,NULL,NULL,'edit',55,56),(30,24,NULL,NULL,'delete',57,58),(31,1,NULL,NULL,'Inventories',60,71),(32,31,NULL,NULL,'index',61,62),(33,31,NULL,NULL,'add',63,64),(34,31,NULL,NULL,'edit',65,66),(35,31,NULL,NULL,'view',67,68),(36,31,NULL,NULL,'delete',69,70),(37,1,NULL,NULL,'InventoryItems',72,83),(38,37,NULL,NULL,'index',73,74),(39,37,NULL,NULL,'add',75,76),(40,37,NULL,NULL,'edit',77,78),(41,37,NULL,NULL,'view',79,80),(42,37,NULL,NULL,'delete',81,82),(43,1,NULL,NULL,'Invoices',84,103),(44,43,NULL,NULL,'index',85,86),(45,43,NULL,NULL,'dropoff',87,88),(46,43,NULL,NULL,'pickup',89,90),(47,43,NULL,NULL,'process_dropoff',91,92),(48,43,NULL,NULL,'process_pickup',93,94),(49,43,NULL,NULL,'add',95,96),(50,43,NULL,NULL,'edit',97,98),(51,43,NULL,NULL,'view',99,100),(52,43,NULL,NULL,'delete',101,102),(53,1,NULL,NULL,'Menus',104,117),(54,53,NULL,NULL,'index',105,106),(55,53,NULL,NULL,'view',107,108),(56,53,NULL,NULL,'add',109,110),(57,53,NULL,NULL,'edit',111,112),(58,53,NULL,NULL,'delete',113,114),(59,53,NULL,NULL,'request',115,116),(60,1,NULL,NULL,'Pages',118,147),(61,60,NULL,NULL,'index',119,120),(62,60,NULL,NULL,'home',121,122),(63,60,NULL,NULL,'hotels_attractions',123,124),(64,60,NULL,NULL,'add',125,126),(65,60,NULL,NULL,'delete',127,128),(66,60,NULL,NULL,'validate_form',129,130),(67,60,NULL,NULL,'view',131,132),(68,60,NULL,NULL,'edit',133,134),(69,60,NULL,NULL,'edit_home',135,136),(70,60,NULL,NULL,'logout',137,138),(71,60,NULL,NULL,'preview',139,140),(72,60,NULL,NULL,'url',141,142),(73,60,NULL,NULL,'publish',143,144),(74,60,NULL,NULL,'test',145,146),(75,1,NULL,NULL,'Reports',148,179),(76,75,NULL,NULL,'daily_accounting',149,150),(77,75,NULL,NULL,'download',151,152),(78,75,NULL,NULL,'vouchers',153,154),(79,75,NULL,NULL,'request_voucher_list',155,156),(80,75,NULL,NULL,'request_voucher_pdf',157,158),(81,75,NULL,NULL,'room_nights_report',159,160),(82,75,NULL,NULL,'booking_report',161,162),(83,75,NULL,NULL,'request_bookings',163,164),(84,75,NULL,NULL,'accounting',165,166),(85,75,NULL,NULL,'request_room_nights',167,168),(86,75,NULL,NULL,'index',169,170),(87,75,NULL,NULL,'add',171,172),(88,75,NULL,NULL,'edit',173,174),(89,75,NULL,NULL,'delete',175,176),(90,75,NULL,NULL,'view',177,178),(91,1,NULL,NULL,'Taxes',180,191),(92,91,NULL,NULL,'index',181,182),(93,91,NULL,NULL,'add',183,184),(94,91,NULL,NULL,'edit',185,186),(95,91,NULL,NULL,'view',187,188),(96,91,NULL,NULL,'delete',189,190),(97,1,NULL,NULL,'Users',192,209),(98,97,NULL,NULL,'index',193,194),(99,97,NULL,NULL,'view',195,196),(100,97,NULL,NULL,'add',197,198),(101,97,NULL,NULL,'edit',199,200),(102,97,NULL,NULL,'delete',201,202),(103,97,NULL,NULL,'forgot',203,204),(104,97,NULL,NULL,'reset',205,206),(105,97,NULL,NULL,'new_customers',207,208),(106,1,NULL,NULL,'DebugKit',210,223),(107,106,NULL,NULL,'',211,222),(108,107,NULL,NULL,'add',212,213),(109,107,NULL,NULL,'edit',214,215),(110,107,NULL,NULL,'index',216,217),(111,107,NULL,NULL,'view',218,219),(112,107,NULL,NULL,'delete',220,221);
 /*!40000 ALTER TABLE `acos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -117,7 +117,7 @@ CREATE TABLE `aros_acos` (
   `_delete` varchar(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `ARO_ACO_KEY` (`aro_id`,`aco_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=71 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=79 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,7 +126,7 @@ CREATE TABLE `aros_acos` (
 
 LOCK TABLES `aros_acos` WRITE;
 /*!40000 ALTER TABLE `aros_acos` DISABLE KEYS */;
-INSERT INTO `aros_acos` VALUES (1,1,1,'-1','-1','-1','-1'),(2,1,3,'1','1','1','1'),(3,1,4,'1','1','1','1'),(4,1,5,'1','1','1','1'),(5,1,6,'1','1','1','1'),(6,1,7,'1','1','1','1'),(7,1,8,'1','1','1','1'),(8,1,10,'1','1','1','1'),(9,1,11,'1','1','1','1'),(10,1,12,'1','1','1','1'),(11,1,13,'1','1','1','1'),(12,1,14,'1','1','1','1'),(13,1,15,'1','1','1','1'),(14,1,16,'1','1','1','1'),(15,1,17,'1','1','1','1'),(16,1,18,'1','1','1','1'),(17,1,20,'1','1','1','1'),(18,1,21,'1','1','1','1'),(19,1,22,'1','1','1','1'),(20,1,23,'1','1','1','1'),(21,1,24,'1','1','1','1'),(22,1,25,'1','1','1','1'),(23,1,27,'1','1','1','1'),(24,1,28,'1','1','1','1'),(25,1,29,'1','1','1','1'),(26,1,30,'1','1','1','1'),(27,1,31,'1','1','1','1'),(28,1,33,'1','1','1','1'),(29,1,34,'1','1','1','1'),(30,1,35,'1','1','1','1'),(31,1,36,'1','1','1','1'),(32,1,37,'1','1','1','1'),(33,1,45,'1','1','1','1'),(34,1,46,'1','1','1','1'),(35,1,47,'1','1','1','1'),(36,1,48,'1','1','1','1'),(37,1,49,'1','1','1','1'),(38,1,50,'1','1','1','1'),(39,1,52,'1','1','1','1'),(40,1,53,'1','1','1','1'),(41,1,54,'1','1','1','1'),(42,1,55,'1','1','1','1'),(43,1,56,'1','1','1','1'),(44,1,57,'1','1','1','1'),(45,1,58,'1','1','1','1'),(46,1,59,'1','1','1','1'),(47,1,60,'1','1','1','1'),(48,1,61,'1','1','1','1'),(49,1,62,'1','1','1','1'),(50,1,63,'1','1','1','1'),(51,1,64,'1','1','1','1'),(52,1,65,'1','1','1','1'),(53,1,83,'1','1','1','1'),(54,1,84,'1','1','1','1'),(55,1,85,'1','1','1','1'),(56,1,86,'1','1','1','1'),(57,1,87,'1','1','1','1'),(58,1,89,'1','1','1','1'),(59,1,90,'1','1','1','1'),(60,1,91,'1','1','1','1'),(61,1,92,'1','1','1','1'),(62,1,93,'1','1','1','1'),(63,1,94,'1','1','1','1'),(64,1,95,'1','1','1','1'),(65,1,96,'1','1','1','1'),(66,1,97,'1','1','1','1'),(67,2,1,'-1','-1','-1','-1'),(68,3,1,'-1','-1','-1','-1'),(69,4,1,'-1','-1','-1','-1'),(70,5,1,'-1','-1','-1','-1');
+INSERT INTO `aros_acos` VALUES (1,1,1,'-1','-1','-1','-1'),(2,1,3,'1','1','1','1'),(3,1,4,'1','1','1','1'),(4,1,5,'1','1','1','1'),(5,1,6,'1','1','1','1'),(6,1,7,'1','1','1','1'),(7,1,8,'1','1','1','1'),(8,1,10,'1','1','1','1'),(9,1,11,'1','1','1','1'),(10,1,12,'1','1','1','1'),(11,1,13,'1','1','1','1'),(12,1,14,'1','1','1','1'),(13,1,15,'1','1','1','1'),(14,1,16,'1','1','1','1'),(15,1,17,'1','1','1','1'),(16,1,25,'1','1','1','1'),(17,1,26,'1','1','1','1'),(18,1,27,'1','1','1','1'),(19,1,28,'1','1','1','1'),(20,1,29,'1','1','1','1'),(21,1,30,'1','1','1','1'),(22,1,32,'1','1','1','1'),(23,1,33,'1','1','1','1'),(24,1,34,'1','1','1','1'),(25,1,35,'1','1','1','1'),(26,1,36,'1','1','1','1'),(27,1,38,'1','1','1','1'),(28,1,39,'1','1','1','1'),(29,1,40,'1','1','1','1'),(30,1,41,'1','1','1','1'),(31,1,42,'1','1','1','1'),(32,1,44,'1','1','1','1'),(33,1,45,'1','1','1','1'),(34,1,46,'1','1','1','1'),(35,1,47,'1','1','1','1'),(36,1,48,'1','1','1','1'),(37,1,49,'1','1','1','1'),(38,1,50,'1','1','1','1'),(39,1,51,'1','1','1','1'),(40,1,52,'1','1','1','1'),(41,1,54,'1','1','1','1'),(42,1,55,'1','1','1','1'),(43,1,56,'1','1','1','1'),(44,1,57,'1','1','1','1'),(45,1,58,'1','1','1','1'),(46,1,59,'1','1','1','1'),(47,1,61,'1','1','1','1'),(48,1,62,'1','1','1','1'),(49,1,63,'1','1','1','1'),(50,1,64,'1','1','1','1'),(51,1,65,'1','1','1','1'),(52,1,66,'1','1','1','1'),(53,1,67,'1','1','1','1'),(54,1,68,'1','1','1','1'),(55,1,69,'1','1','1','1'),(56,1,70,'1','1','1','1'),(57,1,71,'1','1','1','1'),(58,1,72,'1','1','1','1'),(59,1,73,'1','1','1','1'),(60,1,74,'1','1','1','1'),(61,1,92,'1','1','1','1'),(62,1,93,'1','1','1','1'),(63,1,94,'1','1','1','1'),(64,1,95,'1','1','1','1'),(65,1,96,'1','1','1','1'),(66,1,98,'1','1','1','1'),(67,1,99,'1','1','1','1'),(68,1,100,'1','1','1','1'),(69,1,101,'1','1','1','1'),(70,1,102,'1','1','1','1'),(71,1,103,'1','1','1','1'),(72,1,104,'1','1','1','1'),(73,1,105,'1','1','1','1'),(74,1,106,'1','1','1','1'),(75,2,1,'-1','-1','-1','-1'),(76,3,1,'-1','-1','-1','-1'),(77,4,1,'-1','-1','-1','-1'),(78,5,1,'-1','-1','-1','-1');
 /*!40000 ALTER TABLE `aros_acos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -152,7 +152,7 @@ CREATE TABLE `groups` (
 
 LOCK TABLES `groups` WRITE;
 /*!40000 ALTER TABLE `groups` DISABLE KEYS */;
-INSERT INTO `groups` VALUES (1,'Super Administrator','2013-06-24 09:16:33','2013-08-01 02:09:36'),(2,'Administrator','2013-06-24 09:16:41','2013-06-24 09:16:41'),(3,'Manager','2013-06-24 09:16:53','2013-06-24 09:16:53'),(4,'Employee','2013-06-24 09:17:03','2013-06-24 09:17:03'),(5,'Member','2013-06-24 09:17:09','2013-06-24 09:17:09');
+INSERT INTO `groups` VALUES (1,'Super Administrator','2013-06-24 09:16:33','2013-08-21 10:15:10'),(2,'Administrator','2013-06-24 09:16:41','2013-06-24 09:16:41'),(3,'Manager','2013-06-24 09:16:53','2013-06-24 09:16:53'),(4,'Employee','2013-06-24 09:17:03','2013-06-24 09:17:03'),(5,'Member','2013-06-24 09:17:09','2013-06-24 09:17:09');
 /*!40000 ALTER TABLE `groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -170,7 +170,7 @@ CREATE TABLE `inventories` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -179,6 +179,7 @@ CREATE TABLE `inventories` (
 
 LOCK TABLES `inventories` WRITE;
 /*!40000 ALTER TABLE `inventories` DISABLE KEYS */;
+INSERT INTO `inventories` VALUES (1,'Dry Clean','All dry clean items','2013-08-21 11:50:56','2013-08-21 11:50:56'),(2,'Laundry','All laundered Items','2013-08-21 11:51:14','2013-08-21 11:51:24');
 /*!40000 ALTER TABLE `inventories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -194,6 +195,7 @@ CREATE TABLE `inventory_items` (
   `inventory_id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `price` decimal(11,2) DEFAULT NULL,
+  `image` varchar(150) DEFAULT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
@@ -207,6 +209,74 @@ CREATE TABLE `inventory_items` (
 LOCK TABLES `inventory_items` WRITE;
 /*!40000 ALTER TABLE `inventory_items` DISABLE KEYS */;
 /*!40000 ALTER TABLE `inventory_items` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `invoice_items`
+--
+
+DROP TABLE IF EXISTS `invoice_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `invoice_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `reference_id` int(11) DEFAULT NULL,
+  `invoice_id` int(6) DEFAULT NULL,
+  `company_id` int(11) DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `colors` varchar(50) DEFAULT NULL,
+  `pretax` decimal(11,2) DEFAULT NULL,
+  `tax` decimal(11,2) DEFAULT NULL,
+  `total` decimal(11,2) DEFAULT NULL,
+  `status` int(1) DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `invoice_items`
+--
+
+LOCK TABLES `invoice_items` WRITE;
+/*!40000 ALTER TABLE `invoice_items` DISABLE KEYS */;
+/*!40000 ALTER TABLE `invoice_items` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `invoices`
+--
+
+DROP TABLE IF EXISTS `invoices`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `invoices` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `invoice_id` int(6) DEFAULT NULL,
+  `company_id` int(11) DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `pretax` decimal(11,2) DEFAULT NULL,
+  `tax` decimal(11,2) DEFAULT NULL,
+  `discount` decimal(11,2) DEFAULT NULL,
+  `discount_id` int(11) DEFAULT NULL,
+  `total` decimal(11,2) DEFAULT NULL,
+  `status` int(1) DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `invoices`
+--
+
+LOCK TABLES `invoices` WRITE;
+/*!40000 ALTER TABLE `invoices` DISABLE KEYS */;
+/*!40000 ALTER TABLE `invoices` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -404,4 +474,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-08-01 13:44:54
+-- Dump completed on 2013-08-21 21:03:17
