@@ -172,6 +172,17 @@ class Inventory_item extends AppModel {
 	{
 		foreach ($find as $key1 => $value1) {
 			foreach ($find[$key1] as $key2 => $value2) {
+				if(isset($find[$key1][$key2]['inventory_id'])){
+					$invs = ClassRegistry::init('Inventory')->find('all',array('conditions'=>array('id'=>$find[$key1][$key2]['inventory_id'])));
+					if(count($invs)>0){
+						foreach ($invs as $inv) {
+							$inventory_name = $inv['Inventory']['name'];
+							$find[$key1][$key2]['inventory_name'] = $inventory_name;
+						}
+							
+					}
+				}
+				
 				if(isset($find[$key1][$key2]['created'])){
 					$find[$key1][$key2]['created'] = $this->arrangeDate($find[$key1][$key2]['created']);
 				}
@@ -200,109 +211,112 @@ class Inventory_item extends AppModel {
 		$date = date('n/d/Y g:i:sa',strtotime($date));
 		return $date;
 	}
-/**
- * /Reservations request controller coming from /reservations/ferry 
- * 
- * this script checks for the most current rate based off schedule_id and inventory item id
- */
-	public function getCurrentRate($data, $item_id)
+	
+	public function createAllImageArray()
 	{
-		$rates = array();
-		$name = $this->getInventoryItemName($this->find('all',array('conditions'=>array('id'=>$item_id))));
-		if(count($data) > 0){
-			foreach ($data as $key => $value) {
-				$oneway = $data[$key]['Schedule_rate']['one_way'];
-				$surcharge = $data[$key]['Schedule_rate']['surcharge'];
-				$total = $data[$key]['Schedule_rate']['total_surcharged'];
-				$rates[$key] = array(
-					'oneway'=>$oneway,
-					'id'=>$item_id,
-					'surcharge'=>$surcharge,
-					'total'=>$total,
-					'name'=>$name
-				);  
-			}
-		} else {
-			$default = $this->find('all',array('conditions'=>array('id'=>$item_id)));
-			if(count($default)>0){
-				foreach ($default as $key => $value) {
-					$oneway = $default[$key]['Inventory_item']['oneway'];
-					$surcharge = $default[$key]['Inventory_item']['surcharge'];
-					$total = $default[$key]['Inventory_item']['total_price'];
-					
-					$rates[$key] = array(
-						'oneway'=>$oneway,
-						'id'=>$item_id,
-						'surcharge'=>$surcharge,
-						'total'=>$total,
-						'name'=>$name
-					);  
-				}
-			} 
-		}
-		
-		return $rates;
+		$images = array(
+			'bedsheets-blue'=>'/img/inventory/bedSheets_blue.png',
+			'bedsheets-green'=>'/img/inventory/bedSheets_green.png',
+			'bedsheets-red'=>'/img/inventory/bedSheets_red.png',
+			'bedskirt-blue'=>'/img/inventory/bedSkirt_blue.png',
+			'bedskirt-green'=>'/img/inventory/bedSkirt_green.png',
+			'bedskirt-red'=>'/img/inventory/bedSkirt_red.png',
+			'bedspread-blue'=>'/img/inventory/bedSpread_blue.png',
+			'bedspread-green'=>'/img/inventory/bedSpread_green.png',
+			'bedspread-red'=>'/img/inventory/bedSpread_red.png',
+			'belt'=>'/img/inventory/belt.png',
+			'blanket-blue'=>'/img/inventory/blanket_blue.png',
+			'blanket-green'=>'/img/inventory/blanket_green.png',
+			'blanket-red'=>'/img/inventory/blanket_red.png',
+			'blouse-purple'=>'/img/inventory/blouse_purple.png',
+			'coatlong-brown'=>'/img/inventory/coatLong_brown.png',
+			'coatshort-gray'=>'/img/inventory/coatShort_gray.png',
+			'comforter-blue'=>'/img/inventory/comforter_blue.png',
+			'comforter-green'=>'/img/inventory/comforter_green.png',
+			'comforter-red'=>'/img/inventory/comforter_red.png',
+			'comforterdown-blue'=>'/img/inventory/comforterDown_blue.png',
+			'comforterdown-green'=>'/img/inventory/comforterDown_green.png',
+			'comforterdown-red'=>'/img/inventory/comforterDown_red.png',
+			'curtain-blue'=>'/img/inventory/curtain_blue.png',
+			'curtain-green'=>'/img/inventory/curtain_green.png',
+			'curtain-red'=>'/img/inventory/curtain_red.png',
+			'cushion-blue'=>'/img/inventory/cushion_blue.png',
+			'cushion-green'=>'/img/inventory/cushion_green.png',
+			'cushion-red'=>'/img/inventory/cushion_red.png',
+			'dresslong-red'=>'/img/inventory/dressLong_red.png',
+			'dressshort-pink'=>'/img/inventory/dressShort_pink.png',
+			'dresssuit-gray'=>'/img/inventory/dressSuit_gray.png',
+			'duvetcover-blue'=>'/img/inventory/duvetCover_blue.png',
+			'duvercover-green'=>'/img/inventory/duvetCover_green.png',
+			'duvetcover-red'=>'/img/inventory/duvetCover_red.png',
+			'hat'=>'/img/inventory/hat.png',
+			'jacket-brown'=>'/img/inventory/jacket_brown.png',
+			'jacket-gray'=>'/img/inventory/jacket_gray.png',
+			'jeans'=>'/img/inventory/jeans.png',
+			'labcoat-white'=>'/img/inventory/labcoat_white.png',
+			'laundryshirt-white'=>'/img/inventory/laundryShirt_white.png',
+			'napkin-blue'=>'/img/inventory/napkin_blue.png',
+			'napkin-green'=>'/img/inventory/napkin_green.png',
+			'napkin-red'=>'/img/inventory/napkin_red.png',			
+			'pants-tan'=>'/img/inventory/pants_tan.png',
+			'pantsHem-blue'=>'/img/inventory/pantsHem_blue.png',
+			'pillow-blue'=>'/img/inventory/pillow_blue.png',
+			'pillow-green'=>'/img/inventory/pillow_green.png',
+			'pillow-red'=>'/img/inventory/pillow_red.png',
+			'pillowCase-blue'=>'/img/inventory/pillowCase_blue.png',
+			'pillowCase-green'=>'/img/inventory/pillowCase_green.png',
+			'pillowCase-red'=>'/img/inventory/pillowCase_red.png',
+			'pillowDown-blue'=>'/img/inventory/pillowDown_blue.png',
+			'pillowDown-green'=>'/img/inventory/pillowDown_green.png',
+			'pillowDown-red'=>'/img/inventory/pillowDown_red.png',
+			'placemat-blue'=>'/img/inventory/placemat_blue.png',
+			'placemat-green'=>'/img/inventory/placemat_green.png',
+			'placemat-red'=>'/img/inventory/placemat_red.png',
+			'polo-red'=>'/img/inventory/polo_red.png',
+			'question'=>'/img/inventory/question.png',
+			'robe-brown'=>'/img/inventory/robe_brown.png',
+			'rug-blue'=>'/img/inventory/rug_blue.png',
+			'rug-green'=>'/img/inventory/rug_green.png',
+			'rug-red'=>'/img/inventory/rug_red.png',
+			'runner-blue'=>'/img/inventory/runner_blue.png',
+			'runner-green'=>'/img/inventory/runner_green.png',
+			'runner-red'=>'/img/inventory/runner_red.png',	
+			'scarf-green'=>'/img/inventory/scarf_green.png',
+			'scarf-purple'=>'/img/inventory/scarf_purple.png',
+			'scissors'=>'/img/inventory/scissors.png',
+			'sewingmachine'=>'/img/inventory/sewingMachine.png',
+			'shirtbox-blue'=>'/img/inventory/shirtBox_blue.png',
+			'shirtKids-green'=>'/img/inventory/shirtKids_green.png',
+			'shirtDc-black'=>'/img/inventory/shirtsDC_black.png',
+			'shorts-gray'=>'/img/inventory/shorts_gray.png',
+			'silkBlouse-red'=>'/img/inventory/silkBlouse_red.png',
+			'skirt-green'=>'/img/inventory/skirt_green.png',
+			'sleepingbag-blue'=>'/img/inventory/sleepingBag_blue.png',
+			'sleepingbag-green'=>'/img/inventory/sleepingBag_green.png',
+			'sleepingbag-red'=>'/img/inventory/sleepingBag_red.png',	
+			'sportsjacket'=>'/img/inventory/sportsJacket_blue.png',
+			'suit_black'=>'/img/inventory/suit_black.png',
+			'sweater-orange'=>'/img/inventory/sweater_orange.png',
+			'sweaterBrush_brown'=>'/img/inventory/sweaterBrush_brown.png',
+			'sweaterBrushed'=>'/img/inventory/sweaterBrushed.png',
+			'sweatersew'=>'/img/inventory/sweaterSew_pink.png',
+			'tablecloth-blue'=>'/img/inventory/tableCloth_blue.png',
+			'tablecloth-green'=>'/img/inventory/tableCloth_green.png',
+			'tablecloth-red'=>'/img/inventory/tableCloth_red.png',	
+			'tie-black'=>'/img/inventory/tie_black.png',
+			'tshirt-pink'=>'/img/inventory/tshirt_pink.png',
+			'tuxshirt-white'=>'/img/inventory/tuxShirt_white.png',
+			'twoPieceWomens'=>'/img/inventory/twoPieceWomens.png',
+			'vest-gray'=>'/img/inventory/vest_gray.png',
+			'weddingbox'=>'/img/inventory/weddingBox.png',
+			'weddinggown'=>'/img/inventory/weddingGown.png',
+			'womensblouse'=>'/img/inventory/womensBlouse.png',
+			'womensPants'=>'/img/inventory/womensPants.png',
+			'womensTop'=>'/img/inventory/womensTop_green.png'
+		);
+		return $images;
 	}
-	public function getCurrentRateOverlength($data, $item_id, $overlength, $overlength_rate)
-	{
-		$rates = array();
-		
-		
-		
-		//get the inventory item name by the id
-		$name = $this->getInventoryItemName($this->find('all',array('conditions'=>array('id'=>$item_id))));
 
-		//if there is a return
-		if(count($data) > 0){
-			foreach ($data as $key => $value) {
-				$oneway = $data[$key]['Schedule_rate']['one_way'];
-				$surcharge = $data[$key]['Schedule_rate']['surcharge'];
-				$total = sprintf('%.2f',round($data[$key]['Schedule_rate']['total_surcharged'] + ($overlength*$overlength_rate),2));
-				$rates[$name][$key] = array(
-					'oneway'=>$oneway,
-					'id'=>$item_id,
-					'name'=>$name,
-					'overlength'=>$overlength,
-					'overlength_rate'=>$overlength_rate,
-					'surcharge'=>$surcharge,
-					'total'=>$total
-				);  
-			}
-		} else {
-			$default = $this->find('all',array('conditions'=>array('id'=>$item_id)));
-			if(count($default)>0){
-				foreach ($default as $key => $value) {
-					$oneway = $default[$key]['Inventory_item']['oneway'];
-					$surcharge = $default[$key]['Inventory_item']['surcharge'];
-					$total = sprintf('%.2f',round($default[$key]['Inventory_item']['total_price'] + ($overlength*$overlength_rate),2));
-					$rates[$name][$key] = array(
-						'oneway'=>$oneway,
-						'overlength'=>$overlength,
-						'id'=>$item_id,
-						'name'=>$name,
-						'overlength_rate'=>$overlength_rate,
-						'surcharge'=>$surcharge,
-						'total'=>$total
-					);  
-				}
-			} 
-		}
-		
-		return $rates;
-	}
-	public function getInventoryItemName($data)
-	{
-		if(!empty($data)){
-		foreach ($data as $key => $value) {
-			$name = $data[$key]['Inventory_item']['name'];
-		}
-		} else {
-			$name = '';
-		}
-		
-		
-		return $name;
-	}
 }
 
 

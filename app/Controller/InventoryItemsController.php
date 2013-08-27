@@ -105,22 +105,14 @@ class InventoryItemsController extends AppController {
 		//get inventory types
 		$inventories = $this->Inventory->find('all');
 		$this->set('inventories',$inventories);
+		$images = $this->Inventory_item->createAllImageArray();
+		$this->set('images',$images);
 		
+
 		if($this->request->is('post')){
 			//create the form data
-			$this->request->data['Inventory_item']['inventory_id'] = $this->data['Inventory_item']['type'];
-			$find = $this->Inventory->find('all',array('conditions'=>array('id'=>$this->data['Inventory_item']['type'])));
-			$find_count = count($find);
-			if($find_count >0){
-				$this->request->data['Inventory_item']['type'] = $find[0]['Inventory']['name'];	
-			} else {
-				$this->request->data['Inventory_item']['type'] = '';
-			}
-			$this->request->data['Inventory_item']['ferry_id'] = 1;
-			$this->request->data['Inventory_item']['name'] = $this->data['Inventory_item']['name'];
-			$this->request->data['Inventory_item']['description'] = $this->data['Inventory_item']['description'];
-			$this->request->data['Inventory_item']['inc_units'] = $this->data['Inventory_item']['inc_units'];
-			$this->request->data['Inventory_item']['total_price'] = $this->data['Inventory_item']['oneway']+$this->data['Inventory_item']['surcharge'];
+			$this->request->data['Inventory_item']['company_id'] = $_SESSION['company_id'];
+
 
 			if($this->Inventory_item->save($this->request->data)){
 				$this->Session->setFlash('Your inventory item has been saved','default',array(),'success');
@@ -148,20 +140,6 @@ class InventoryItemsController extends AppController {
 		if($this->request->is('post')){
 			
 			$this->Inventory_item->id =$id;
-			//create the form data
-			$this->request->data['Inventory_item']['inventory_id'] = $this->data['Inventory_item']['type'];
-			$find = $this->Inventory->find('all',array('conditions'=>array('id'=>$this->data['Inventory_item']['type'])));
-			$find_count = count($find);
-			if($find_count >0){
-				$this->request->data['Inventory_item']['type'] = $find[0]['Inventory']['name'];	
-			} else {
-				$this->request->data['Inventory_item']['type'] = '';
-			}
-			$this->request->data['Inventory_item']['ferry_id'] = 1;
-			$this->request->data['Inventory_item']['name'] = $this->data['Inventory_item']['name'];
-			$this->request->data['Inventory_item']['description'] = $this->data['Inventory_item']['description'];
-			$this->request->data['Inventory_item']['inc_units'] = $this->data['Inventory_item']['inc_units'];
-			$this->request->data['Inventory_item']['total_price'] = $this->data['Inventory_item']['oneway']+$this->data['Inventory_item']['surcharge'];
 
 			if($this->Inventory_item->save($this->request->data)){
 				$this->Session->setFlash('Your inventory item has been saved','default',array(),'success');
@@ -188,8 +166,7 @@ class InventoryItemsController extends AppController {
 		//get from db
 		$inv_items = $this->Inventory_item->fixData($this->Inventory_item->read(null, $id));
 		$this->set('inv_items', $inv_items);	
-		$ferry_inv_items = $this->Ferry_inventory->fixData($this->Ferry_inventory->find('all',array('conditions'=>array('item_id'=>$id))));
-		$this->set('ferry_inv_items',$ferry_inv_items);	
+
 	}
 	
 	public function delete($id = null)

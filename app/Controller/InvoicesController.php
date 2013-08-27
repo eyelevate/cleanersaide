@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class InvoicesController extends AppController {
 
 	public $name = 'Invoices';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice', 'Invoice_item','Inventory','Inventory_item');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice', 'Inventory_item','Inventory','Inventory_item');
 
 
 	public function beforeFilter()
@@ -82,15 +82,18 @@ class InvoicesController extends AppController {
 		$username = $this->Auth->user('username');
 		$this->set('username',$username);
 	
-		$company_id = '1';
+		$company_id = $_SESSION['company_id'];
 
 		// //get inventory group_data
-		// $inv_groups = $this->Inventory->find('all',array('conditions'=>array('company_id'=>$company_id)));
-		// $inv_items = $this->Invoice->getInventoryItems($inv_groups);
+		$inv_groups = $this->Inventory->find('all',array('conditions'=>array('company_id'=>$company_id)));
+		$inv_items = $this->Inventory_item->find('all',array('conditions'=>array('company_id'=>$company_id)));
+
 // 		
 		// //get colors
 		// $colors = $this->Color->find('all',array('conditions'=>array('company_id'=>$company_id)));
 		
+		$this->set('inv_groups',$inv_groups);
+		$this->set('inv_items',$inv_items);
 		
 			
 	}

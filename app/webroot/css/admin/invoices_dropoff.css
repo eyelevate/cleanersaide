@@ -1,0 +1,27 @@
+
+.text-center{
+	text-align:center;
+}
+.number_list li{
+	text-align:center;
+	margin-left:0px;
+	margin-right:3px;
+	width:5%;
+	float:left;
+	cursor:pointer;
+}
+.colorDiv{
+	text-align:center;
+}
+.colorDiv div{
+	width:25%;
+	height:25%;
+	border:1px solid @5e5e5e;
+	
+}
+
+.colorUl li{
+	float:left;
+	
+}
+

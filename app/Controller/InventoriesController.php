@@ -82,10 +82,8 @@ class InventoriesController extends AppController {
 		$this->set('admin_check',$admin_check);	
 		
 		if($this->request->is('post')){
-			$this->request->data['Inventory']['ferry_id'] = 1;
-			if(!empty($this->request->data['Inventory']['towed_units'])){
-				$this->request->data['Inventory']['towed_units'] = json_encode($this->data['Inventory']['towed_units']);
-			}
+			//create the form data
+			$this->request->data['Inventory']['company_id'] = $_SESSION['company_id'];
 			if($this->Inventory->save($this->request->data)){
 				$this->Session->setFlash(__('Successfully added a new Inventory'),'default',array(),'success');
 				$this->redirect(array('action'=>'index'));
@@ -108,10 +106,7 @@ class InventoriesController extends AppController {
 		
 		if($this->request->is('post')){
 			$this->Inventory->id = $id;
-			$this->request->data['Inventory']['ferry_id'] = 1;
-			if(!empty($this->data['Inventory']['towed_units'])){
-				$this->request->data['Inventory']['towed_units'] = json_encode($this->data['Inventory']['towed_units']);
-			}
+
 			if($this->Inventory->save($this->request->data)){
 				$this->Session->setFlash(__('Successfully added a new Inventory'),'default',array(),'success');
 				$this->redirect(array('action'=>'index'));

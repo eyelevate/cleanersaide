@@ -1,7 +1,8 @@
 $(document).ready(function(){
 	//numberformatting
 	inventory.numberformat();
-	inventory.validation();
+
+	inventory.images();
 });
 
 /**
@@ -10,41 +11,20 @@ $(document).ready(function(){
 
 inventory = {
 	numberformat: function(){
-		$(".oneway").priceFormat({
-			'prefix':'',
-		});	
-		$(".surcharge").priceFormat({
-			'prefix':'',
-		});	
-		$(".total").priceFormat({
+
+		$(".price").priceFormat({
 			'prefix':'',
 		});		
 	},
-	validation: function(){
-		$(".oneway").keyup(function(){
-			var oneway = $(this).val();
-			var surcharge = $('.surcharge').val();
-			var total = parseFloat(oneway)+parseFloat(surcharge);
-			var total = total.toFixed(2);
+	images: function(){
 
-			$('.total').val(total);
-			
+		$(".inventoryImage").click(function(){
+			$(this).parent().find('li').removeClass('image_selected');
+
+			$(this).addClass('image_selected');	
+			source = $(this).find('img').attr('src');
+			$("#imageInput").val(source);		
 		});
-		$(".surcharge").keyup(function(){
-			var oneway = $('.oneway').val();
-			var surcharge = $(this).val();
-			var total = parseFloat(oneway)+parseFloat(surcharge);
-			var total = total.toFixed(2);
-
-			$('.total').val(total);			
-		});
-		$(".total").keyup(function(){
-			var oneway = $('.oneway').val();
-			var total = $(this).val();
-			var surcharge = parseFloat(total)-parseFloat(oneway);
-			var surcharge = total.toFixed(2);
-
-			$('.surcharge').val(surcharge);				
-		});		
+		
 	}
 }

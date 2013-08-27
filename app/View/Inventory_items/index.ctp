@@ -21,9 +21,10 @@ WHERE `TABLE_SCHEMA`='cleanersaide'
 	<?php
 	foreach ($inventory_items as $inv): ?>
 	<tr>
-		<td><?php echo h($inv['Inventory_item']['inventory_id']); ?>&nbsp;</td>
+		<td><?php echo h($inv['Inventory_item']['inventory_name']); ?>&nbsp;</td>
 		<td><?php echo h($inv['Inventory_item']['name']); ?>&nbsp;</td>
 		<td><?php echo h($inv['Inventory_item']['description']); ?>&nbsp;</td>
+		<td><?php echo h($inv['Inventory_item']['price']); ?>&nbsp;</td>
 		<td><?php echo h($inv['Inventory_item']['image']); ?>&nbsp;</td>
 		<td class="actions">
 			<?php 

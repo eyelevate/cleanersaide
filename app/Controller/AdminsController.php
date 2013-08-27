@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class AdminsController extends AppController {
 
 	public $name = 'Admins';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','invoice','invoice_item');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice','Invoice_item','Company');
 
 
 	public function beforeFilter()
@@ -56,19 +56,42 @@ class AdminsController extends AppController {
 		
 		//set autherror to page
 		$this->set('authError',$this->Auth->authError);
-		
-		//set the title
- 		if ($this->request->is('post')) {
-	    	//check to see if the username, company_id, password bring back a row
-	    	$username = $this->request->data['User']['username'];
-			//login User with auth component
-	        if ($this->Auth->login()) {
-	            return $this->redirect($this->Auth->redirect());
-	        } else {
-	        //the password is incorrect 
-	            $this->Session->setFlash(__('Password is incorrect'));  
-			}
-		}		
+
+		//check to see if the company has been logged in 
+		if(isset($_COOKIE['company_id']) && !empty($_COOKIE['company_id'])){ //company has been logged in now show the employee login
+			$this->Session->write('company_id',$_COOKIE['company_id']);
+			//set the title
+	 		if ($this->request->is('post')) {
+		    	//check to see if the username, company_id, password bring back a row
+		    	$username = $this->request->data['User']['username'];
+				//login User with auth component
+		        if ($this->Auth->login()) {
+		            return $this->redirect($this->Auth->redirect());
+		        } else {
+		        //the password is incorrect 
+		            $this->Session->setFlash(__('Password is incorrect'));  
+				}
+			}			
+		} else { //company has not been logged
+			
+			
+			if($this->request->is('post')){
+				$username = $this->request->data['Company']['owner'];
+				$password = $this->Company->hashPasswords($this->request->data['Company']['password']);
+				$search_company = $this->Company->company_login($username, $password);
+				if($search_company == true){
+					$this->Session->setFlash('You have successfully logged in. Your session will expire in 24 hours.','default',array(),'success');
+					
+					$this->redirect(array('controller'=>'admins','action'=>'login'));
+					
+				} else {
+					$this->Session->setFlash('Your company username and password do not match. Please try again','default',array(),'error');
+				}
+				
+			} 
+		}
+//setcookie('company_id', "", time()-3600);
+				
 	}
 /**
  * logsout and sends back to PagesContoller=>index
