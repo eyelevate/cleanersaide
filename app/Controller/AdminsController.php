@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class AdminsController extends AppController {
 
 	public $name = 'Admins';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice','Invoice_item','Company');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice','Invoice_item','Company','Tax');
 
 
 	public function beforeFilter()

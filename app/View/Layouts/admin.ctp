@@ -91,7 +91,13 @@ if (!isset($username)) {
 								
 								<li class="divider-vertical hidden-phone hidden-tablet"></li>
 								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $username;?> <? if ($username != "You are not logged in.") {echo '<b class="caret"></b>';} ?></a>
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $username;?> 
+									<?php 
+										if ($username != "You are not logged in.") {
+											echo '<b class="caret"></b>';
+										} 
+									?>
+									</a>
 									<ul class="dropdown-menu">
 										<li>
 											<a href="/admins/logout">Log Out</a>

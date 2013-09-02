@@ -3,6 +3,15 @@ $this->Html->css(array('admin/invoices_dropoff'),'stylesheet', array('inline' =>
 //add scripts to header
 echo $this->Html->script(array('admin/invoices_dropoff.js'),FALSE);
 
+$tax_rate  = 0;
+if(!empty($taxes)){
+	foreach ($taxes as $t) {
+		$tax_rate = $t['Tax']['rate'];
+	}
+}
+
+
+
 ?>
 <div class="row-fluid">
 	<h1 class="heading">Drop Off</h1>
@@ -93,7 +102,7 @@ echo $this->Html->script(array('admin/invoices_dropoff.js'),FALSE);
 		</div>
 		<div class="pull-left span6 well well-small" style="background-color:#ffffff">
 			<legend>Invoice Summary</legend>
-			<table class="table table-bordered table-condensed table-hover table-striped">
+			<table class="table table-bordered table-condensed table-hover">
 				<thead>
 					<tr>
 						<th>Qty</th>
@@ -110,22 +119,22 @@ echo $this->Html->script(array('admin/invoices_dropoff.js'),FALSE);
 					<tr>
 						<th colspan="3"></th>
 						<th>Total Qty</th>
-						<td></td>
+						<td id="total_qty"></td>
 					</tr>
 					<tr>
 						<th colspan="3"></th>
 						<th>Total Pre-tax</th>
-						<td></td>
+						<td id="total_pretax"></td>
 					</tr>
 					<tr>
 						<th colspan="3"></th>
 						<th>Total Tax</th>
-						<td></td>
+						<td id="total_tax"></td>
 					</tr>
 					<tr>
 						<th colspan="3"></th>
 						<th>Total After-tax</th>
-						<td></td>
+						<td id="total_aftertax"></td>
 					</tr>
 				</tfoot>
 			</table>
@@ -135,43 +144,43 @@ echo $this->Html->script(array('admin/invoices_dropoff.js'),FALSE);
 		<div class="span12 well well-small" style="margin-top:15px;">
 			<legend>Select a color</legend>
 			<ul class="colorUl unstyled">
-				<li class="span1 well well-small" style="background-color:#ffffff;">
+				<li class="span1 well well-small" style="background-color:#ffffff;" color="black">
 					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:#000000"/></p>
 					<p style="text-align:center; line-height:80%;">Black</p>
 				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;">
+				<li class="span1 well well-small" style="background-color:#ffffff;" color="white">
 					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:#ffffff"/></p>
 					<p style="text-align:center; line-height:80%;">White</p>
 				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;">
+				<li class="span1 well well-small" style="background-color:#ffffff;" color="red">
 					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:red"/></p>
 					<p style="text-align:center; line-height:80%;">Red</p>
 				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;">
+				<li class="span1 well well-small" style="background-color:#ffffff;" color="green">
 					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:green"/></p>
 					<p style="text-align:center; line-height:80%;">Green</p>
 				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;">
+				<li class="span1 well well-small" style="background-color:#ffffff;" color="yellow">
 					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:yellow"/></p>
 					<p style="text-align:center; line-height:80%;">Yellow</p>
 				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;">
+				<li class="span1 well well-small" style="background-color:#ffffff;" color="blue">
 					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:blue"/></p>
 					<p style="text-align:center; line-height:80%;">Blue</p>
 				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;">
+				<li class="span1 well well-small" style="background-color:#ffffff;" color="tan">
 					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:tan"/></p>
 					<p style="text-align:center; line-height:80%;">Tan</p>
 				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;">
+				<li class="span1 well well-small" style="background-color:#ffffff;" color="pink">
 					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:pink"/></p>
 					<p style="text-align:center; line-height:80%;">Pink</p>
 				</li>			
-				<li class="span1 well well-small" style="background-color:#ffffff;">
+				<li class="span1 well well-small" style="background-color:#ffffff;" color="purple">
 					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:purple"/></p>
 					<p style="text-align:center; line-height:80%;">Purple</p>
 				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;">
+				<li class="span1 well well-small" style="background-color:#ffffff;" color="brown">
 					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:brown"/></p>
 					<p style="text-align:center; line-height:80%;">Brown</p>
 				</li>
@@ -180,7 +189,12 @@ echo $this->Html->script(array('admin/invoices_dropoff.js'),FALSE);
 	</div>
 	<div class="formRow ">
 		<div class="formSep"></div>
-		<form action="/invoices/process_dropoff/"></form>
+		<form action="/invoices/process_dropoff/">
+			<input id="tax_rate" type="hidden" name="tax_rate" value="<?php echo $tax_rate;?>"/>
+			<div id="invoiceCreated">
+				
+			</div>
+		</form>
 		<div class="clearfix">
 			<button class="btn btn-danger pull-left">Cancel</button>
 			<button class="btn btn-primary pull-right">Finish</button>

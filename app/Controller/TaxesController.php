@@ -89,8 +89,10 @@ class TaxesController extends AppController {
 		$this->set('admin_nav',$admin_nav);
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);   	
-		
+	
 		if($this->request->is('post')){
+			$this->request->data['Tax']['company_id'] = $this->Session->read('company_id');
+			//debug($this->Session->read('company_id'));
 			if($this->Tax->save($this->request->data)){
 				$this->Session->setFlash(__('Successfully Added New Tax Rate'),'default',array(),'success');
 				$this->redirect(array('action'=>'index'));

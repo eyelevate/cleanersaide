@@ -24,4 +24,6 @@
 	float:left;
 	
 }
-
+.invoice_item_td[status=active]{
+	background-color:#C4DAFF;
+}

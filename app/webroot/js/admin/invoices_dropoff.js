@@ -1,6 +1,7 @@
 $(document).ready(function(){
 	invoice.quantity();
 	invoice.orders();
+	invoice.colors();
 });
 
 //functions
@@ -38,15 +39,6 @@ invoice = {
 				break;
 			}
 			
-			
-			// if(quantity == 'C'){
-				// $("#finalTotal").attr('value','').html('');
-			// } else {
-				// $("#finalTotal").attr('value',new_quantity).html(new_quantity);
-			// }	
-			
-
-			
 		});
 	},
 	orders: function(){
@@ -68,14 +60,17 @@ invoice = {
 		});
 	},
 	colors: function(){
-		
+		$(".colorUl li").click(function(){
+			var color = $(this).attr('color');
+			alert(color);
+		});
 	}
-}
+};
 
 summary = {
 	set_pricing: function(item_id, quantity, name,price, new_price, form, new_invoice){
 		//check to see if any previous rows exist
-		check_exists = 'No'
+		check_exists = 'No';
 		
 		$("#invoiceTbody tr").each(function(){
 			var finished_item_id = $(this).attr('id').replace('invoice_item_td-','');
@@ -92,7 +87,9 @@ summary = {
 				$("#invoice_item_td-"+item_id+" .quantityTd").html(new_quantity);
 				$("#invoice_item_td-"+item_id+" .priceTd").html(new_price);
 				$("#invoice_item_td-"+item_id+" .invoiceData").html(updated_form);
-				$("#finalTotal").html('0').attr('val','0');					
+				$("#finalTotal").html('0').attr('val','0');	
+				$(this).parent().find('tr').attr('status','notactive');
+				$(this).attr('status','active');				
 				return false;
 			}
 		});
@@ -100,9 +97,45 @@ summary = {
 		if(check_exists == 'No'){
 			$("#invoiceTbody").append(new_invoice);
 			$("#finalTotal").html('0').attr('val','0');
-		}		
+			$('#invoiceTbody tr').attr('status','notactive');
+			$('#invoiceTbody tr:last').attr('status','active');
+
+			
+			$('#invoiceTbody tr:last .removeRow').click(function(){
+				if(confirm('Would you like to delete this row?')){
+					$(this).parents('tr:first').remove();
+					summary.sum_all();
+				}
+			});
+		}
+		summary.sum_all();		
+	},
+	
+	sum_all:function(){
+		var tax = 1+(parseFloat($("#tax_rate").val()) / 100);
+		total_qty = 0;
+		total_pretax = 0;
+		total_aftertax = 0;
+		total_tax = 0;
+		$("#invoiceTbody tr").each(function(){
+			total_qty += parseInt($(this).find('.quantityTd').html());
+			total_pretax += parseFloat($(this).find('.priceTd').html());
+			
+		});
+		
+		total_pretax = roundCents(total_pretax,1);
+		total_aftertax = roundCents(parseFloat(total_pretax) * tax,1);
+		total_tax = roundCents((total_aftertax - total_pretax),1);
+		
+		//remove old form and create a new form
+		$("#total_qty").html(total_qty);
+		$("#total_pretax").html(total_pretax);
+		$("#total_tax").html(total_tax);
+		$("#total_aftertax").html(total_aftertax);
+		totals_form = new_totals_form(total_qty, total_pretax, total_tax, total_aftertax);
+		
 	}
-}
+};
 
 //var funcitons
 var new_invoice_item = function(item_id,qty, item, price,form){
@@ -114,15 +147,25 @@ var new_invoice_item = function(item_id,qty, item, price,form){
 			'<td><a class="removeRow">remove</a><div class="invoiceData hide">'+form+'</div></td>'+
 		'</tr>';
 	return tr;
-}
+};
 var new_invoice_form = function(item_id,qty, item, price){
-	new_form = '<input type="hidden" name="data[Invoice][quantity]" value="'+qty+'"/>'+
-				'<input type="hidden" name="data[Invoice][name]" value="'+item+'"/>'+
-				'<input type="hidden" name="data[Invoice][before_tax]" value="'+price+'"/>'+
-				'<input type="hidden" name="data[Invoice][item_id]" value="'+item_id+'"/>';
+	new_form = '<input type="hidden" name="data[Invoice][items][quantity]" value="'+qty+'"/>'+
+				'<input type="hidden" name="data[Invoice][items][name]" value="'+item+'"/>'+
+				'<input type="hidden" name="data[Invoice][items][before_tax]" value="'+price+'"/>'+
+				'<input type="hidden" name="data[Invoice][items][item_id]" value="'+item_id+'"/>';
 	return new_form;
-}
+};
+var new_totals_form = function(qty, pretax, tax, aftertax){
+	new_form = '<input type="hidden" name="data[Invoice][total_qty]" value="'+qty+'"/>'+
+				'<input type="hidden" name="data[Invoice][total_pretax]" value="'+pretax+'"/>'+
+				'<input type="hidden" name="data[Invoice][total_tax]" value="'+tax+'"/>'+
+				'<input type="hidden" name="data[Invoice][total_aftertax]" value="'+aftertax+'"/>';
+	return new_form;
+};
 
+var new_colors_form = function(){
+	
+};
 
 var roundCents = function(price, qty){
 	rounded = parseFloat(price) * parseInt(qty);
@@ -132,4 +175,4 @@ var roundCents = function(price, qty){
 	rounded = rounded.toFixed(2);
 	
 	return rounded;
-}
+};

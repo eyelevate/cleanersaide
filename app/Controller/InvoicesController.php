@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class InvoicesController extends AppController {
 
 	public $name = 'Invoices';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice', 'Inventory_item','Inventory','Inventory_item');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice', 'Inventory_item','Inventory','Inventory_item','Tax');
 
 
 	public function beforeFilter()
@@ -88,12 +88,16 @@ class InvoicesController extends AppController {
 		$inv_groups = $this->Inventory->find('all',array('conditions'=>array('company_id'=>$company_id)));
 		$inv_items = $this->Inventory_item->find('all',array('conditions'=>array('company_id'=>$company_id)));
 
-// 		
+		//tax
+		$taxes = $this->Tax->find('all',array('conditions'=>array('company_id'=>$company_id)));
+		
+				
 		// //get colors
 		// $colors = $this->Color->find('all',array('conditions'=>array('company_id'=>$company_id)));
 		
 		$this->set('inv_groups',$inv_groups);
 		$this->set('inv_items',$inv_items);
+		$this->set('taxes',$taxes);
 		
 			
 	}
