@@ -102,7 +102,8 @@ if(!empty($taxes)){
 		</div>
 		<div class="pull-left span6 well well-small" style="background-color:#ffffff">
 			<legend>Invoice Summary</legend>
-			<table class="table table-bordered table-condensed table-hover">
+			<table id="invoiceTable" class="table table-bordered table-condensed">
+				
 				<thead>
 					<tr>
 						<th>Qty</th>

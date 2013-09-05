@@ -62,7 +62,26 @@ invoice = {
 	colors: function(){
 		$(".colorUl li").click(function(){
 			var color = $(this).attr('color');
-			alert(color);
+			var active_colors = $("#invoiceTable tbody tr[status='active'] .colorsTd").html();
+			var qty = parseInt($("#invoiceTable tbody tr[status='active'] .quantityTd").html());
+			var color_count = parseInt($("#invoiceTable tbody tr[status='active'] .colorsTd").attr('count'));
+			colors = '';
+		
+			if(color_count < qty){
+				new_count = color_count + 1;
+				
+				if(active_colors == ''){
+					colors = color;
+				} else {
+					colors = active_colors+', '+color;
+				}
+				$("#invoiceTable tbody tr[status='active'] .colorsTd").attr('count',new_count).html(colors);
+				
+			} else {
+				alert('Color count cannot exceed quantity count.');
+			}
+
+			
 		});
 	}
 };
@@ -100,12 +119,18 @@ summary = {
 			$('#invoiceTbody tr').attr('status','notactive');
 			$('#invoiceTbody tr:last').attr('status','active');
 
-			
+			//click to remove
 			$('#invoiceTbody tr:last .removeRow').click(function(){
 				if(confirm('Would you like to delete this row?')){
 					$(this).parents('tr:first').remove();
 					summary.sum_all();
 				}
+			});
+			//click to make active
+			$("#invoiceTbody tr:last").click(function(){
+				$(this).parents().find('tr').attr('status','notactive');
+				$(this).attr('status','active');
+
 			});
 		}
 		summary.sum_all();		
@@ -142,7 +167,7 @@ var new_invoice_item = function(item_id,qty, item, price,form){
 	tr = '<tr id="invoice_item_td-'+item_id+'" class="invoice_item_td" status="active">'+
 			'<td class="quantityTd">'+qty+'</td>'+
 			'<td class="itemTd">'+item+'</td>'+
-			'<td class="colorsTd"></td>'+
+			'<td class="colorsTd" count="0"></td>'+
 			'<td class="priceTd">'+price+'</td>'+
 			'<td><a class="removeRow">remove</a><div class="invoiceData hide">'+form+'</div></td>'+
 		'</tr>';
@@ -162,6 +187,7 @@ var new_totals_form = function(qty, pretax, tax, aftertax){
 				'<input type="hidden" name="data[Invoice][total_aftertax]" value="'+aftertax+'"/>';
 	return new_form;
 };
+
 
 var new_colors_form = function(){
 	
