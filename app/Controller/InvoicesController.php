@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class InvoicesController extends AppController {
 
 	public $name = 'Invoices';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice', 'Inventory_item','Inventory','Inventory_item','Tax');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice', 'Inventory_item','Inventory','Tax');
 
 
 	public function beforeFilter()
@@ -124,9 +124,32 @@ class InvoicesController extends AppController {
 
 
 	}
-	public function process_dropoff()
+	public function process_dropoff_no_copy()
 	{
+		if($this->request->is('post')){
 
+			if($this->Invoice->save($this->request->data)){
+				$items = $this->request->data['Invoice']['items'];	
+				$store_copy = $this->Inventory_item->reorganizeByInventory($items);		
+				
+				$this->set('store',$store_copy);		
+
+			}
+
+		}
+	}
+	
+	public function process_dropoff_copy()
+	{
+		if($this->request->is('post')){
+			if($this->Invoice->save($this->request->data)){
+				$items = $this->request->data['Invoice']['items'];	
+				$store_copy = $this->Inventory_item->reorganizeByInventory($items);		
+				
+				$this->set('customer',$this->request->data);
+				$this->set('store',$store_copy);			
+			}
+		}
 	}
 
 	public function process_pickup()

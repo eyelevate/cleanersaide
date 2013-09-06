@@ -2,6 +2,7 @@ $(document).ready(function(){
 	invoice.quantity();
 	invoice.orders();
 	invoice.colors();
+	invoice.print();
 });
 
 //functions
@@ -64,24 +65,75 @@ invoice = {
 			var color = $(this).attr('color');
 			var active_colors = $("#invoiceTable tbody tr[status='active'] .colorsTd").html();
 			var qty = parseInt($("#invoiceTable tbody tr[status='active'] .quantityTd").html());
-			var color_count = parseInt($("#invoiceTable tbody tr[status='active'] .colorsTd").attr('count'));
+			color_check = $("#invoiceTable tbody tr[status='active'] .colorsTd ul li[color='"+color+"']").length;
+			if(color_check >0){
+				var color_count = parseInt($("#invoiceTable tbody tr[status='active'] .colorsTd ul li").attr('count'));
+			} else {
+				var color_count = 0;
+			}	
+			
+			//get total color count for active row
+			total_color_count = 0;
+			$("#invoiceTable tbody tr[status='active'] .colorsTd ul li").each(function(){
+				total_color_count += parseInt($(this).attr('count'));
+			});
+
 			colors = '';
 		
-			if(color_count < qty){
+			if(total_color_count <= (qty-1)){
+
 				new_count = color_count + 1;
 				
-				if(active_colors == ''){
-					colors = color;
-				} else {
-					colors = active_colors+', '+color;
-				}
-				$("#invoiceTable tbody tr[status='active'] .colorsTd").attr('count',new_count).html(colors);
+				colors_make = colors_html(color, new_count);
+				$("#invoiceTable tbody tr[status='active'] .colorsTd ul li[color='"+color+"']").remove();
+				$("#invoiceTable tbody tr[status='active'] .colorsTd ul").append(colors);
+				
+				
+				$("#invoiceTable tbody tr").each(function(){
+
+					color_li_count = $(this).find('ul li').length;
+					if(color_li_count > 0){
+						$(this).find('ul li').each(function(en){
+							color_grab_qty = $(this).attr('count');
+							color_grab_color = $(this).attr('color');
+							color_item_id = $(this).parents('tr:first').attr('id').replace('invoice_item_td-','');
+
+							colors_array = colors_form_input_array(color_grab_qty, color_grab_color, color_item_id, en);
+							$(this).find('.colorsFormInput').remove();
+							$(this).append(colors_array);
+						});
+						
+					}
+
+				});
 				
 			} else {
 				alert('Color count cannot exceed quantity count.');
 			}
 
 			
+		});
+	},
+	print: function(){
+		$(".printCustomerCopy").click(function(){
+			var type = $(this).attr('id').replace('printCustomerCopy-','');
+			var count_invoice_rows = $("#invoiceTbody tr").length;
+			if(count_invoice_rows>0){
+				switch(type){
+					case 'No':
+						$('#invoiceForm').attr('action','/invoices/process_dropoff_no_copy');
+					break;
+					
+					default:
+						$('#invoiceForm').attr('action','/invoices/process_dropoff_copy');
+					break;
+				}
+				
+				$('#invoiceForm').submit();				
+			} else {
+				alert('There is no invoice to create. Please select at least one inventory item.');
+			}
+
 		});
 	}
 };
@@ -158,7 +210,7 @@ summary = {
 		$("#total_tax").html(total_tax);
 		$("#total_aftertax").html(total_aftertax);
 		totals_form = new_totals_form(total_qty, total_pretax, total_tax, total_aftertax);
-		
+		$("#hiddenTotalsDiv").html(totals_form);
 	}
 };
 
@@ -167,17 +219,17 @@ var new_invoice_item = function(item_id,qty, item, price,form){
 	tr = '<tr id="invoice_item_td-'+item_id+'" class="invoice_item_td" status="active">'+
 			'<td class="quantityTd">'+qty+'</td>'+
 			'<td class="itemTd">'+item+'</td>'+
-			'<td class="colorsTd" count="0"></td>'+
+			'<td class="colorsTd"><ul class="unstyled" count="0"></ul></td>'+
 			'<td class="priceTd">'+price+'</td>'+
 			'<td><a class="removeRow">remove</a><div class="invoiceData hide">'+form+'</div></td>'+
 		'</tr>';
 	return tr;
 };
 var new_invoice_form = function(item_id,qty, item, price){
-	new_form = '<input type="hidden" name="data[Invoice][items][quantity]" value="'+qty+'"/>'+
-				'<input type="hidden" name="data[Invoice][items][name]" value="'+item+'"/>'+
-				'<input type="hidden" name="data[Invoice][items][before_tax]" value="'+price+'"/>'+
-				'<input type="hidden" name="data[Invoice][items][item_id]" value="'+item_id+'"/>';
+	new_form = '<input id="invoiceItemInput-quantity" type="hidden" name="data[Invoice][items]['+item_id+'][quantity]" value="'+qty+'"/>'+
+				'<input id="invoiceItemInput-name" type="hidden" name="data[Invoice][items]['+item_id+'][name]" value="'+item+'"/>'+
+				'<input id="invoiceItemInput-before_tax" type="hidden" name="data[Invoice][items]['+item_id+'][before_tax]" value="'+price+'"/>'+
+				'<input id="invoiceItemInput-item_id" type="hidden" name="data[Invoice][items]['+item_id+'][item_id]" value="'+item_id+'"/>';
 	return new_form;
 };
 var new_totals_form = function(qty, pretax, tax, aftertax){
@@ -188,10 +240,24 @@ var new_totals_form = function(qty, pretax, tax, aftertax){
 	return new_form;
 };
 
+var colors_html = function(color, count){
+	if(count > 1){
+		title = '('+count+'x) '+color;
+	} else {
+		title = color;
+	}
 
-var new_colors_form = function(){
+	colors = '<li class="badge badge-inverse pull-left" color="'+color+'" count="'+count+'">'+title+'</li>';
 	
+	return colors;
 };
+
+var colors_form_input_array = function(count, color, item_id,row){
+	input = '<input class="colorsFormInput" type="hidden" name="data[Invoice][items]['+item_id+'][colors]['+row+'][quantity]" value="'+count+'"/>';
+	input += '<input class="colorsFormInput" type="hidden" name="data[Invoice][items]['+item_id+'][colors]['+row+'][color]" value="'+color+'"/>';
+	return input;
+};
+
 
 var roundCents = function(price, qty){
 	rounded = parseFloat(price) * parseInt(qty);

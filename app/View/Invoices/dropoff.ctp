@@ -101,44 +101,47 @@ if(!empty($taxes)){
 			</div>
 		</div>
 		<div class="pull-left span6 well well-small" style="background-color:#ffffff">
-			<legend>Invoice Summary</legend>
-			<table id="invoiceTable" class="table table-bordered table-condensed">
-				
-				<thead>
-					<tr>
-						<th>Qty</th>
-						<th>Item(s)</th>
-						<th>Color(s)</th>
-						<th>Price</th>
-						<th>Action</th>
-					</tr>
-				</thead>
-				<tbody id="invoiceTbody">
+			<form id="invoiceForm" method="post" action="/invoices/process_dropoff">
+				<legend>Invoice Summary</legend>
+				<table id="invoiceTable" class="table table-bordered table-condensed">
 					
-				</tbody>
-				<tfoot>
-					<tr>
-						<th colspan="3"></th>
-						<th>Total Qty</th>
-						<td id="total_qty"></td>
-					</tr>
-					<tr>
-						<th colspan="3"></th>
-						<th>Total Pre-tax</th>
-						<td id="total_pretax"></td>
-					</tr>
-					<tr>
-						<th colspan="3"></th>
-						<th>Total Tax</th>
-						<td id="total_tax"></td>
-					</tr>
-					<tr>
-						<th colspan="3"></th>
-						<th>Total After-tax</th>
-						<td id="total_aftertax"></td>
-					</tr>
-				</tfoot>
-			</table>
+					<thead>
+						<tr>
+							<th>Qty</th>
+							<th>Item(s)</th>
+							<th>Color(s)</th>
+							<th>Price</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody id="invoiceTbody">
+						
+					</tbody>
+					<tfoot>
+						<tr>
+							<th colspan="3"></th>
+							<th>Total Qty</th>
+							<td id="total_qty"></td>
+						</tr>
+						<tr>
+							<th colspan="3"></th>
+							<th>Total Pre-tax</th>
+							<td id="total_pretax"></td>
+						</tr>
+						<tr>
+							<th colspan="3"></th>
+							<th>Total Tax</th>
+							<td id="total_tax"></td>
+						</tr>
+						<tr>
+							<th colspan="3"></th>
+							<th>Total After-tax</th>
+							<td id="total_aftertax"></td>
+						</tr>
+					</tfoot>
+				</table>
+				<div id="hiddenTotalsDiv" class="hide"></div>
+			</form>
 		</div>
 	</div>
 	<div class="formRow clearfix">
@@ -192,13 +195,34 @@ if(!empty($taxes)){
 		<div class="formSep"></div>
 		<form action="/invoices/process_dropoff/">
 			<input id="tax_rate" type="hidden" name="tax_rate" value="<?php echo $tax_rate;?>"/>
-			<div id="invoiceCreated">
-				
-			</div>
+
 		</form>
 		<div class="clearfix">
-			<button class="btn btn-danger pull-left">Cancel</button>
-			<button class="btn btn-primary pull-right">Finish</button>
+			<button id="cancelDropOffButton" class="btn btn-danger pull-left">Cancel</button>
+			  <!-- Button trigger modal -->
+  			<a data-toggle="modal" href="#myModal" class="btn btn-primary btn-lg pull-right">Finish</a>
+
 		</div>
+
 	</div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+	    <div class="modal-header">
+	      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	      <h4 class="modal-title">Select Invoice Type</h4>
+	    </div>
+	    <div class="modal-body">
+	     	<h3>Would you like to print a customer copy of the invoice?</h3>
+	     	<br/><br/>
+	    </div>
+	    <div class="modal-footer">
+	      <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+	      <button id="printCustomerCopy-No" type="button" class="printCustomerCopy btn btn-danger pull-right">No</button>
+	      <button id="printCustomerCopy-Yes" type="button" class=" printCustomerCopy btn btn-primary pull-right">Yes</button>
+	    </div>
+	  </div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

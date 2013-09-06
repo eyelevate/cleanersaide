@@ -317,6 +317,29 @@ class Inventory_item extends AppModel {
 		return $images;
 	}
 
+	public function reorganizeByInventory($data){
+		
+		$reorder = array();
+		$idx = -1;
+		if(count($data)>0){
+			foreach ($data as $ikey => $ivalue) {
+				$idx++;
+				$item_id = $ikey;
+				//get inventory_id
+				$inventories = $this->find('all',array('conditions'=>array('id'=>$item_id,'company_id'=>$_SESSION['company_id'])));
+				if(count($inventories) >0){
+					foreach ($inventories as $inv) {
+						$inventory_id = $inv['Inventory_item']['inventory_id'];
+					}
+					
+					$reorder[$inventory_id][$ikey] = $ivalue;
+				} 
+			}
+		}
+
+		return $reorder;
+	}
+
 }
 
 
