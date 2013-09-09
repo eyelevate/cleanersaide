@@ -140,6 +140,9 @@ if(!empty($taxes)){
 						</tr>
 					</tfoot>
 				</table>
+				<div id="hiddenInvoiceDiv" class="hide">
+					<input type="hidden" name="data[Invoice][customer_id]" value="<?php echo $customer_id;?>"/>
+				</div>
 				<div id="hiddenTotalsDiv" class="hide"></div>
 			</form>
 		</div>

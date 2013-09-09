@@ -233,10 +233,10 @@ var new_invoice_form = function(item_id,qty, item, price){
 	return new_form;
 };
 var new_totals_form = function(qty, pretax, tax, aftertax){
-	new_form = '<input type="hidden" name="data[Invoice][total_qty]" value="'+qty+'"/>'+
-				'<input type="hidden" name="data[Invoice][total_pretax]" value="'+pretax+'"/>'+
-				'<input type="hidden" name="data[Invoice][total_tax]" value="'+tax+'"/>'+
-				'<input type="hidden" name="data[Invoice][total_aftertax]" value="'+aftertax+'"/>';
+	new_form = '<input type="hidden" name="data[Invoice][quantity]" value="'+qty+'"/>'+
+				'<input type="hidden" name="data[Invoice][pretax]" value="'+pretax+'"/>'+
+				'<input type="hidden" name="data[Invoice][tax]" value="'+tax+'"/>'+
+				'<input type="hidden" name="data[Invoice][total]" value="'+aftertax+'"/>';
 	return new_form;
 };
 

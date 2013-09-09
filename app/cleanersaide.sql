@@ -293,6 +293,7 @@ CREATE TABLE `invoices` (
   `invoice_id` int(6) DEFAULT NULL,
   `company_id` int(11) DEFAULT NULL,
   `customer_id` int(11) DEFAULT NULL,
+  `items` text,
   `quantity` int(11) DEFAULT NULL,
   `pretax` decimal(11,2) DEFAULT NULL,
   `tax` decimal(11,2) DEFAULT NULL,
@@ -303,7 +304,7 @@ CREATE TABLE `invoices` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -312,6 +313,7 @@ CREATE TABLE `invoices` (
 
 LOCK TABLES `invoices` WRITE;
 /*!40000 ALTER TABLE `invoices` DISABLE KEYS */;
+INSERT INTO `invoices` VALUES (1,1,1,7525,'{\"2\":{\"colors\":[{\"quantity\":\"3\",\"color\":\"purple\"}],\"quantity\":\"3\",\"name\":\"Dress\",\"before_tax\":\"22.50\",\"item_id\":\"2\"},\"1\":{\"colors\":[{\"quantity\":\"3\",\"color\":\"green\"}],\"quantity\":\"3\",\"name\":\"Dry Clean Shirt\",\"before_tax\":\"16.50\",\"item_id\":\"1\"},\"3\":{\"colors\":[{\"quantity\":\"2\",\"color\":\"blue\"},{\"quantity\":\"1\",\"color\":\"green\"},{\"quantity\":\"1\",\"color\":\"red\"},{\"quantity\":\"1\",\"color\":\"white\"}],\"quantity\":\"5\",\"name\":\"Mens Shirt\",\"before_tax\":\"7.50\",\"item_id\":\"3\"}}',11,'46.50','4.42',NULL,NULL,'50.92',1,'2013-09-09 01:32:27','2013-09-09 01:32:27');
 /*!40000 ALTER TABLE `invoices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -512,4 +514,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-09-06 11:29:25
+-- Dump completed on 2013-09-09 10:33:23

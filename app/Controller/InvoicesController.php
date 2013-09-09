@@ -98,6 +98,7 @@ class InvoicesController extends AppController {
 		$this->set('inv_groups',$inv_groups);
 		$this->set('inv_items',$inv_items);
 		$this->set('taxes',$taxes);
+		$this->set('customer_id',$id);
 		
 			
 	}
@@ -128,7 +129,11 @@ class InvoicesController extends AppController {
 	{
 		if($this->request->is('post')){
 
-			if($this->Invoice->save($this->request->data)){
+			//add in special variables
+			$invoice_data = $this->Invoice->invoice_complete($this->request->data);
+
+			
+			if($this->Invoice->save($invoice_data)){
 				$items = $this->request->data['Invoice']['items'];	
 				$store_copy = $this->Inventory_item->reorganizeByInventory($items);		
 				
@@ -142,7 +147,10 @@ class InvoicesController extends AppController {
 	public function process_dropoff_copy()
 	{
 		if($this->request->is('post')){
-			if($this->Invoice->save($this->request->data)){
+			//add in special variables
+			$invoice_data = $this->Invoice->invoice_complete($this->request->data);			
+			
+			if($this->Invoice->save($invoice_data)){
 				$items = $this->request->data['Invoice']['items'];	
 				$store_copy = $this->Inventory_item->reorganizeByInventory($items);		
 				
