@@ -1,13 +1,15 @@
 $(document).ready(function(){
-	invoice.datepicker();
-	invoice.quantity();
-	invoice.orders();
-	invoice.colors();
-	invoice.print();
+	edit.datepicker();
+	edit.quantity();
+	edit.orders();
+	edit.colors();
+	edit.save();
+	
+	edit.initialize();
 });
 
 //functions
-invoice = {
+edit = {
 	datepicker:function(){
 
 		
@@ -134,27 +136,48 @@ invoice = {
 			
 		});
 	},
-	print: function(){
-		$(".printCustomerCopy").click(function(){
-			var type = $(this).attr('id').replace('printCustomerCopy-','');
+	save: function(){
+		$("#editButton").click(function(){
+
 			var count_invoice_rows = $("#invoiceTbody tr").length;
 			if(count_invoice_rows>0){
-				switch(type){
-					case 'No':
-						$('#invoiceForm').attr('action','/invoices/process_dropoff_no_copy');
-					break;
-					
-					default:
-						$('#invoiceForm').attr('action','/invoices/process_dropoff_copy');
-					break;
-				}
-				
+
 				$('#invoiceForm').submit();				
 			} else {
 				alert('There is no invoice to create. Please select at least one inventory item.');
 			}
 
 		});
+	},
+	initialize: function(){
+		$("#invoiceTable tbody tr").each(function(){
+
+			color_li_count = $(this).find('ul li').length;
+			if(color_li_count > 0){
+				$(this).find('ul li').each(function(en){
+					color_grab_qty = $(this).attr('count');
+					color_grab_color = $(this).attr('color');
+					color_item_id = $(this).parents('tr:first').attr('id').replace('invoice_item_td-','');
+
+					colors_array = colors_form_input_array(color_grab_qty, color_grab_color, color_item_id, en);
+					$(this).find('.colorsFormInput').remove();
+					$(this).append(colors_array);
+				});
+				
+			}
+
+			//click to remove
+			$(this).find('.removeRow').click(function(){
+				if(confirm('Would you like to delete this row?')){
+					$(this).parents('tr:first').remove();
+					summary.sum_all();
+				}
+			});	
+
+		});	
+
+		
+		summary.sum_all();
 	}
 };
 

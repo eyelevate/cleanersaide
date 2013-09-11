@@ -68,17 +68,68 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 	<div class="well well-large">
 		<form action="/invoices/pickup" method="post">
 			<h4 class="heading">Invoices</h4>
-			<table class="table table-bordered table-hover table-striped">
+			<table class="table table-bordered table-hover table-condensed">
 				<thead>
 					<tr>
 						<th>Invoice</th>
+						<th>Rack</th>
 						<th>Drop</th>
 						<th>Due</th>
-						<th>Items</th>
 						<th>Qty</th>
+						<th>Items</th>	
 						<th>Price</th>
+						<th>Actions</th>
 					</tr>
 				</thead>
+				<tbody>
+				<?php
+				
+				foreach ($invoices as $inv) {
+					$invoice_id = sprintf('%06d',$inv['Invoice']['invoice_id']);
+					$quantity = $inv['Invoice']['quantity'];
+					$total = sprintf('%.2f',$inv['Invoice']['total']);
+					$created = date('D n/d/y',strtotime($inv['Invoice']['created']));
+					$due_date = date('D n/d/y',strtotime($inv['Invoice']['due_date']));
+					//create items string
+					$items = json_decode($inv['Invoice']['items'],true);
+					$item_list = '';
+					foreach ($items as $item) {
+						$item_qty = $item['quantity'];
+						$item_name = $item['name'];
+						$item_colors = $item['colors'];
+						
+						//switch qty
+						if($item_qty > 1){
+							$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+						} else {
+							$item_list .= '<span class="badge">'.$item_name.'</span>';
+						}
+					}
+
+				?>
+					<tr>
+						<td><?php echo $invoice_id;?></td>
+						<td></td>
+						<td><?php echo $created;?></td>
+						<td><?php echo $due_date;?></td>
+						<td><?php echo $quantity;?></td>
+						<td><?php echo $item_list;?></td>		
+						<td>$<?php echo $total;?></td>
+						<td>
+							<ul class="unstyled">
+								<li class="hide"><?php echo $this->Form->postLink(); ?></li>
+								<li class="pull-left" style="margin-right:5px;"><?php echo $this->Form->postLink(__('Edit'), array('action' => 'edit', $invoice_id), null, __('Are you sure you want to edit Invoice #%s?', $invoice_id)); ?></li>
+								<li class="pull-left"><?php echo $this->Form->postLink(__('Cancel'), array('action' => 'delete', $invoice_id), null, __('Are you sure you want to cancel Invoice #%s?', $invoice_id)); ?></li>
+							</ul>
+						</td>
+					</tr>
+				<?php
+				}
+				?>
+				</tbody>
+				<tfoot>
+					
+				</tfoot>
 			</table>
 			<?php
 			if(!is_null($customer_id)){

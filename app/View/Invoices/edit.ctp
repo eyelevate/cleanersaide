@@ -1,7 +1,7 @@
 <?php
 $this->Html->css(array('admin/invoices_dropoff'),'stylesheet', array('inline' => false)); 
 //add scripts to header
-echo $this->Html->script(array('admin/invoices_dropoff.js'),FALSE);
+echo $this->Html->script(array('admin/invoices_edit.js'),FALSE);
 
 $tax_rate  = 0;
 if(!empty($taxes)){
@@ -10,11 +10,15 @@ if(!empty($taxes)){
 	}
 }
 
-
+//get important variables
+foreach ($invoices as $i) {
+	$customer_id = $i['Invoice']['customer_id'];
+	$due_date = date('n/d/Y',strtotime($i['Invoice']['due_date']));
+}
 
 ?>
 <div class="row-fluid">
-	<h1 class="heading">Drop Off</h1>
+	<h1 class="heading">Edit Invoice #<?php echo $invoice_id;?></h1>
 	<div class="formRow">
 		<div class="pull-left span12">
 			<ul style="margin-left:0px;" class="number_list unstyled">
@@ -101,7 +105,7 @@ if(!empty($taxes)){
 			</div>
 		</div>
 		<div class="pull-left span6 well well-small" style="background-color:#ffffff">
-			<form id="invoiceForm" method="post" action="/invoices/process_dropoff">
+			<form id="invoiceForm" method="post" action="/invoices/process_edit">
 				<legend>Invoice Summary</legend>
 				<table id="invoiceTable" class="table table-bordered table-condensed">
 					
@@ -115,7 +119,64 @@ if(!empty($taxes)){
 						</tr>
 					</thead>
 					<tbody id="invoiceTbody">
+					<?php
+					$item_colors = '';
+					foreach ($invoices as $inv) {
+						$items = json_decode($inv['Invoice']['items'],true);
+						
+						if(count($items)>0){
+							
+							foreach ($items as $ikey => $ivalue) {
+								$item_qty = $ivalue['quantity'];
+								$item_name = $ivalue['name'];
+								$item_bt = $ivalue['before_tax'];
+								$item_id = $ivalue['item_id'];
+								$item_colors = $ivalue['colors'];
 
+								?>
+								<tr id="invoice_item_td-<?php echo $item_id;?>" class="invoice_item_td" status="notactive">
+									<td class="quantityTd"><?php echo $item_qty;?></td>
+									<td class="itemTd"><?php echo $item_name;?></td>
+									<td class="colorsTd">
+										<ul class="unstyled" count="0">
+										<?php
+										if(count($item_colors)>0){
+											foreach ($item_colors as $ckey => $cvalue) {
+												$color_qty = $cvalue['quantity'];
+												$color_name = $cvalue['color'];
+
+												if($color_qty > 1){
+	
+													$color_title = '('.$color_qty.'x) '.$color_name;
+												} else {
+													$color_title = $color_name;
+												}
+												
+												?>
+												<li class="badge badge-inverse pull-left" color="<?php echo $color_name;?>" count="<?php echo $color_qty;?>"><?php echo $color_title;?></li>
+												<?php
+											}
+										}										
+										?>											
+										</ul>
+									</td>
+									<td class="priceTd"><?php echo $item_bt;?></td>
+									<td>
+										<a class="removeRow">remove</a>
+										<div class="invoiceData hide">
+											<input id="invoiceItemInput-quantity" type="hidden" name="data[Invoice][items][<?php echo $item_id;?>][quantity]" value="<?php echo $item_qty;?>"/>
+											<input id="invoiceItemInput-name" type="hidden" name="data[Invoice][items][<?php echo $item_id;?>][name]" value="<?php echo $item_name;?>"/>
+											<input id="invoiceItemInput-before_tax" type="hidden" name="data[Invoice][items][<?php echo $item_id;?>][before_tax]" value="<?php echo $item_bt;?>"/>
+											<input id="invoiceItemInput-item_id" type="hidden" name="data[Invoice][items][<?php echo $item_id;?>][item_id]" value="<?php echo $item_id;?>"/>											
+										</div>
+									</td>
+								</tr>
+								<?php
+
+							}
+						}
+					}
+					?>
 					</tbody>
 					<tfoot>
 						<tr>
@@ -141,7 +202,7 @@ if(!empty($taxes)){
 					</tfoot>
 				</table>
 				<div id="hiddenInvoiceDiv" class="hide">
-					<input type="hidden" name="data[Invoice][customer_id]" value="<?php echo $customer_id;?>"/>
+					<input type="hidden" name="data[Invoice][invoice_id]" value="<?php echo $invoice_id;?>"/>
 					<input id="due_date_input" type="hidden" name="data[Invoice][due_date]" value="<?php echo $due_date;?>"/>
 				</div>
 				<div id="hiddenTotalsDiv" class="hide"></div>
@@ -230,8 +291,7 @@ if(!empty($taxes)){
 	    </div>
 	    <div class="modal-footer">
 	      <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-	      <button id="printCustomerCopy-No" type="button" class="printCustomerCopy btn btn-danger pull-right">Customer Copy + Store Copy</button>
-	      <button id="printCustomerCopy-Yes" type="button" class=" printCustomerCopy btn btn-primary pull-right">Store Copy Only</button>
+	      <button id="editButton" type="button" class="btn btn-primary pull-right">Edit Invoice</button>
 	    </div>
 	  </div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->

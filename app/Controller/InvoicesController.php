@@ -53,15 +53,19 @@ class InvoicesController extends AppController {
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);
 		
+		//setup variables
+		$company_id = $_SESSION['company_id'];
+		
 		//get data from db
 		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
-		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status'=>'1')));
+		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status'=>'1','company_id'=>$company_id)));
 		
 		
 		
 		//push data to view page
 		$this->set('users',$users);
 		$this->set('customer_id',$id);		
+		$this->set('invoices',$invoices);
 	}
 
 /**
@@ -95,23 +99,61 @@ class InvoicesController extends AppController {
 		// //get colors
 		// $colors = $this->Color->find('all',array('conditions'=>array('company_id'=>$company_id)));
 		
+		//get basic due date
+		$due = date('n/d/Y',strtotime($this->Invoice->date_due()));
+		
 		$this->set('inv_groups',$inv_groups);
 		$this->set('inv_items',$inv_items);
 		$this->set('taxes',$taxes);
 		$this->set('customer_id',$id);
+		$this->set('due_date',$due);
 		
 			
 	}
-
-/**
- * pickup method
- *
- * @return void
- */
-	public function pickup() {
+	public function edit($invoice_id = null)
+	{
 		//set the admin navigation
 		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
-		$page_url = '/admins/index';
+		$page_url = '/invoices/dropoff';
+		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
+		$this->set('admin_nav',$admin_nav);
+		$this->set('admin_pages',$page_url);
+		$this->set('admin_check',$admin_check);
+		//set username
+		$username = $this->Auth->user('username');
+		$this->set('username',$username);
+	
+		$company_id = $_SESSION['company_id'];
+
+		// //get inventory group_data
+		$inv_groups = $this->Inventory->find('all',array('conditions'=>array('company_id'=>$company_id)));
+		$inv_items = $this->Inventory_item->find('all',array('conditions'=>array('company_id'=>$company_id)));
+
+		//tax
+		$taxes = $this->Tax->find('all',array('conditions'=>array('company_id'=>$company_id)));
+		
+				
+		// //get colors
+		// $colors = $this->Color->find('all',array('conditions'=>array('company_id'=>$company_id)));
+		
+		//get invoice information
+		$invoices = $this->Invoice->find('all',array('conditions'=>array('invoice_id'=>$invoice_id,'company_id'=>$company_id)));
+		
+
+		
+		$this->set('inv_groups',$inv_groups);
+		$this->set('inv_items',$inv_items);
+		$this->set('taxes',$taxes);
+		$this->set('invoice_id',$invoice_id);
+		$this->set('invoices',$invoices);
+				
+	}
+	
+	public function rack()
+	{
+		//set the admin navigation
+		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
+		$page_url = '/invoices/rack';
 		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
 		$this->set('admin_nav',$admin_nav);
 		$this->set('admin_pages',$page_url);
@@ -122,20 +164,61 @@ class InvoicesController extends AppController {
 		//set the action levels
 		$group_id = $this->Auth->user('group_id');
 		
+		//setup variables
+		$company_id = $_SESSION['company_id'];
+		
+				
+	}
 
+/**
+ * pickup method
+ *
+ * @return void
+ */
+	public function pickup($id = null) {
+		//set the admin navigation
+		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
+		$page_url = '/invoices/pickup';
+		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
+		$this->set('admin_nav',$admin_nav);
+		$this->set('admin_pages',$page_url);
+		$this->set('admin_check',$admin_check);
+		//set username
+		$username = $this->Auth->user('username');
+		$this->set('username',$username);
+		//set the action levels
+		$group_id = $this->Auth->user('group_id');
+		
+		//setup variables
+		$company_id = $_SESSION['company_id'];
+		
+		//get data from db
+		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
+		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status'=>'1','company_id'=>$company_id)));
+		
+		//push data to view page
+		$this->set('users',$users);
+		$this->set('customer_id',$id);		
+		$this->set('invoices',$invoices);
 
 	}
 	public function process_dropoff_no_copy()
 	{
 		if($this->request->is('post')){
 
+			$customer_id = $this->request->data['Invoice']['customer_id'];
+			$this->request->data['Invoice']['due_date'] = date('Y-m-d',strtotime($this->request->data['Invoice']['due_date'])).' 16:00:00';
+			$due_date = $this->request->data['Invoice']['due_date'];
 			//add in special variables
-			$invoice_data = $this->Invoice->invoice_complete($this->request->data);
-
+			$invoice_complete = $this->Invoice->invoice_complete($this->request->data);	
+			//reorganize inventory by type and save into invoices table
+					
+			$items = $this->request->data['Invoice']['items'];	
+			$store_copy = $this->Inventory_item->reorganizeByInventory($items);	
 			
-			if($this->Invoice->save($invoice_data)){
-				$items = $this->request->data['Invoice']['items'];	
-				$store_copy = $this->Inventory_item->reorganizeByInventory($items);		
+			$invoice_split = $this->Invoice->invoice_split($store_copy, $customer_id, $due_date);
+
+			if($this->Invoice->saveAll($invoice_split['Invoice'])){
 				
 				$this->set('store',$store_copy);		
 
@@ -147,17 +230,63 @@ class InvoicesController extends AppController {
 	public function process_dropoff_copy()
 	{
 		if($this->request->is('post')){
+
+			$customer_id = $this->request->data['Invoice']['customer_id'];
+			$this->request->data['Invoice']['due_date'] = date('Y-m-d',strtotime($this->request->data['Invoice']['due_date'])).' 16:00:00';
+			$due_date = $this->request->data['Invoice']['due_date'];
 			//add in special variables
-			$invoice_data = $this->Invoice->invoice_complete($this->request->data);			
+			$invoice_complete = $this->Invoice->invoice_complete($this->request->data);	
+			//reorganize inventory by type and save into invoices table
+					
+			$items = $this->request->data['Invoice']['items'];	
+			$store_copy = $this->Inventory_item->reorganizeByInventory($items);	
 			
-			if($this->Invoice->save($invoice_data)){
-				$items = $this->request->data['Invoice']['items'];	
-				$store_copy = $this->Inventory_item->reorganizeByInventory($items);		
+			$invoice_split = $this->Invoice->invoice_split($store_copy, $customer_id, $due_date);
+
+			if($this->Invoice->saveAll($invoice_split['Invoice'])){
+	
 				
 				$this->set('customer',$this->request->data);
 				$this->set('store',$store_copy);			
 			}
 		}
+	}
+	
+	public function process_edit()
+	{
+		if($this->request->is('post')){
+
+			//get unique id of invoice
+			$company_id = $_SESSION['company_id'];
+			$invoice_id = $this->request->data['Invoice']['invoice_id'];
+			$invoices = $this->Invoice->find('all',array('conditions'=>array('invoice_id'=>$invoice_id,'company_id'=>$company_id)));
+			$this->request->data['Invoice']['due_date'] = date('Y-m-d',strtotime($this->request->data['Invoice']['due_date'])).' 16:00:00';
+			$this->request->data['Invoice']['items'] = json_encode($this->request->data['Invoice']['items']);
+			
+			if(count($invoices)>0){
+				foreach ($invoices as $invoice) {
+					$id = $invoice['Invoice']['id'];
+					$customer_id = $invoice['Invoice']['customer_id'];
+				}
+				$this->Invoice->id = $id;
+
+				if($this->Invoice->save($this->request->data)){
+					$this->Session->setFlash(__('Invoice #'.$invoice_id.' has been successfully edited.'),'default',array(),'success');
+					$this->redirect(array('controller'=>'invoices','action'=>'index',$customer_id));
+				}
+				
+			} else {
+				$this->Session->setFlash(__('No such invoice was created. Please search again.'),'default',array(),'error');
+				$this->redirect(array('controller'=>'admin','action'=>'index'));				
+			}
+
+
+		}		
+	}
+
+	public function process_rack()
+	{
+		
 	}
 
 	public function process_pickup()
