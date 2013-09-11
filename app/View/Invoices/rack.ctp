@@ -17,27 +17,35 @@ echo $this->Html->script(array('admin/invoices_rack.js'),FALSE);
 				<a id="submitRack" class="add-on">Submit</a>
 			</div>
 		</div>
-		<table class="table table-bordered">
-			<thead>
-				<tr>
-					<th>Invoice</th>
-					<th>Rack</th>
-					<th>Actions</th>
-				</tr>
-			</thead>
-			<tbody id="rackTbody">
+		<form action="/invoices/process_rack" method="post">
 			
-			</tbody>
-			<tfoot>
-				<tr>
-					<td style="border-top:2px solid #5e5e5e;"></td>
-					<th style="border-top:2px solid #5e5e5e;">Quantity</th>
-					<td style="border-top:2px solid #5e5e5e;"></td>
-				</tr>
-			</tfoot>
-		</table>
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>Invoice</th>
+						<th>Rack</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody id="rackTbody">
+				
+				</tbody>
+				<tfoot>
+					<tr>
+						<td style="border-top:2px solid #5e5e5e;"></td>
+						<th style="border-top:2px solid #5e5e5e;">Quantity</th>
+						<td id="total_quantity" style="border-top:2px solid #5e5e5e;">0</td>
+					</tr>
+				</tfoot>
+			</table>
+		</form>
 	</div>
-	
+	<div class="clearfix">
+		<button id="cancelDropOffButton" class="btn btn-danger pull-left">Cancel</button>
+		  <!-- Button trigger modal -->
+		<a data-toggle="modal" href="#myModal" class="btn btn-primary btn-lg pull-right">Finish</a>
+
+	</div>	
 </div>
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

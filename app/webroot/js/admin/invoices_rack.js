@@ -1,9 +1,21 @@
 $(document).ready(function(){
 	rack.events();
+	
+	setTimeout(function(){
+		rack.initialize();
+	}, 1000);
+	
+	
 });
 
 rack = {
+	initialize: function(){
+		$("#rackInput").val('').focus();	
+	},
+	
 	events: function(){
+		
+		
 		$('#rackInput').on('keyup', function(e) {
 		    if (e.which == 13) {
 		        $("#submitRack").click();
@@ -25,6 +37,14 @@ rack = {
 					$("#rackTbody tr").attr('status','notactive');
 					$("#rackTbody").append(new_row);
 					
+					$("#rackTbody tr[status='active'] .removeRow").click(function(){
+						if(confirm('Are you sure you want to delete this row?')){
+							$(this).parents('tr:first').remove();
+							rack.summary();
+						}
+					});
+					
+					rack.summary();
 					rack.print(); //print a new row
 				break;
 				
@@ -33,8 +53,13 @@ rack = {
 					$("#rackTbody tr[status='active'] #rackNumberInput").val(number);
 				break;
 			}
-			
+			$("#rackInput").val('').focus();
 		});
+	},
+	
+	summary: function(count){
+		count = $("#rackTbody tr").length;
+		$("#total_quantity").html(count);
 	},
 	
 	print: function(){
@@ -52,7 +77,7 @@ var newRow = function(invoice_id,idx){
 			'<input id="rackNumberInput" type="text" value="" name="data[Invoice]['+count_row+'][rack]"/>'+
 		'</td>'+
 		'<td>'+
-			'<a class="removeRow">remove</a>'+
+			'<a class="removeRow" style="cursor:pointer;">remove</a>'+
 		'</td>'+
 		'</tr>';
 	return row;
