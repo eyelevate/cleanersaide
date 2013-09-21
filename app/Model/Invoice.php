@@ -143,5 +143,37 @@ class Invoice extends AppModel {
 		$due_date = date('Y-m-d',strtotime($today) + ($due * 86400)).' 16:00:00';
 		return $due_date;
 	}
+	
+	public function rackEmailData($email,$invoice_id, $company_id)
+	{
+		$invoice = $this->find('all',array('conditions'=>array('invoice_id'=>$invoice_id,'company_id'=>$company_id)));
+		$idx = -1;
+		if(count($invoice)>0){
+			foreach ($invoice as $inv) {
+				$idx++;
+				$customer_id = $inv['Invoice']['customer_id'];
+
+				$email[$customer_id]['Invoice'][$invoice_id]['due_date'] = date('D n/d/y',strtotime($inv['Invoice']['due_date']));
+				$email[$customer_id]['Invoice'][$invoice_id]['pretax'] = $inv['Invoice']['pretax'];
+				$email[$customer_id]['Invoice'][$invoice_id]['tax'] = $inv['Invoice']['tax'];
+				$email[$customer_id]['Invoice'][$invoice_id]['total'] = $inv['Invoice']['total'];
+				$email[$customer_id]['Invoice'][$invoice_id]['items'] = json_decode($inv['Invoice']['items'],true);
+				$customers = ClassRegistry::init('User')->find('all',array('conditions'=>array('User.id'=>$customer_id)));
+				if(count($customers)>0){
+					foreach ($customers as $cust) {
+						$contact_email = $cust['User']['contact_email'];
+						$first_name = $cust['User']['first_name'];
+						$last_name = $cust['User']['last_name'];
+						$email[$customer_id]['email'] = $contact_email;
+						$email[$customer_id]['first_name'] = $first_name;
+						$email[$customer_id]['last_name'] = $last_name;
+						
+					}
+				}
+				
+			}
+		}
+		return $email;
+	}
 }
 ?>

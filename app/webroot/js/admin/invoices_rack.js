@@ -55,6 +55,16 @@ rack = {
 			}
 			$("#rackInput").val('').focus();
 		});
+		
+		$("#rackButton").click(function(){
+			var racks = $("#rackTbody tr").length;
+			if(racks > 0){
+				//inspect all racks
+				$("#finalRackForm").submit();
+			} else{
+				alert('You must have invoices to rack before saving.');
+			}
+		});
 	},
 	
 	summary: function(count){

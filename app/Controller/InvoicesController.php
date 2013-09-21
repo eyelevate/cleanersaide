@@ -166,6 +166,7 @@ class InvoicesController extends AppController {
 		
 		//setup variables
 		$company_id = $_SESSION['company_id'];
+
 		
 				
 	}
@@ -286,7 +287,34 @@ class InvoicesController extends AppController {
 
 	public function process_rack()
 	{
+		$company_id = $_SESSION['company_id'];
 		
+		if($this->request->is('post')){
+
+			//first determine if we are sending out emails
+			$emails = $this->request->data['Email'];
+			switch($emails){
+				case 'Yes':
+					$emailScript = array();
+
+					foreach ($this->request->data['Invoice'] as $invoice) {
+						$invoice_id = $invoice['invoice_id'];
+						$emailScript = $this->Invoice->rackEmailData($emailScript,$invoice_id, $company_id);
+						
+						
+					}
+
+				break;
+					
+				default:
+					foreach ($this->request->data['Invoice'] as $invoice) {
+						$invoice_id = $invoice['invoice_id'];
+
+					}					
+				break;
+			}
+			//next save the racked data
+		}
 	}
 
 	public function process_pickup()
