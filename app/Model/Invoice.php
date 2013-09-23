@@ -153,6 +153,8 @@ class Invoice extends AppModel {
 				$idx++;
 				$customer_id = $inv['Invoice']['customer_id'];
 
+
+
 				$email[$customer_id]['Invoice'][$invoice_id]['due_date'] = date('D n/d/y',strtotime($inv['Invoice']['due_date']));
 				$email[$customer_id]['Invoice'][$invoice_id]['pretax'] = $inv['Invoice']['pretax'];
 				$email[$customer_id]['Invoice'][$invoice_id]['tax'] = $inv['Invoice']['tax'];
@@ -173,6 +175,7 @@ class Invoice extends AppModel {
 				
 			}
 		}
+
 		return $email;
 	}
 }

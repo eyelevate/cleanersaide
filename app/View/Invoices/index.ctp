@@ -68,7 +68,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 	<div class="well well-large">
 		<form action="/invoices/pickup" method="post">
 			<h4 class="heading">Invoices</h4>
-			<table class="table table-bordered table-hover table-condensed">
+			<table class="table table-bordered table-striped table-hover">
 				<thead>
 					<tr>
 						<th>Invoice</th>
@@ -90,6 +90,10 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 					$total = sprintf('%.2f',$inv['Invoice']['total']);
 					$created = date('D n/d/y',strtotime($inv['Invoice']['created']));
 					$due_date = date('D n/d/y',strtotime($inv['Invoice']['due_date']));
+					$due_string = strtotime($inv['Invoice']['due_date']);
+					$today_string = strtotime(date('Y-m-d H:i:s'));
+					$rack = $inv['Invoice']['rack'];
+					$status = $inv['Invoice']['status'];
 					//create items string
 					$items = json_decode($inv['Invoice']['items'],true);
 					$item_list = '';
@@ -105,17 +109,33 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 							$item_list .= '<span class="badge">'.$item_name.'</span>';
 						}
 					}
+					
+					switch($status){
+						case '1': //newly created 
+						
+							if($today_string > $due_string){ //if todays date is greater than the due date and not racked
+								$background_color = '#ffd0d0';
+							} else { //still not racked but not ready yet
+								$background_color = '';
+							}
+						break;
+						
+						case '3': //racked and ready to pick up
+							$background_color = '#d0ffef';
+						break;
+							
+					}
 
 				?>
 					<tr>
-						<td><?php echo $invoice_id;?></td>
-						<td></td>
-						<td><?php echo $created;?></td>
-						<td><?php echo $due_date;?></td>
-						<td><?php echo $quantity;?></td>
-						<td><?php echo $item_list;?></td>		
-						<td>$<?php echo $total;?></td>
-						<td>
+						<td style="background-color:<?php echo $background_color;?>"><?php echo $invoice_id;?></td>
+						<td style="background-color:<?php echo $background_color;?>"><?php echo $rack;?></td>
+						<td style="background-color:<?php echo $background_color;?>"><?php echo $created;?></td>
+						<td style="background-color:<?php echo $background_color;?>"><?php echo $due_date;?></td>
+						<td style="background-color:<?php echo $background_color;?>"><?php echo $quantity;?></td>
+						<td style="background-color:<?php echo $background_color;?>"><?php echo $item_list;?></td>		
+						<td style="background-color:<?php echo $background_color;?>">$<?php echo $total;?></td>
+						<td style="background-color:<?php echo $background_color;?>">
 							<ul class="unstyled">
 								<li class="hide"><?php echo $this->Form->postLink(); ?></li>
 								<li class="pull-left" style="margin-right:5px;"><?php echo $this->Form->postLink(__('Edit'), array('action' => 'edit', $invoice_id), null, __('Are you sure you want to edit Invoice #%s?', $invoice_id)); ?></li>

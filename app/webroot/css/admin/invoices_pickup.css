@@ -1,0 +1,28 @@
+/**
+ * 	Invoices/pickup
+ */
+.pointer {
+	cursor:pointer;
+}
+.status_one{ 
+	background-color: '';
+}
+.status_two{
+	background-color: #ffd0d0;
+}
+
+.status_three{
+	background-color: #d0ffef;
+}
+
+.status_select{
+	background-color: #38f3ff;
+	font-weight:bold;
+}
+
+#total_quantity, #total_bt, #total_tax, #total_discount, #total_at{
+	text-align:right;
+}
+#total_discount, #discountTotal{
+	color:#ff0000;
+}

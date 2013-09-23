@@ -52,13 +52,15 @@ class InvoicesController extends AppController {
 		$this->set('admin_nav',$admin_nav);
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);
-		
+		//set username
+		$username = $this->Auth->user('username');
+		$this->set('username',$username);		
 		//setup variables
 		$company_id = $_SESSION['company_id'];
 		
 		//get data from db
 		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
-		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status'=>'1','company_id'=>$company_id)));
+		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status <'=>'4','company_id'=>$company_id)));
 		
 		
 		
@@ -195,7 +197,7 @@ class InvoicesController extends AppController {
 		
 		//get data from db
 		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
-		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status'=>'1','company_id'=>$company_id)));
+		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status <'=>'4','company_id'=>$company_id)));
 		
 		//push data to view page
 		$this->set('users',$users);
@@ -295,25 +297,27 @@ class InvoicesController extends AppController {
 			$emails = $this->request->data['Email'];
 			switch($emails){
 				case 'Yes':
-					$emailScript = array();
+					$emailData = array(); //start email data array
 
 					foreach ($this->request->data['Invoice'] as $invoice) {
 						$invoice_id = $invoice['invoice_id'];
-						$emailScript = $this->Invoice->rackEmailData($emailScript,$invoice_id, $company_id);
-						
-						
+						$emailData = $this->Invoice->rackEmailData($emailData,$invoice_id, $company_id);
+
 					}
+					
+					//$emailScript =$this->Invoice->rackEmailScript($emailData);
 
 				break;
 					
-				default:
-					foreach ($this->request->data['Invoice'] as $invoice) {
-						$invoice_id = $invoice['invoice_id'];
 
-					}					
-				break;
 			}
 			//next save the racked data
+			foreach ($this->request->data['Invoice'] as $rack) {
+
+				$this->Invoice->query('update invoices set rack="'.$rack['rack'].'", status="3" where invoice_id="'.$rack['invoice_id'].'" and company_id ="'.$company_id.'"');
+			}
+			$this->Session->setFlash(__('You have successfully racked '.count($this->request->data['Invoice']).' invoices!'),'default',array(),'success');
+			$this->redirect(array('controller'=>'invoices','action'=>'rack'));
 		}
 	}
 

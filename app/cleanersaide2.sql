@@ -300,12 +300,13 @@ CREATE TABLE `invoices` (
   `discount` decimal(11,2) DEFAULT NULL,
   `discount_id` int(11) DEFAULT NULL,
   `total` decimal(11,2) DEFAULT NULL,
+  `rack` varchar(11) DEFAULT NULL,
   `status` int(1) DEFAULT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   `due_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -314,7 +315,7 @@ CREATE TABLE `invoices` (
 
 LOCK TABLES `invoices` WRITE;
 /*!40000 ALTER TABLE `invoices` DISABLE KEYS */;
-INSERT INTO `invoices` VALUES (1,1,1,7525,'{\"1\":{\"colors\":[{\"quantity\":\"2\",\"color\":\"tan\"}],\"quantity\":\"2\",\"name\":\"Dry Clean Shirt\",\"before_tax\":\"11.00\",\"item_id\":\"1\"},\"2\":{\"colors\":[{\"quantity\":\"2\",\"color\":\"brown\"}],\"quantity\":\"2\",\"name\":\"Dress\",\"before_tax\":\"15.00\",\"item_id\":\"2\"}}',4,'26.00','2.47',NULL,NULL,'28.47',1,'2013-09-10 07:06:32','2013-09-10 07:06:32','2013-09-12 16:00:00'),(2,2,1,7525,'{\"3\":{\"colors\":[{\"quantity\":\"3\",\"color\":\"pink\"},{\"quantity\":\"3\",\"color\":\"purple\"}],\"quantity\":\"6\",\"name\":\"Mens Shirt\",\"before_tax\":\"9.00\",\"item_id\":\"3\"}}',6,'9.00','0.86',NULL,NULL,'9.86',1,'2013-09-10 07:06:32','2013-09-10 22:37:40','2013-09-13 16:00:00');
+INSERT INTO `invoices` VALUES (1,1,1,7525,'{\"1\":{\"colors\":[{\"quantity\":\"1\",\"color\":\"purple\"},{\"quantity\":\"2\",\"color\":\"pink\"},{\"quantity\":\"2\",\"color\":\"tan\"}],\"quantity\":\"5\",\"name\":\"Dry Clean Shirt\",\"before_tax\":\"27.50\",\"item_id\":\"1\"},\"2\":{\"colors\":[{\"quantity\":\"1\",\"color\":\"black\"},{\"quantity\":\"1\",\"color\":\"white\"},{\"quantity\":\"1\",\"color\":\"red\"},{\"quantity\":\"2\",\"color\":\"green\"}],\"quantity\":\"5\",\"name\":\"Dress\",\"before_tax\":\"37.50\",\"item_id\":\"2\"}}',10,'65.00','6.18',NULL,NULL,'71.18',NULL,1,'2013-09-23 08:52:53','2013-09-23 08:52:53','2013-09-25 16:00:00'),(2,2,1,7525,'{\"3\":{\"colors\":[{\"quantity\":\"2\",\"color\":\"pink\"},{\"quantity\":\"3\",\"color\":\"tan\"}],\"quantity\":\"5\",\"name\":\"Mens Shirt\",\"before_tax\":\"7.50\",\"item_id\":\"3\"}}',5,'7.50','0.71',NULL,NULL,'8.21',NULL,1,'2013-09-23 08:52:53','2013-09-23 08:52:53','2013-09-25 16:00:00'),(3,3,1,7525,'{\"5\":{\"colors\":[{\"quantity\":\"5\",\"color\":\"brown\"}],\"quantity\":\"5\",\"name\":\"Tablecloth (Lg)\",\"before_tax\":\"117.80\",\"item_id\":\"5\"}}',5,'117.80','11.19',NULL,NULL,'128.99',NULL,1,'2013-09-23 08:52:53','2013-09-23 08:52:53','2013-09-25 16:00:00');
 /*!40000 ALTER TABLE `invoices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -515,4 +516,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-09-13  2:43:35
+-- Dump completed on 2013-09-23 20:14:57
