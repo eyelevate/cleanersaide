@@ -32,6 +32,23 @@ CREATE TABLE `acl_permissions` (
 ) ENGINE=InnoDB AUTO_INCREMENT=828 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+
+CREATE TABLE `deliveries` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `company_id` int(11) DEFAULT NULL,
+  `day` varchar(25) DEFAULT NULL,
+  `limit` int(11) DEFAULT NULL,
+  `start_time` varchar(25) DEFAULT NULL,
+  `end_time` varchar(25) DEFAULT NULL,
+  `zipcode` text DEFAULT NULL,
+  `blackout` text DEFAULT NULL,
+  `status` int(1) DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=828 DEFAULT CHARSET=latin1;
+
 --
 -- Dumping data for table `acl_permissions`
 --

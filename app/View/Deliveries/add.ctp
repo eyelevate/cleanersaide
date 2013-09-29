@@ -18,16 +18,16 @@ echo $this->Form->create();
 				<div class="accordion-inner">
 					<legend>Setup Time & Limits</legend>
 					<?php
-					echo $this->Form->input('limit',array(
+					echo $this->Form->input('Deliveries.0.limit',array(
 						'label'=>'Delivery Limit (How many stops per day)',
 						
 					));
-					echo $this->Form->input('start_time');
-					echo $this->Form->input('end_time');
+					echo $this->Form->input('Deliveries.0.start_time');
+					echo $this->Form->input('Deliveries.0.end_time');
 					?>
 					<legend>Setup Zipcodes and Blackout Dates</legend>
 					<?php
-					echo $this->Form->input('zipcode',array(
+					echo $this->Form->input('Deliveries.0.zipcode',array(
 						'before'=>'<div class="input-append">',
 						'after'=>'<a class="add-on" style="cursor:pointer">Add Zipcode</a></div>'	
 					));
@@ -37,7 +37,7 @@ echo $this->Form->create();
 					</div>
 					<hr/>
 					<?php
-					echo $this->Form->input('blackout',array(
+					echo $this->Form->input('Deliveries.0.blackout',array(
 						'before'=>'<div class="input-append">',
 						'after'=>'<a class="add-on" style="cursor:pointer">Add Blackout</a></div>'
 					));
@@ -55,7 +55,35 @@ echo $this->Form->create();
 			</div>
 			<div class="accordion-body collapse" id="collapse-tuesday">
 				<div class="accordion-inner">
-					
+					<legend>Setup Time & Limits</legend>
+					<?php
+					echo $this->Form->input('Deliveries.1.limit',array(
+						'label'=>'Delivery Limit (How many stops per day)',
+						
+					));
+					echo $this->Form->input('Deliveries.1.start_time');
+					echo $this->Form->input('Deliveries.1.end_time');
+					?>
+					<legend>Setup Zipcodes and Blackout Dates</legend>
+					<?php
+					echo $this->Form->input('Deliveries.1.zipcode',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Zipcode</a></div>'	
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>
+					<hr/>
+					<?php
+					echo $this->Form->input('Deliveries.1.blackout',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Blackout</a></div>'
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>				
 				</div>
 			</div>
 		</div>
@@ -65,7 +93,35 @@ echo $this->Form->create();
 			</div>
 			<div class="accordion-body collapse" id="collapse-wednesday">
 				<div class="accordion-inner">
-					
+					<legend>Setup Time & Limits</legend>
+					<?php
+					echo $this->Form->input('Deliveries.2.limit',array(
+						'label'=>'Delivery Limit (How many stops per day)',
+						
+					));
+					echo $this->Form->input('Deliveries.2.start_time');
+					echo $this->Form->input('Deliveries.2.end_time');
+					?>
+					<legend>Setup Zipcodes and Blackout Dates</legend>
+					<?php
+					echo $this->Form->input('Delivery.2.zipcode',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Zipcode</a></div>'	
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>
+					<hr/>
+					<?php
+					echo $this->Form->input('Deliveries.2.blackout',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Blackout</a></div>'
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>				
 				</div>
 			</div>
 		</div>
@@ -75,7 +131,35 @@ echo $this->Form->create();
 			</div>
 			<div class="accordion-body collapse" id="collapse-thursday">
 				<div class="accordion-inner">
-					
+					<legend>Setup Time & Limits</legend>
+					<?php
+					echo $this->Form->input('Deliveries.3.limit',array(
+						'label'=>'Delivery Limit (How many stops per day)',
+						
+					));
+					echo $this->Form->input('Deliveries.3.start_time');
+					echo $this->Form->input('Deliveries.3.end_time');
+					?>
+					<legend>Setup Zipcodes and Blackout Dates</legend>
+					<?php
+					echo $this->Form->input('Deliveries.3.zipcode',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Zipcode</a></div>'	
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>
+					<hr/>
+					<?php
+					echo $this->Form->input('Deliveries.3.blackout',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Blackout</a></div>'
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>					
 				</div>
 			</div>
 		</div>
@@ -85,7 +169,35 @@ echo $this->Form->create();
 			</div>
 			<div class="accordion-body collapse" id="collapse-friday">
 				<div class="accordion-inner">
-					
+					<legend>Setup Time & Limits</legend>
+					<?php
+					echo $this->Form->input('Deliveries.4.limit',array(
+						'label'=>'Delivery Limit (How many stops per day)',
+						
+					));
+					echo $this->Form->input('Deliveries.4.start_time');
+					echo $this->Form->input('Deliveries.4.end_time');
+					?>
+					<legend>Setup Zipcodes and Blackout Dates</legend>
+					<?php
+					echo $this->Form->input('Deliveries.4.zipcode',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Zipcode</a></div>'	
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>
+					<hr/>
+					<?php
+					echo $this->Form->input('Deliveries.4.blackout',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Blackout</a></div>'
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>				
 				</div>
 			</div>
 		</div>
@@ -95,7 +207,35 @@ echo $this->Form->create();
 			</div>
 			<div class="accordion-body collapse" id="collapse-saturday">
 				<div class="accordion-inner">
-					
+					<legend>Setup Time & Limits</legend>
+					<?php
+					echo $this->Form->input('Deliveries.5.limit',array(
+						'label'=>'Delivery Limit (How many stops per day)',
+						
+					));
+					echo $this->Form->input('Deliveries.5.start_time');
+					echo $this->Form->input('Deliveries.5.end_time');
+					?>
+					<legend>Setup Zipcodes and Blackout Dates</legend>
+					<?php
+					echo $this->Form->input('Deliveries.5.zipcode',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Zipcode</a></div>'	
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>
+					<hr/>
+					<?php
+					echo $this->Form->input('Deliveries.5.blackout',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Blackout</a></div>'
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>					
 				</div>
 			</div>
 		</div>
@@ -105,7 +245,35 @@ echo $this->Form->create();
 			</div>
 			<div class="accordion-body collapse" id="collapse-sunday">
 				<div class="accordion-inner">
-					
+					<legend>Setup Time & Limits</legend>
+					<?php
+					echo $this->Form->input('Deliveries.6.limit',array(
+						'label'=>'Delivery Limit (How many stops per day)',
+						
+					));
+					echo $this->Form->input('Deliveries.6.start_time');
+					echo $this->Form->input('Deliveries.6.end_time');
+					?>
+					<legend>Setup Zipcodes and Blackout Dates</legend>
+					<?php
+					echo $this->Form->input('Deliveries.6.zipcode',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Zipcode</a></div>'	
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>
+					<hr/>
+					<?php
+					echo $this->Form->input('Deliveries.6.blackout',array(
+						'before'=>'<div class="input-append">',
+						'after'=>'<a class="add-on" style="cursor:pointer">Add Blackout</a></div>'
+					));
+					?>
+					<div class="well well-small">
+						
+					</div>					
 				</div>
 			</div>
 		</div>
