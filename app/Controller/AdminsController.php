@@ -136,6 +136,9 @@ class AdminsController extends AppController {
 		$this->set('admin_nav',$admin_nav);
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);
+		//set username
+		$username = $this->Auth->user('username');
+		$this->set('username',$username);
 		if($this->request->is('post')){
 			$query = $this->request->data['query'];
 			if(is_numeric($query)){

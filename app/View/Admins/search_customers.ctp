@@ -1,10 +1,15 @@
 <?php
 //CSS Files
 $this->Html->css(array(
-	'admin/events'
+	'admin/search_customers'
 	),
 	'stylesheet',
 	array('inline'=>false)
+);
+echo $this->Html->script(array(
+	'admin/search_customers.js'	
+	),
+	FALSE
 );
 
 ?>
@@ -12,7 +17,7 @@ $this->Html->css(array(
 <div class="formRow">
 	<h2 class="heading">Select Customer</h2>
 	<form action="/admins/search_customers" method="post" >
-		<table class="table table-bordered table-condensed table-hover table-striped">
+		<table id="searchCustomersTable" class="table table-bordered table-hover">
 			<thead>
 				<tr>
 					<th>Id</th>
@@ -43,8 +48,8 @@ $this->Html->css(array(
 					$zip = $u['User']['contact_zip'];
 					$email = $u['User']['contact_email'];
 					?>
-					<tr class="finger">
-						<td><label class="radio"><input value="<?php echo $user_id;?>" type="radio" name="query"/> <?php echo $user_id;?></label></td>
+					<tr id="finger-<?php echo $user_id;?>" class="finger">
+						<td><label class="radio"><input id="indexFingerInput-<?php echo $user_id;?>" class="indexFingerInput" value="<?php echo $user_id;?>" type="radio" name="query"/> <?php echo $user_id;?></label></td>
 						<td><?php echo $last_name;?></td>
 						<td><?php echo $first_name;?></td>
 						<td><?php echo $phone;?></td>

@@ -203,8 +203,37 @@ class InvoicesController extends AppController {
 		$this->set('users',$users);
 		$this->set('customer_id',$id);		
 		$this->set('invoices',$invoices);
+		
+
 
 	}
+	
+	function process_pickup()
+	{
+		$print = $this->request->data['Invoice']['print'];
+		$customer_id = $this->request->data['Invoice']['customer_id'];
+		$company_id = $_SESSION['company_id'];
+		$total_bt = $this->request->data['Invoice']['total_bt'];
+		$quantity = $this->request->data['Invoice']['quantity'];
+		$total_tax = $this->request->data['Invoice']['total_tax'];
+		foreach ($this->request->data['Invoice']['picked_up'] as $key => $value) {
+			$invoice_id = $value['invoice_id'];
+
+			$this->Invoice->query('update invoices set status = 5 where invoice_id ='.$invoice_id.' and company_id ='.$company_id.'');
+		}
+		
+		switch($print){
+			case 'Yes':
+				//place printing code here
+			break;
+				
+			default:
+				$this->Session->setFlash(__('You have successfully finished a pickup reservation session.'),'default',array(),'success');
+				$this->redirect(array('controller'=>'invoices','action'=>'dropoff',$customer_id));
+			break;
+		}
+	}
+	
 	public function process_dropoff_no_copy()
 	{
 		if($this->request->is('post')){
@@ -321,10 +350,6 @@ class InvoicesController extends AppController {
 		}
 	}
 
-	public function process_pickup()
-	{
-
-	}
 
 
 }

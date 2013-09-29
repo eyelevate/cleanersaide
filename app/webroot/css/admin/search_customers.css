@@ -1,0 +1,12 @@
+/**
+ * 	Search customers stylesheet
+ */
+
+#searchCustomersTable tbody tr{
+	cursor:pointer;
+}
+
+.status_select td{
+	background-color: #38f3ff;
+	font-weight:bold;
+}

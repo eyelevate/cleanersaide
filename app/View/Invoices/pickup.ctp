@@ -1,7 +1,12 @@
 <?php
 $this->Html->css(array('admin/invoices_pickup'),'stylesheet', array('inline' => false)); 
 //add scripts to header
-echo $this->Html->script(array('admin/invoices_pickup.js'),FALSE);
+echo $this->Html->script(array(
+	'admin/plugins/jquerypriceformat/jquery.price_format.1.7.min.js',
+	'admin/invoices_pickup.js'	
+	),
+	FALSE
+);
 
 $tax_rate  = 0;
 if(!empty($taxes)){
@@ -112,7 +117,7 @@ foreach ($invoices as $i) {
 				<tr>
 					<th>Discount</th>
 					<td id="total_discount" value="0"></td>
-					<td><button data-toggle="modal" href="#myModalDiscount" class="btn btn-info">Add</button></td>
+					<td><button data-toggle="modal" href="#myModalDiscount" class="btn btn-info" style="width:75px;">Add</button></td>
 				</tr>
 
 			</tbody>
@@ -120,7 +125,7 @@ foreach ($invoices as $i) {
 				<tr>
 					<th style="border-top:2px solid #5e5e5e;">Total Due</th>
 					<td id="total_at" style="border-top:2px solid #5e5e5e;" value="0.00">$0.00</td>
-					<td style="border-top:2px solid #5e5e5e;"><button data-toggle="modal" href="#myModalFinish" class="btn btn-primary">Finish</button></td>
+					<td style="border-top:2px solid #5e5e5e;"><button data-toggle="modal" href="#myModalFinish" class="btn btn-primary" style="width:75px;">Finish</button></td>
 				</tr>				
 			</tfoot>
 		</table>
@@ -189,18 +194,75 @@ foreach ($invoices as $i) {
 	      <h4 class="modal-title">Finish Invoice</h4>
 	    </div>
 	    <div class="modal-body">
-	     	<h3>Select Due Date</h3>
-	     	<div class="control-group">
-	     		<div class="input-append">
-	     			<input id="due_date" type="text" value="<?php echo $due_date;?>"/>
-	     			<span class="add-on"><i class="icon-calendar"></i></span>
-	     		</div>
-	     	</div>
-	     	<br/><br/>
+			<div class="control-group">
+				<div class="input-prepend input-append"> 
+					<span class="add-on">$</span>
+					<input id="finalTotalDue" type="text" disabled="disabled" value="0.00"/>
+					<span class="add-on">Total Due</span>
+				</div>
+			</div>
+			<ul id="paymentTypeUl" class="nav nav-tabs">
+				<li class="active" value="credit" ><a href="#creditLi" data-toggle="tab">Credit</a></li>
+				<li value="cash"><a href="#cashLi" data-toggle="tab">Cash</a></li>
+				
+			</ul>
+			<ol class="unstyled tab-content">
+				<li id="creditLi" class="tab-pane active">
+					<div class="control-group">
+						<label>Last 4 digits</label>
+						<input type="text" placeholder="optional"/>
+					</div>
+				</li>
+				<li id='cashLi' class="tab-pane">
+					<div class="row-fluid">
+						<div class="pull-left" style="width:50%;">
+							<div class="calculatorDiv">
+								<div class="control-group">
+									<ul id="calculator" class="unstyled">
+										<li id="totalPaidLi" class="clearfix control-group"><input id="totalPaidFinal" class="center-text" type="text" disabled="disabled" style="background-color:#ffffff;" value="0.00"/></li>
+										<li class="clearfix">
+											<button class="pull-left" value="7">7</button>
+											<button class="pull-left" value="8">8</button>
+											<button class="pull-left" value="9">9</button>
+										</li>
+										<li class="clearfix">
+											<button class="pull-left" value="4">4</button>
+											<button class="pull-left" value="5">5</button>
+											<button class="pull-left" value="6">6</button>
+										</li>
+										<li class="clearfix">
+											<button class="pull-left" value="1">1</button>
+											<button class="pull-left" value="2">2</button>
+											<button class="pull-left" value="3">3</button>
+										</li>
+										<li class="clearfix">
+											<button class="pull-left" value="00">00</button>
+											<button class="pull-left" value="0">0</button>
+											<button class="pull-left" value="C">C</button>
+										</li>
+										<li id="totalChangeLi" class="clearfix control-group" style="margin-top:5px;"><input id="totalChangeDue" class="center-text text" type="text" disabled="disabled" value="0.00"/></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+	
+						<div class="pull-right" style="width:50%;">
+							<ul id="quickButtonsUl" class="unstyled">
+								<li><button class="quickButtons btn btn-info" value="5.00">$5.00</button></li>
+								<li><button class="quickButtons btn btn-info" value="10.00">$10.00</button></li>
+								<li><button class="quickButtons btn btn-info" value="20.00">$20.00</button></li>
+								<li><button class="quickButtons btn btn-info" value="50.00">$50.00</button></li>
+								<li><button class="quickButtons btn btn-info" value="100.00">$100.00</button></li>
+							</ul>
+						</div>
+					</div>
+				</li>
+			</ol>			
 	    </div>
 	    <div class="modal-footer">
 	      <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-	      <button id="editButton" type="button" class="btn btn-primary pull-right">Edit Invoice</button>
+	      <button id="printPickup" type="button" class="btn btn-success pull-right">Print Reciept</button>
+	      <button id="noPrintPickup" type="button" class="btn btn-primary pull-right">No Reciept</button>
 	    </div>
 	  </div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
@@ -298,4 +360,4 @@ $reward_points = 400;
 	  </div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<form method="post" action="/invoices/pickup"></form>
+<form id="finalPickupForm" customer_id="<?php echo $customer_id;?>" method="post" action="/invoices/process_pickup"></form>

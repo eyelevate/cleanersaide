@@ -1,6 +1,13 @@
 /**
  * 	Invoices/pickup
  */
+
+/* page global css */
+.center-text {
+	text-align:center;
+}
+
+
 .pointer {
 	cursor:pointer;
 }
@@ -25,4 +32,18 @@
 }
 #total_discount, #discountTotal{
 	color:#ff0000;
+}
+
+/* calculator */
+#calculator button{
+	width:29%;
+	height:45px;
+}
+
+/* quick buttons */
+#quickButtonsUl li{
+	margin-top:10px;
+}
+.quickButtons{
+	width: 50%;
 }
