@@ -65,6 +65,12 @@ class DeliveriesController extends AppController {
 		//paginate the menus 
 		$this->Delivery->recursive = 0;
 		$this->set('deliveries', $this->paginate());
+		
+		//get routes
+		$routes = $this->Delivery->arrangeRoutes($this->Delivery->find('all'));
+		$this->set('routes',$routes);
+		
+		
 	}
 
 /**
@@ -113,7 +119,19 @@ class DeliveriesController extends AppController {
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);
 
+
+		$minutesArray = $this->Delivery->minutesArray();
 		
+		$this->set('minutesArray',$minutesArray);
+		if($this->request->is('post')){
+			
+			$deliveries = $this->Delivery->arrangeDataForSaving($this->request->data);
+			
+			if($this->Delivery->saveAll($deliveries['Delivery'])){
+				$this->Session->setFlash(__('You have successfully created a new delivery route schedule'),'default',array(),'success');
+		
+			}
+		}		
 	}
 
 /**
@@ -132,22 +150,28 @@ class DeliveriesController extends AppController {
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);
 		
-		//set the menu_id
-		$this->Menu->id = $id;
-		$find = $this->Menu->find('all',array('conditions'=>array('id'=>$id)));
-		$this->set('menus',$find);
-		//get icons
-		$icons = $this->Menu->getIcons();
-		$this->set('icons',$icons);
+		//set variables here
+		$company_id = $_SESSION['company_id'];
+		$minutesArray = $this->Delivery->minutesArray();
 		
-		//get all user created pages that are published
-		$pages = $this->Page->find('all',array('conditions'=>array('status'=>'2'),'Order'=>'Page.page_name asc'));
-		$pages = $this->Menu->getPublicPages($pages);
-		$this->set('pages',$pages);
+		$this->set('minutesArray',$minutesArray);		
+		//get routes
+		$routes = $this->Delivery->find('all',array('conditions'=>array('id'=>$id,'company_id'=>$company_id)));
+		$this->set('routes',$routes);
+		$this->set('delivery_id',$id);
 		
-		//get all admin content
-		$controllers = $this->Menu->getAllMethods();
-		$this->set('controllers',$controllers);
+		if($this->request->is('post')){
+
+			$deliveries = $this->Delivery->arrangeEditedDeliveryForSave($this->request->data);
+			
+			debug($deliveries);
+			$this->Delivery->id = $deliveries['Delivery']['id'];
+			if($this->Delivery->save($deliveries)){
+				$this->Session->setFlash(__('You have successfully edited your route!'),'default',array(),'success');
+				$this->redirect(array('action'=>'index'));
+			}
+		}
+		
 	}
 
 /**

@@ -125,15 +125,10 @@ class PagesController extends AppController {
 		$primary_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $primary_nav);
 		$this->set('primary_nav',$primary_nav);
 		
-		$home_packages = $this->Package->fixLargeData($this->Package->find('all',array(
-				'conditions'=>array('featured'=>'yes', 'status'=>'6','start_date <='=>date("Y-m-d H:i:s"),'end_date >='=>date("Y-m-d H:i:s")),
-				'order'=>'RAND()'	
-			)));
-		
+
 		$contents = $this->Page_content->find('all',array('conditions'=>array('page_id'=>'1')));
 		
 		$this->set('contents',$contents);			
-		$this->set('packages',$home_packages);	
 	    // session_unset();     // unset $_SESSION variable for the run-time 
 	    // session_destroy();   // destroy session data in storage		
 	}

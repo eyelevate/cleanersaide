@@ -33,6 +33,7 @@ CREATE TABLE `acl_permissions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
+ALTER TABLE  `deliveries` ADD  `route_name` VARCHAR( 50 ) NULL AFTER  `company_id`;
 
 CREATE TABLE `deliveries` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
