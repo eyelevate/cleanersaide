@@ -78,7 +78,7 @@ class User extends AppModel {
 			)
 		), 
 
-		'email'=>array(
+		'contact_email'=>array(
 			'notEmpty'=>array(
 		        'rule'    => 'notEmpty',
 		        'message' => 'This field cannot be left blank'
@@ -96,32 +96,7 @@ class User extends AppModel {
 				'message'=>'This field cannot be left blank'
 			)
 		),
-		//birthdate
-		'dobm'=>array(
-			'notEmpty'=>array(
-				'rule'=>array('equals','NONE'),
-				'message'=>'This field cannot be left blank'				
-			)
-		),
-		'dobd'=>array(
-			'notEmpty'=>array(
-				'rule'=>array('equals','NONE'),
-				'message'=>'This field cannot be left blank'
-			)
-			
-		),
-		'doby'=>array(
-			'notEmpty'=>array(
-				'rule'=>array('equals','NONE'),
-				'message'=>'This field cannot be left blank'
-			)
-		),
-		'citizenship'=>array(
-			'notEmpty'=>array(
-				'rule'=>array('equals','NONE'),
-				'message'=>'This field cannot be left blank'
-			)
-		),
+
 
 		'contact_address'=>array(
 			'notEmpty'=>array(
@@ -163,25 +138,14 @@ class User extends AppModel {
 				'message'=>'This field cannot be left blank'
 			)
 		),
-		'doctype'=>array(
-			'notEmpty'=>array(
-				'rule'=>array('equals','NONE'),
-				'message'=>'This field cannot be left blank'	
-			)
-		),
-		// 'docnumber'=>array(
-			// 'notEmpty'=>array(
-				// 'rule'=>'notEmpty',
-				// 'message'=>'This field cannot be left blank'
-			// )
-		// ),
+
 		'password'=>array(
 			'notEmpty'=>array(
 		        'rule'    => 'notEmpty',
 		        'message' => 'This field cannot be left blank'
 			)
 		),
-		'retypePassword'=>array(
+		'password2'=>array(
 			'notEmpty'=>array(
 		        'rule'    => 'notEmpty',
 		        'message' => 'This field cannot be left blank'

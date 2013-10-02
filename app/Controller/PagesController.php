@@ -77,9 +77,7 @@ class PagesController extends AppController {
 	public function beforeFilter() {
 	    parent::beforeFilter();
 		$this->set('username',AuthComponent::user('username'));
-		$this->Auth->allow('home','login','url','test','hotels_attractions','marketing');
-
-		
+		$this->Auth->allow('home','login','url','test');
 	
 	}
 /**

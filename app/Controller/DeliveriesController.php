@@ -20,7 +20,7 @@ class DeliveriesController extends AppController {
 		$menu_id = $menu_ids[0]['Menu']['id'];		
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
-		$this->Auth->allow('login','logout');
+		$this->Auth->allow('login','logout','index','form','confirmation');
 		//set username
 		$username = $this->Auth->user('username');
 		$this->set('username',$username);
@@ -54,23 +54,13 @@ class DeliveriesController extends AppController {
  * @return void
  */
 	public function index() {
-		//set the admin navigation
-		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
-		$page_url = '/deliveries/index';
-		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
-		$this->set('admin_nav',$admin_nav);
-		$this->set('admin_pages',$page_url);
-		$this->set('admin_check',$admin_check);
+		//choose layout
+		$this->layout = 'pages';
 		
-		//paginate the menus 
-		$this->Delivery->recursive = 0;
-		$this->set('deliveries', $this->paginate());
-		
-		//get routes
-		$routes = $this->Delivery->arrangeRoutes($this->Delivery->find('all'));
-		$this->set('routes',$routes);
-		
-		
+		if($this->request->is('post')){
+			debug($this->request->data);
+			
+		}
 	}
 
 /**
@@ -88,20 +78,14 @@ class DeliveriesController extends AppController {
 		$this->set('admin_nav',$admin_nav);
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);
-				
-		//set the menu_id
-		$this->Menu->id = $id;
-		if (!$this->Menu->exists()) {
-			throw new NotFoundException(__('Invalid menu'));
-		}
-		$menus = $this->Menu->read(null,$id);
-		$this->set('menus', $menus);
-		//get all menu_items (basic)
-		$menu_items = $this->Menu_item->find('all',array('conditions'=>array('menu_id'=>$id),'order'=>array('orders asc')));
-		$this->set('menu_items',$menu_items);
-		//get all menu_items (by group)
-		$menu_item_tiers = $this->Menu_item->arrangeByTiers($id);
-		$this->set('mits',$menu_item_tiers);
+		
+		//paginate the menus 
+		$this->Delivery->recursive = 0;
+		$this->set('deliveries', $this->paginate());
+		
+		//get routes
+		$routes = $this->Delivery->arrangeRoutes($this->Delivery->find('all'));
+		$this->set('routes',$routes);
 
 	}
 
@@ -129,7 +113,7 @@ class DeliveriesController extends AppController {
 			
 			if($this->Delivery->saveAll($deliveries['Delivery'])){
 				$this->Session->setFlash(__('You have successfully created a new delivery route schedule'),'default',array(),'success');
-		
+				$this->redirect(array('action'=>'view'));
 			}
 		}		
 	}
@@ -163,12 +147,11 @@ class DeliveriesController extends AppController {
 		if($this->request->is('post')){
 
 			$deliveries = $this->Delivery->arrangeEditedDeliveryForSave($this->request->data);
-			
-			debug($deliveries);
+
 			$this->Delivery->id = $deliveries['Delivery']['id'];
 			if($this->Delivery->save($deliveries)){
 				$this->Session->setFlash(__('You have successfully edited your route!'),'default',array(),'success');
-				$this->redirect(array('action'=>'index'));
+				$this->redirect(array('action'=>'view'));
 			}
 		}
 		
@@ -198,6 +181,27 @@ class DeliveriesController extends AppController {
 		}
 		$this->Session->setFlash(__('Menu was not deleted'));
 		$this->redirect(array('action' => 'index'));
+	}
+	
+	public function schedule()
+	{
+		//set the admin navigation
+		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
+		$page_url = '/deliveries/schedule';
+		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
+		$this->set('admin_nav',$admin_nav);
+		$this->set('admin_pages',$page_url);
+		$this->set('admin_check',$admin_check);		
+	}
+	
+	public function form()
+	{
+		$this->layout = 'pages';
+	}
+
+	public function confirmation()
+	{
+		$this->layout = 'pages';
 	}
 
 }

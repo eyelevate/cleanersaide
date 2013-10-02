@@ -18,7 +18,7 @@ class UsersController extends AppController {
 		$this->set('username',AuthComponent::user('username'));
 		//deny all public users to this controller
 		//$this->Auth->deny('*');
-		$this->Auth->allow('forgot','reset','convert_users');
+		$this->Auth->allow('forgot','reset','convert_users','new_customers','process_frontend_new_user','redirect_new_frontend_customer');
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
 		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
@@ -304,18 +304,41 @@ class UsersController extends AppController {
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);
 		//select layout
-		$this->layout = 'admin';		
+		$this->layout = 'pages';	
+		if(isset($_SESSION['users'])){	
+			$users = $_SESSION['users'];
+			
+			$this->set('users',$users);
+			unset($_SESSION['users']);
+		}
+		
+		
 		//if saving
 		if ($this->request->is('post')) {
+			
 			$this->User->create();
 			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('The user has been saved'));
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('controller'=>'deliveries','action' => 'form'));
 			} else {
 				$this->Session->setFlash(__('The user could not be saved. Please, try again.'));
 			}
 		}
 		$groups = $this->User->Group->find('list');
 		$this->set(compact('groups'));		
+	}
+	
+	public function redirect_new_frontend_customer()
+	{
+		if($this->request->is('post')){
+			$users = $this->request->data;
+			$_SESSION['users'] = $users;
+			$this->redirect(array('action'=>'new_customers'));
+		}
+	}
+	
+	public function process_frontend_new_user()
+	{
+
 	}
 }
