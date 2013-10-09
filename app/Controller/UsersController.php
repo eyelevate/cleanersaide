@@ -18,7 +18,7 @@ class UsersController extends AppController {
 		$this->set('username',AuthComponent::user('username'));
 		//deny all public users to this controller
 		//$this->Auth->deny('*');
-		$this->Auth->allow('forgot','reset','convert_users','new_customers','process_frontend_new_user','redirect_new_frontend_customer');
+		$this->Auth->allow('forgot','reset','convert_users','new_customers','process_frontend_new_user','redirect_new_frontend_customer','frontend_logout');
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
 		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
@@ -315,14 +315,41 @@ class UsersController extends AppController {
 		
 		//if saving
 		if ($this->request->is('post')) {
+			//set variables
+			$this->request->data['User']['group_id'] = 5;
+			$phone = preg_replace('/\D/', '', $this->request->data['User']['contact_phone']);
+			$company_id = 1;
+			$username = $this->request->data['User']['username'];
+			$this->request->data['User']['contact_phone'] = $phone;
+			$this->request->data['User']['company_id'] = $company_id;
+			//lookup by phone number
+			$lookup = $this->User->find('all',array('conditions'=>array('contact_phone'=>$phone,'company_id'=>$company_id)));
 			
-			$this->User->create();
-			if ($this->User->save($this->request->data)) {
-				$this->Session->setFlash(__('The user has been saved'));
-				$this->redirect(array('controller'=>'deliveries','action' => 'form'));
-			} else {
-				$this->Session->setFlash(__('The user could not be saved. Please, try again.'));
+			if(count($lookup)>0){ //this is already a customer move on to next page
+				foreach ($lookup as $cust) {
+					$customer_id = $cust['User']['id'];
+					$lookup_username = $cust['User']['username'];
+				}
+
+				if(!is_null($lookup_username)){
+					$this->set('error_message','The account with this phone number already contains a username. Please use another phone number.');
+				} else {
+					$this->User->id = $customer_id;
+					if($this->User->save($this->request->data)){
+						$_SESSION['message'] = 'Thank you '.$this->request->data['User']['username'].'! Please fill out form below to request a delivery pickup.';
+						$this->redirect(array('controller'=>'deliveries','action' => 'form'));						
+					}						
+				}
+			
+				
+			} else { //create a new customer
+				$this->User->create();
+				if($this->User->save($this->request->data)){
+					$_SESSION['message'] = 'Thank you '.$this->request->data['User']['username'].'! Please fill out form below to request a delivery pickup.';
+					$this->redirect(array('controller'=>'deliveries','action' => 'form'));						
+				}
 			}
+
 		}
 		$groups = $this->User->Group->find('list');
 		$this->set(compact('groups'));		
@@ -335,6 +362,16 @@ class UsersController extends AppController {
 			$_SESSION['users'] = $users;
 			$this->redirect(array('action'=>'new_customers'));
 		}
+	}
+	
+	public function frontend_logout()
+	{
+		unset($_SESSION['customers']);
+		unset($_SESSION['login']);
+		unset($_SESSION['success']);
+		unset($_SESSION['customer_id']);	
+		
+		$this->redirect('/');	
 	}
 	
 	public function process_frontend_new_user()

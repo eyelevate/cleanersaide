@@ -6,6 +6,14 @@ App::uses('AppModel', 'Model');
 class Delivery extends AppModel {
     public $name = 'Delivery';
 	
+
+	
+	public function hashPasswords($password)
+	{
+		$hashedPasswords = Security::hash($password, NULL, true);
+		
+		return $hashedPasswords;
+	}	
 	public function arrangeDataForSaving($data)
 	{
 		$route_name = $data['route_name'];
@@ -25,35 +33,37 @@ class Delivery extends AppModel {
 		
 		
 		foreach ($data['Delivery'] as $key => $value) {
+			
 			switch($key){
-				case '0': //monday
+				case 0: //monday
 					$day = 'Monday';					
 				break;
 				
-				case '1':
+				case 1:
 					$day = 'Tuesday';
 				break;
 					
-				case '2':
+				case 2:
 					$day = 'Wednesday';
 				break;
 					
-				case '3':
+				case 3:
 					$day = 'Thursday';
 				break;
 				
-				case '4':
+				case 4:
 					$day = 'Friday';
 				break;
 				
-				case '5':
+				case 5:
 					$day = 'Saturday';
 				break;
 				
-				default:
+				case 6:
 					$day = 'Sunday';
 				break;
 			}
+			debug($key.' '.$day);
 			$data['Delivery'][$key]['route_name'] = $route_name;
 			$data['Delivery'][$key]['company_id'] = $company_id;	
 			$data['Delivery'][$key]['status'] = 1;	
@@ -150,6 +160,47 @@ class Delivery extends AppModel {
 			$routes[$name][$idx]['blackout'] = $blackout;
 			$routes[$name][$idx]['status'] = $status;
 			
+		}
+		
+		return $routes;
+	}
+	
+	public function routes($zipcode,$company_id)
+	{
+		$routes = array();
+		$status = 1;
+		//first pull all routes with this company_id and a stataus of 1;
+		$find = $this->find('all',array('conditions'=>array('company_id'=>$company_id,'status'=>$status)));
+		if(count($find)>0){
+			$idx = -1;
+			foreach ($find as $d) {
+				$delivery_id = $d['Delivery']['id'];
+				$route_name = $d['Delivery']['route_name'];
+				$day = $d['Delivery']['day'];
+				$limit = $d['Delivery']['limit'];
+				$start_time = $d['Delivery']['start_time'];
+				$end_time = $d['Delivery']['end_time'];
+				$blackouts = json_decode($d['Delivery']['blackout'],true);
+				
+				$zipcodes = json_decode($d['Delivery']['zipcode'],true);
+				if(count($zipcodes)>0){
+					foreach ($zipcodes as $key => $value) {
+						if($value == $zipcode){
+							$idx++;
+							$routes[$idx] = array(
+								'id'=>$delivery_id,
+								'name'=>$route_name,
+								'day'=>$day,
+								'limit'=>$limit,
+								'start'=>$start_time,
+								'end'=>$end_time,
+								'zipcodes'=>$zipcodes,
+								'blackouts'=>$blackouts,
+							);
+						}
+					}
+				}
+			}
 		}
 		
 		return $routes;

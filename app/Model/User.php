@@ -132,10 +132,20 @@ class User extends AppModel {
 				'message'=>'This is not a valid email'
 			)
 		),
+		'phone'=>array(
+			'notEmpty'=>array(
+				'rule'=>'notEmpty',
+				'message'=>'This field cannot be left blank'
+			)
+		),
 		'contact_phone'=>array(
 			'notEmpty'=>array(
 				'rule'=>'notEmpty',
 				'message'=>'This field cannot be left blank'
+			),
+			'unique'=>array(
+				'rule'=>'isUnique',
+				'message'=>'This phone number has already been taken. Enter in a new phone number.'
 			)
 		),
 
@@ -154,8 +164,42 @@ class User extends AppModel {
 				'rule' => array('identicalPasswordCheck','password'),
 				'message' => 'Your passwords do not match. Please try again'
 			)	
-		)
-  		
+		),
+		'card_full_name'=>array(
+			'notEmpty'=>array(
+				'rule'=>'notEmpty',
+				'message'=>'This field cannot be left blank'
+			)
+		),
+		'ccnum'=>array(
+			'notEmpty'=>array(
+				'rule'=>'notEmpty',
+				'message'=>'This field cannot be left blank'				
+			),
+			'cc'=>array(
+				'rule'    => array('cc', array('visa','mc','disc','amex'), false, null),
+				'message' => 'The credit card number you supplied was invalid.'
+			)
+		),
+		'cvv'=>array(
+			'notEmpty'=>array(
+				'rule'=>'notEmpty',
+				'message'=>'This field cannot be left blank'
+			),
+		    'numeric' => array(
+		        'rule'    => 'numeric',
+		        'message' => 'CVV must be numeric digit'
+		    ),
+		    'minLength' => array(
+		        'rule'    => array('minLength', 3),
+		        'message' => 'CVV must be at least 3 digits in length'
+		    ),
+		    'maxLength'=>array(
+				'rule'=>array('maxLength',4),
+				'message'=>'CVV must at least 3 to 4 digits in length'
+			)
+			
+		),  		
 	);
 /**
  * validation custom functions

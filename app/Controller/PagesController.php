@@ -118,11 +118,10 @@ class PagesController extends AppController {
 		$this->set('title_for_layout','Home');
 						
 		//Set up Primary navigation -------------------------------------------------------------
-		$page_url = '/hotels-attractions';
-		$primary_nav = $this->Menu_item->arrangeByTiers(1);	
+		$page_url = '/';
+		$primary_nav = $this->Menu_item->arrangeByTiers(4);	
 		$primary_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $primary_nav);
 		$this->set('primary_nav',$primary_nav);
-		
 
 		$contents = $this->Page_content->find('all',array('conditions'=>array('page_id'=>'1')));
 		

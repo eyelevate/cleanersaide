@@ -12,7 +12,10 @@ delivery = {
 	},	
 	events: function(){
 		$("#newMemberButton").click(function(){
-			$("#guestForm").attr('action','/users/redirect_new_frontend_customer').submit();
+			$("#custInfoForm").attr('action','/users/redirect_new_frontend_customer').submit();
+		});
+		$("#nextButton").click(function(){
+			$("#custInfoForm").submit();
 		});
 	},
 

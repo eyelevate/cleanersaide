@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class DeliveriesController extends AppController {
 
 	public $name = 'Deliveries';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Delivery');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Delivery','Schedule');
 
 
 	public function beforeFilter()
@@ -20,7 +20,7 @@ class DeliveriesController extends AppController {
 		$menu_id = $menu_ids[0]['Menu']['id'];		
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
-		$this->Auth->allow('login','logout','index','form','confirmation');
+		$this->Auth->allow('login','logout','index','form','confirmation','process_sad','process_login','request_date_time');
 		//set username
 		$username = $this->Auth->user('username');
 		$this->set('username',$username);
@@ -56,11 +56,97 @@ class DeliveriesController extends AppController {
 	public function index() {
 		//choose layout
 		$this->layout = 'pages';
+		//Set up Primary navigation -------------------------------------------------------------
+		$page_url = '/deliveries';
+		$primary_nav = $this->Menu_item->arrangeByTiers(4);	
+		$primary_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $primary_nav);
+		$this->set('primary_nav',$primary_nav);		
+		
+		
+		$company_id = 1; //jays cleaners
+		
+		// unset($_SESSION['customers']);
+		// unset($_SESSION['login']);
+		// unset($_SESSION['success']);
+		// unset($_SESSION['customer_id']);
+		
+		if(isset($_SESSION['guest_form'])){ //processed in process_sad from home page
+			$this->set('guest_form',$_SESSION['guest_form']);
+			
+			unset($_SESSION['guest_form']); //remove session
+		}
+		
+		if(isset($_SESSION['login'])){
+			$login = $_SESSION['login'];
+		} else {
+			$login = 'No';
+		}
+		if(isset($_SESSION['success'])){
+			$success = $_SESSION['success'];
+		} else {
+			$success = 'Not Set';
+		}
+		if(isset($_SESSION['customers'])){
+			$customers = $_SESSION['customers'];
+		} else {
+			$customers = '';
+		}
+		if(isset($_SESSION['customer_id'])){
+			$customer_id = $_SESSION['customer_id'];
+		} else {
+			$customer_id = '';
+		}
+		$this->set('login',$login);
+		$this->set('success',$success);
+		$this->set('customers',$customers);
+		$this->set('customer_id',$customer_id);		
 		
 		if($this->request->is('post')){
-			debug($this->request->data);
-			
+			$_SESSION['Delivery'] = $this->request->data;  
+		
+			$this->User->set($this->request->data);
+
+			if ($this->User->validates()){ //form has validated move on
+				$customer_id = $this->request->data['User']['customer_id'];
+				$_SESSION['customer_id'] = $customer_id;
+				$phone = preg_replace('/\D/', '', $this->request->data['User']['phone']);
+				$this->request->data['User']['contact_phone'] = $phone;
+				$this->request->data['User']['company_id'] = 1;
+				$this->request->data['User']['group_id'] = 5;
+				if(!empty($customer_id)){ //this is a returning customer
+					//just update the user
+					$this->User->id = $customer_id;
+					if($this->User->save($this->request->data['User'])){
+						$_SESSION['message'] = 'You have successfully updated your information. Please fill out the form below to select your delivery time and date.';
+						
+					}
+					
+				} else { //this is a guest
+					//lookup by phone number
+					$lookup = $this->User->find('all',array('conditions'=>array('contact_phone'=>$phone,'company_id'=>$company_id)));
+					
+					if(count($lookup)>0){ //this is already a customer move on to next page
+						$_SESSION['message'] = 'Thank you returning Guest. Please fill out the form below to set a date and time for delivery.';	
+						
+					} else { //create a new customer
+						$this->User->create();
+						if($this->User->save($this->request->data)){
+							$_SESSION['message'] = 'Thank you new Guest. Please fill out the form below to set a date and time for delivery.';							
+						}
+					}
+
+					
+				}
+				$this->redirect(array('action'=>'form'));	
+			} else { //form has not validated refill form and errors
+				$customers = $this->request->data;
+				$this->set('customers',$customers);
+				$errors = $this->User->validationErrors;
+				$this->set('form_errors',$errors);
+			}
+
 		}
+		
 	}
 
 /**
@@ -194,14 +280,98 @@ class DeliveriesController extends AppController {
 		$this->set('admin_check',$admin_check);		
 	}
 	
+	public function process_sad()
+	{
+		if($this->request->is('post')){
+			$_SESSION['guest_form'] = $this->request->data;
+			
+			$this->redirect(array('action'=>'index'));
+		}
+	}
+	
+	public function process_login()
+	{
+		if($this->request->is('post')){
+			$username = $this->request->data['User']['username'];
+			$password = $this->Delivery->hashPasswords($this->request->data['User']['password']);
+			$group_id = 5;
+			$customers = $this->User->find('all',array('conditions'=>array('username'=>$username,'password'=>$password,'group_id'=>$group_id)));
+			if(count($customers)>0){
+				foreach ($customers as $c) {
+					$_SESSION['customer_id'] = $c['User']['id'];
+				}
+				$_SESSION['customers'] = $customers;
+				$_SESSION['login'] = 'Yes';
+			} else {
+				$_SESSION['login'] = 'No';
+				$_SESSION['success'] = 'error';
+							
+			}
+
+			$this->redirect(array('action'=>'index'));			
+		}
+	}
+	
 	public function form()
 	{
 		$this->layout = 'pages';
+		$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+
+		$company_id = 1;
+
+		$zipcode = $_SESSION['Delivery']['User']['contact_zip'];
+		$this->set('zipcode',$zipcode);
+
+		$find_routes = $this->Delivery->routes($zipcode,$company_id);
+		$month = date('m');
+		$year = date('Y');
+		$route_schedule = $this->Schedule->create_schedule($find_routes,$company_id,$month, $year);
+		
+		if(count($find_routes)>0){
+			$this->set('route_status','1');
+			$this->set('routes',$find_routes);
+		} else {
+			$this->set('route_status','0');
+			$this->set('routes',array());
+		}
+
+		$this->set('route_schedule',$route_schedule);
+
+		if($this->request->is('post')){
+			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+			$date_string = $this->request->data['Schedule']['date'];
+			
+			$_SESSION['Delivery']['Schedule']['customer_id'] = $customer_id;
+			$_SESSION['Delivery']['Schedule']['deliver_date'] = date('Y-m-d H:i:s',$date_string);
+			$_SESSION['Delivery']['Schedule']['company_id'] = 1;
+			$_SESSION['Delivery']['Schedule']['delivery_id'] = $this->request->data['Schedule']['time'];
+			$_SESSION['Delivery']['Schedule']['day'] = date('l',$date_string);
+			$_SESSION['Delivery']['Schedule']['status'] = 1;
+			$_SESSION['Delivery']['Schedule']['type'] = 'frontend';
+			$_SESSION['message'] = 'You have successfully selected your delivery date and time. Please confirm all the information below and submit your payment information';
+			$this->redirect(array('action'=>'confirmation'));
+		}
 	}
 
+	
+	public function request_date_time()
+	{
+		if($this->request->is('ajax')){
+			$month = $this->data['month'];
+			$year = $this->data['year'];
+			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+			$company_id = 1;
+	
+			$zipcode = $_SESSION['Delivery']['User']['contact_zip'];
+			$this->set('zipcode',$zipcode);
+	
+			$find_routes = $this->Delivery->routes($zipcode,$company_id);
+			$route_schedule = $this->Schedule->create_schedule($find_routes,$company_id,$month, $year);
+			$this->set('route_schedule',$route_schedule);
+		}
+	}
 	public function confirmation()
 	{
 		$this->layout = 'pages';
 	}
-
 }
