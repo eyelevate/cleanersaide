@@ -9,6 +9,7 @@ class DeliveriesController extends AppController {
 	public $name = 'Deliveries';
 	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Delivery','Schedule');
 
+	public $helpers = array('Csv'); 
 
 	public function beforeFilter()
 	{
@@ -278,6 +279,73 @@ class DeliveriesController extends AppController {
 		$this->set('admin_nav',$admin_nav);
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);		
+		
+		$start = date('Y-m-d').' 00:00:00';
+		$end = date('Y-m-d').' 23:59:59';
+		$conditions = array('Schedule.deliver_date BETWEEN ? AND ?' => array($start,$end));
+		$today_schedule = $this->Schedule->find('all',array('conditions'=>$conditions));
+		$prepare_schedule = $this->Schedule->setSchedule($today_schedule);
+		$this->set('date',date('n/d/Y'));
+		$this->set('today',$prepare_schedule);
+		
+		if($this->request->is('post')){
+			$delivery_start = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 00:00:00';
+			$delivery_end = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 23:59:59';
+			$conditions = array('Schedule.deliver_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end));
+			$selected_schedule = $this->Schedule->find('all',array('conditions'=>$conditions));
+			$prepare_schedule = $this->Schedule->setSchedule($selected_schedule);
+			$this->set('date',date('n/d/Y',strtotime($this->request->data['Delivery']['date'])));
+			$this->set('today',$prepare_schedule);
+			
+			// //prepare csv
+			// $csv = new csvHelper();
+// 			
+			// //$csv->addRow($a);
+			// $date = date('mdy');
+			// $filename = 'delivery-'.$date;
+			// $fullfilename = '/tmp/'.$filename.'.csv';
+			// $csv->save($fullfilename);
+// 			
+			// $sendTo = array('onedough83@gmail.com');
+// 	
+			// $subject = 'delivery schedule ('.date('n/d/Y',strtotime($this->request->data['Delivery']['date'])).'): '.$filename;
+// 			
+			// $Email = new CakeEmail('gmail');
+// 						
+			// //primary email settings
+// 			
+			// $Email->template('customs')
+			   	// ->emailFormat('text')
+			    // ->to($sendTo)
+				// //->bcc(array('bbtpackage@seanet.com','john@treenumbertwo.com'))
+				// ->attachments(array( ($filename.'.csv') => $fullfilename ))
+				// ->subject($subject);
+// 			
+			// //backup email settings
+			// $Backup = new CakeEmail('default');
+			// //$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
+			// $Backup->template('customs')
+			    // ->emailFormat('text')
+			    // ->to($sendTo)
+				// //->bcc(array('bbtpackage@seanet.com','john@treenumbertwo.com'))
+				// ->attachments(array( ($filename.'.csv') => $fullfilename ))
+				// ->subject($subject);
+// 			
+// 			
+			// //simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
+			// try
+			// {
+				// $Email->send();
+			// } 
+			// catch (SocketException $e)
+			// {
+				// $Backup->send();	
+			// }	
+// 	
+			// unlink ($fullfilename);
+// 		
+			// exit();
+		}
 	}
 	
 	public function process_sad()
@@ -373,5 +441,47 @@ class DeliveriesController extends AppController {
 	public function confirmation()
 	{
 		$this->layout = 'pages';
+		$this->set('deliveries',$_SESSION['Delivery']);
+		//get delivery time 
+		$delivery_data = $this->Delivery->find('all',array('conditions'=>array('id'=>$_SESSION['Delivery']['Schedule']['delivery_id'])));
+		if(count($delivery_data)>0){
+			foreach ($delivery_data as $d) {
+				$start_time = $d["Delivery"]['start_time'];
+				$end_time = $d['Delivery']['end_time'];
+			}
+			$this->set('time',$start_time.' - '.$end_time);
+		} else {
+			$this->set('time','Not Set');
+		}
+		if(!empty($_SESSION['Delivery']['User']['customer_id'])){
+			//get payment info
+			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+			$users = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
+			$profile_id = '';
+			$payment_id = '';
+			if(count($users)>0){
+				foreach ($users as $u) {
+					$profile_id = $u['User']['profile_id'];
+					$payment_id = $u['User']['payment_id'];
+				}
+			}
+			if(is_null($payment_id)){
+				$this->set('display_payment','Yes');
+			} else {
+				$this->set('display_payment','No');
+			}
+			
+		} else {
+			$this->set('display_payment','Yes');
+		}
+		
+		if($this->request->is('post')){
+			debug($_SESSION['Delivery']);
+			debug($this->request->data);
+			
+			//get payment info
+		}
+		
+		
 	}
 }

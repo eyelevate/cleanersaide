@@ -143,6 +143,7 @@ if(!empty($taxes)){
 				<div id="hiddenInvoiceDiv" class="hide">
 					<input type="hidden" name="data[Invoice][customer_id]" value="<?php echo $customer_id;?>"/>
 					<input id="due_date_input" type="hidden" name="data[Invoice][due_date]" value="<?php echo $due_date;?>"/>
+					<textarea id="memo_textarea" type="hidden" name="data[Invoice][memo]"></textarea>
 				</div>
 				<div id="hiddenTotalsDiv" class="hide"></div>
 			</form>
@@ -153,43 +154,64 @@ if(!empty($taxes)){
 			<legend>Select a color</legend>
 			<ul class="colorUl unstyled">
 				<li class="span1 well well-small" style="background-color:#ffffff;" color="black">
-					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:#000000"/></p>
-					<p style="text-align:center; line-height:80%;">Black</p>
+					<p style="text-align:center;">
+						<div style="text-align:center; background-color:#000000; height:50px; margin-bottom:5px;" class="span12"></div>
+					</p>
+					
+					<p style="text-align:center; line-height:90%;">Black</p>
 				</li>
 				<li class="span1 well well-small" style="background-color:#ffffff;" color="white">
-					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:#ffffff"/></p>
-					<p style="text-align:center; line-height:80%;">White</p>
+					<p style="text-align:center;">
+						<div style="text-align:center; background-color:#ffffff; height:50px; margin-bottom:5px;" class="span12"></div>
+					</p>
+					<p style="text-align:center; line-height:90%;">White</p>
 				</li>
 				<li class="span1 well well-small" style="background-color:#ffffff;" color="red">
-					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:red"/></p>
+					<p style="text-align:center;">
+						<div style="text-align:center; background-color:red; height:50px; margin-bottom:5px;" class="span12"></div>
+					</p>
 					<p style="text-align:center; line-height:80%;">Red</p>
 				</li>
 				<li class="span1 well well-small" style="background-color:#ffffff;" color="green">
-					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:green"/></p>
+					<p style="text-align:center;">
+						<div style="text-align:center; background-color:green; height:50px; margin-bottom:5px;" class="span12"></div>
+					</p>
 					<p style="text-align:center; line-height:80%;">Green</p>
 				</li>
 				<li class="span1 well well-small" style="background-color:#ffffff;" color="yellow">
-					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:yellow"/></p>
+					<p style="text-align:center;">
+						<div style="text-align:center; background-color:yellow; height:50px; margin-bottom:5px;" class="span12"></div>
+					</p>
 					<p style="text-align:center; line-height:80%;">Yellow</p>
 				</li>
 				<li class="span1 well well-small" style="background-color:#ffffff;" color="blue">
-					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:blue"/></p>
+					<p style="text-align:center;">
+						<div style="text-align:center; background-color:blue; height:50px; margin-bottom:5px;" class="span12"></div>
+					</p>
 					<p style="text-align:center; line-height:80%;">Blue</p>
 				</li>
 				<li class="span1 well well-small" style="background-color:#ffffff;" color="tan">
-					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:tan"/></p>
+					<p style="text-align:center;">
+						<div style="text-align:center; background-color:tan; height:50px; margin-bottom:5px;" class="span12"></div>
+					</p>
 					<p style="text-align:center; line-height:80%;">Tan</p>
 				</li>
 				<li class="span1 well well-small" style="background-color:#ffffff;" color="pink">
-					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:pink"/></p>
+					<p style="text-align:center;">
+						<div style="text-align:center; background-color:pink; height:50px; margin-bottom:5px;" class="span12"></div>
+					</p>
 					<p style="text-align:center; line-height:80%;">Pink</p>
 				</li>			
 				<li class="span1 well well-small" style="background-color:#ffffff;" color="purple">
-					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:purple"/></p>
+					<p style="text-align:center;">
+						<div style="text-align:center; background-color:purple; height:50px; margin-bottom:5px;" class="span12"></div>
+					</p>
 					<p style="text-align:center; line-height:80%;">Purple</p>
 				</li>
 				<li class="span1 well well-small" style="background-color:#ffffff;" color="brown">
-					<p style="text-align:center;"><img style="height:50px; width:50px; background-color:brown"/></p>
+					<p style="text-align:center;">
+						<div style="text-align:center; background-color:brown; height:50px; margin-bottom:5px;" class="span12"></div>
+					</p>
 					<p style="text-align:center; line-height:80%;">Brown</p>
 				</li>
 			</ul>
@@ -227,6 +249,10 @@ if(!empty($taxes)){
 	     		</div>
 	     	</div>
 	     	<br/><br/>
+	     	<h3>Add Memo</h3>
+	     	<div class="control-group">
+	     		<textarea id="memo" placeholder="optional"></textarea>
+	     	</div>
 	    </div>
 	    <div class="modal-footer">
 	      <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>

@@ -18,7 +18,7 @@ class UsersController extends AppController {
 		$this->set('username',AuthComponent::user('username'));
 		//deny all public users to this controller
 		//$this->Auth->deny('*');
-		$this->Auth->allow('forgot','reset','convert_users','new_customers','process_frontend_new_user','redirect_new_frontend_customer','frontend_logout');
+		$this->Auth->allow('forgot','reset','convert_users','new_customers','process_frontend_new_user','redirect_new_frontend_customer','frontend_logout','process_delete_profile');
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
 		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
@@ -82,7 +82,8 @@ class UsersController extends AppController {
 		
 		//paginate the users and send to view
 		$this->paginate = array(
-		    'limit' => 10, // this was the option which you forgot to mention
+			'conditions' =>array('group_id'=>5,'company_id'=>$_SESSION['company_id']),
+		    'limit' => 50, // this was the option which you forgot to mention
 		    'order' => array(
 		        'User.username' => 'ASC')
 		);		
@@ -161,6 +162,7 @@ class UsersController extends AppController {
 		$this->set('admin_check',$admin_check);
 		//select layout
 		$this->layout = 'admin';
+
 
 		//set user id
 		$this->User->id = $id;
@@ -322,6 +324,9 @@ class UsersController extends AppController {
 			$username = $this->request->data['User']['username'];
 			$this->request->data['User']['contact_phone'] = $phone;
 			$this->request->data['User']['company_id'] = $company_id;
+			$this->request->data['User']['reward'] = '1';
+			$this->request->data['User']['account'] = '1';
+			
 			//lookup by phone number
 			$lookup = $this->User->find('all',array('conditions'=>array('contact_phone'=>$phone,'company_id'=>$company_id)));
 			
@@ -334,6 +339,26 @@ class UsersController extends AppController {
 				if(!is_null($lookup_username)){
 					$this->set('error_message','The account with this phone number already contains a username. Please use another phone number.');
 				} else {
+					$this->request->data['User']['customer_id'] = $customer_id;
+					$this->request->data['User']['company_id'] = '1';
+					$store_credit_data = $this->request->data['User']['store_credit_data'];
+					switch($store_credit_data){
+						case 'Yes':
+							$profile = $this->AuthorizeNet->createProfile($this->request->data);
+							$payment_profile = $this->AuthorizeNet->createPaymentProfile($this->request->data, $profile['customerProfileId']);
+								
+							//set variables to save
+							$this->request->data['User']['profile_id'] = $profile['customerProfileId'];
+							$this->request->data['User']['payment_id'] = $payment_profile['customerPaymentProfileId'];	
+						break;
+							
+						case 'No':
+							$profile_id = $this->AuthorizeNet->createProfile($this->request->data);
+							//set variables to save
+							$this->request->data['User']['profile_id'] = $profile['customerProfileId'];
+						break;
+					}
+				
 					$this->User->id = $customer_id;
 					if($this->User->save($this->request->data)){
 						$_SESSION['message'] = 'Thank you '.$this->request->data['User']['username'].'! Please fill out form below to request a delivery pickup.';
@@ -344,15 +369,68 @@ class UsersController extends AppController {
 				
 			} else { //create a new customer
 				$this->User->create();
+
 				if($this->User->save($this->request->data)){
+					$last_id = $this->User->getLastInsertId();
+					
+					$new_customers = $this->User->find('all',array('conditions'=>array('User.id'=>$last_id)));
+
+					if(count($new_customers)>0){
+						foreach ($new_customers as $cust) {
+							$new_customer_id = $cust['User']['id'];
+						}
+						$this->request->data['User']['customer_id'] = $new_customer_id;
+						$this->request->data['User']['company_id'] = '1';
+						$store_credit_data = $this->request->data['User']['store_credit_data'];
+						switch($store_credit_data){
+							case 'Yes':
+								$profile = $this->AuthorizeNet->createProfile($this->request->data);
+								$payment_profile = $this->AuthorizeNet->createPaymentProfile($this->request->data, $profile['customerProfileId']);
+									
+								//set variables to save
+								$new['User']['profile_id'] = $profile['customerProfileId'];
+								$new['User']['payment_id'] = $payment_profile['customerPaymentProfileId'];	
+									
+							break;
+								
+							case 'No':
+								$profile = $this->AuthorizeNet->createProfile($this->request->data);
+									
+								//set variables to save
+								$new['User']['profile_id'] = $profile['customerProfileId'];
+							break;
+						}	
+						$this->User->id = $new_customer_id;
+						$this->User->save($new);					
+						
+					}
+					
+					
 					$_SESSION['message'] = 'Thank you '.$this->request->data['User']['username'].'! Please fill out form below to request a delivery pickup.';
-					$this->redirect(array('controller'=>'deliveries','action' => 'form'));						
+					//$this->redirect(array('controller'=>'deliveries','action' => 'form'));						
 				}
 			}
 
 		}
 		$groups = $this->User->Group->find('list');
 		$this->set(compact('groups'));		
+	}
+
+	public function process_delete_profile($id)
+	{
+		$delete_status = $this->AuthorizeNet->deletePaymentProfile($id);
+		switch($delete_status){
+			case 1:
+				$this->Session->setFlash(__('There was an error deleting your profile, please contact us for assistance.'),'default',array(),'error');
+			break;
+				
+			case 2:
+				$this->Session->setFlash(__('Successfully deleted profile.'),'default',array(),'success');		
+			break;
+		}
+		debug($delete_status);
+		//$this->redirect('/');
+		
 	}
 	
 	public function redirect_new_frontend_customer()

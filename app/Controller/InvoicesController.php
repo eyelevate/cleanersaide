@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class InvoicesController extends AppController {
 
 	public $name = 'Invoices';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice', 'Inventory_item','Inventory','Tax');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice', 'Inventory_item','Inventory','Tax','Company');
 
 
 	public function beforeFilter()
@@ -15,6 +15,9 @@ class InvoicesController extends AppController {
 		parent::beforeFilter();
 		//set the default layout
 		$this->layout = 'admin';
+		//set username
+		$username = $this->Auth->user('username');
+		$this->set('username',$username);			
 		//set the navigation menu_id		
 		$menu_ids = $this->Menu->find('all',array('conditions'=>array('name'=>'Admin')));
 		$menu_id = $menu_ids[0]['Menu']['id'];		
@@ -52,9 +55,7 @@ class InvoicesController extends AppController {
 		$this->set('admin_nav',$admin_nav);
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);
-		//set username
-		$username = $this->Auth->user('username');
-		$this->set('username',$username);		
+
 		//setup variables
 		$company_id = $_SESSION['company_id'];
 		
@@ -62,7 +63,24 @@ class InvoicesController extends AppController {
 		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
 		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status <'=>'4','company_id'=>$company_id)));
 		
+		//set variable to show rewards system
+		$rewards_display = 'Yes';
+		$this->set('rewards_display',$rewards_display);
 		
+		//set reward status
+		$reward_status = 1;
+		$reward_points = 0;
+		if(count($users)>0){
+			foreach ($users as $u) {
+				$reward_status = $u['User']['reward_status'];
+				$reward_points = $u['User']['reward_points'];
+				if(is_null($reward_points)){
+					$reward_points = 0;
+				}
+			}
+		}
+		$this->set('reward_status',$reward_status);
+		$this->set('reward_points',$reward_points);
 		
 		//push data to view page
 		$this->set('users',$users);
@@ -125,7 +143,7 @@ class InvoicesController extends AppController {
 		$username = $this->Auth->user('username');
 		$this->set('username',$username);
 	
-		$company_id = $_SESSION['company_id'];
+		$company_id = $_SESSION['company_id'];	
 
 		// //get inventory group_data
 		$inv_groups = $this->Inventory->find('all',array('conditions'=>array('company_id'=>$company_id)));
@@ -178,7 +196,7 @@ class InvoicesController extends AppController {
  *
  * @return void
  */
-	public function pickup($id = null) {
+	public function pickup() {
 		//set the admin navigation
 		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
 		$page_url = '/invoices/pickup';
@@ -195,15 +213,43 @@ class InvoicesController extends AppController {
 		//setup variables
 		$company_id = $_SESSION['company_id'];
 		
-		//get data from db
-		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
-		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status <'=>'4','company_id'=>$company_id)));
-		
-		//push data to view page
-		$this->set('users',$users);
-		$this->set('customer_id',$id);		
-		$this->set('invoices',$invoices);
-		
+	
+		if($this->request->is('post')){
+			$customer_id = $this->request->data['customer_id'];
+			//get data from db
+			$users = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));		
+			//set variable to show rewards system
+			$rewards_display = 'Yes';
+			$this->set('rewards_display',$rewards_display);		
+			//get data from db
+			$users = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
+			$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$customer_id,'status <'=>'4','company_id'=>$company_id)));	
+			
+			//set reward status
+			$reward_status = 1;
+			$reward_points = 0;
+			if(count($users)>0){
+				foreach ($users as $u) {
+					$reward_status = $u['User']['reward_status'];
+					$reward_points = $u['User']['reward_points'];
+					if(is_null($reward_points)){
+						$reward_points = 0;
+					}
+				}
+			}
+			$this->set('reward_status',$reward_status);
+			$this->set('reward_points',$reward_points);		
+			
+	
+			
+			//push data to view page
+			$this->set('users',$users);
+			$this->set('customer_id',$customer_id);		
+			$this->set('invoices',$invoices);
+	
+			
+		}
+				
 
 
 	}
@@ -241,6 +287,7 @@ class InvoicesController extends AppController {
 			$customer_id = $this->request->data['Invoice']['customer_id'];
 			$this->request->data['Invoice']['due_date'] = date('Y-m-d',strtotime($this->request->data['Invoice']['due_date'])).' 16:00:00';
 			$due_date = $this->request->data['Invoice']['due_date'];
+			$memo = $this->request->data['Invoice']['memo'];
 			//add in special variables
 			$invoice_complete = $this->Invoice->invoice_complete($this->request->data);	
 			//reorganize inventory by type and save into invoices table
@@ -248,11 +295,19 @@ class InvoicesController extends AppController {
 			$items = $this->request->data['Invoice']['items'];	
 			$store_copy = $this->Inventory_item->reorganizeByInventory($items);	
 			
-			$invoice_split = $this->Invoice->invoice_split($store_copy, $customer_id, $due_date);
+			$invoice_split = $this->Invoice->invoice_split($store_copy, $customer_id, $due_date, $memo);
 
 			if($this->Invoice->saveAll($invoice_split['Invoice'])){
-				
-				$this->set('store',$store_copy);		
+				$printer = 'Epson';
+				$company = $this->Company->find('all',array('conditions'=>array('id'=>$_SESSION['company_id'])));
+				$customer = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
+				$username = $this->Auth->user('username');
+				$create_store_copy = $this->Invoice->createStoreCopyInvoice($invoice_split,$username, $printer,$customer, $company);
+			
+				$this->set('customer',$this->request->data);
+				$this->set('store',$store_copy);	
+				$this->set('create_store_copy',$create_store_copy);	
+
 
 			}
 
@@ -266,20 +321,27 @@ class InvoicesController extends AppController {
 			$customer_id = $this->request->data['Invoice']['customer_id'];
 			$this->request->data['Invoice']['due_date'] = date('Y-m-d',strtotime($this->request->data['Invoice']['due_date'])).' 16:00:00';
 			$due_date = $this->request->data['Invoice']['due_date'];
+			$memo = $this->request->data['Invoice']['memo'];
 			//add in special variables
 			$invoice_complete = $this->Invoice->invoice_complete($this->request->data);	
 			//reorganize inventory by type and save into invoices table
 					
 			$items = $this->request->data['Invoice']['items'];	
 			$store_copy = $this->Inventory_item->reorganizeByInventory($items);	
-			
-			$invoice_split = $this->Invoice->invoice_split($store_copy, $customer_id, $due_date);
+			$invoice_split = $this->Invoice->invoice_split($store_copy, $customer_id, $due_date, $memo);
 
 			if($this->Invoice->saveAll($invoice_split['Invoice'])){
-	
-				
+				$printer = 'Epson';
+				$company = $this->Company->find('all',array('conditions'=>array('id'=>$_SESSION['company_id'])));
+				$customer = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
+				$username = $this->Auth->user('username');
+				$create_store_copy = $this->Invoice->createStoreCopyInvoice($invoice_split,$username, $printer,$customer, $company);
+				$create_customer_copy = $this->Invoice->createCustomerCopyInvoice($invoice_complete, $username, $printer, $customer, $company);
 				$this->set('customer',$this->request->data);
-				$this->set('store',$store_copy);			
+				$this->set('customer_id',$customer_id);
+				$this->set('store',$store_copy);	
+				$this->set('create_store_copy',$create_store_copy);	
+				$this->set('create_customer_copy',$create_customer_copy);	
 			}
 		}
 	}

@@ -20,6 +20,8 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 					<th>City</th>
 					<th>State</th>
 					<th>Zip</th>
+					<th>Starch</th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -34,6 +36,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 						$city = $u['User']['contact_city'];
 						$state = $u['User']['contact_state'];
 						$zip = $u["User"]['contact_zip'];
+						$starch = $u['User']['starch'];
 						?>
 						<tr>
 							<td><?php echo $id;?></td>
@@ -44,6 +47,8 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 							<td><?php echo $city;?></td>
 							<td><?php echo $state;?></td>
 							<td><?php echo $zip;?></td>
+							<td><?php echo $starch;?></td>
+							<td><a href="/users/edit/<?php echo $customer_id;?>">Edit</a></td>
 						</tr>						
 						<?php
 					}
@@ -95,20 +100,26 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 					$rack = $inv['Invoice']['rack'];
 					$status = $inv['Invoice']['status'];
 					//create items string
-					$items = json_decode($inv['Invoice']['items'],true);
-					$item_list = '';
-					foreach ($items as $item) {
-						$item_qty = $item['quantity'];
-						$item_name = $item['name'];
-						$item_colors = $item['colors'];
-						
-						//switch qty
-						if($item_qty > 1){
-							$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
-						} else {
-							$item_list .= '<span class="badge">'.$item_name.'</span>';
-						}
+					if(count(json_decode($inv['Invoice']['items'],true))>0){
+						$items = json_decode($inv['Invoice']['items'],true);
+						$item_list = '';
+						foreach ($items as $item) {
+							$item_qty = $item['quantity'];
+							$item_name = $item['name'];
+							if(isset($item['colors'])){
+								$item_colors = $item['colors'];	
+							} else {
+								$item_colors = '';
+							}
+							//switch qty
+							if($item_qty > 1){
+								$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+							} else {
+								$item_list .= '<span class="badge">'.$item_name.'</span>';
+							}
+						}						
 					}
+
 					
 					switch($status){
 						case '1': //newly created 
@@ -138,6 +149,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 						<td style="background-color:<?php echo $background_color;?>">
 							<ul class="unstyled">
 								<li class="hide"><?php echo $this->Form->postLink(); ?></li>
+								<li class="pull-left" style="margin-right: 5px"><?php echo $this->Form->postLink(__('Reprint'), array('action' => 'process_reprint', $invoice_id), null, __('Are you sure you want to reprint Invoice #%s?', $invoice_id)); ?></li>
 								<li class="pull-left" style="margin-right:5px;"><?php echo $this->Form->postLink(__('Edit'), array('action' => 'edit', $invoice_id), null, __('Are you sure you want to edit Invoice #%s?', $invoice_id)); ?></li>
 								<li class="pull-left"><?php echo $this->Form->postLink(__('Cancel'), array('action' => 'delete', $invoice_id), null, __('Are you sure you want to cancel Invoice #%s?', $invoice_id)); ?></li>
 							</ul>
@@ -155,8 +167,8 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 			if(!is_null($customer_id)){
 			?>
 			<div class="formRow">
-				<form action="/invoices/pickup/<?php echo $customer_id;?>" method="post">
-					<input value="" name="" type="hidden"/>
+				<form action="/invoices/pickup" method="post">
+					<input value="<?php echo $customer_id;?>" name="data[customer_id]" type="hidden"/>
 					<input class="btn btn-primary" type="submit" value="Pickup"/>
 				</form>
 			</div>	

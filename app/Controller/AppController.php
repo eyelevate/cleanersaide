@@ -48,6 +48,7 @@ class AppController extends Controller {
 		'Session',
 		'Cookie',
 		'RequestHandler',
+		'AuthorizeNet',
 		'Auth'=>array(
  			'loginAction'=>array('controller'=>'admins','action'=>'login'),
           	'loginRedirect'=>array('controller'=>'admins','action'=>'index'),

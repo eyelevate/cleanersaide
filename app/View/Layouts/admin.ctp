@@ -88,6 +88,43 @@ if (!isset($username)) {
 								<li class="hidden-phone hidden-tablet">
 									<div class="nb_boxes clearfix"></div>
 								</li>
+								<?php
+								if(isset($rewards_display)){
+									if($reward_status == 2){
+										$reward_title = 'Reward Points <span class="label label-inverse" style="font-size:larger;">'.$reward_points.'</span> <b class="caret"></b>';
+									} else {
+										$reward_title = 'Reward Program Not Activated <b class="caret"></b>';
+									}
+								?>
+								<li class="divider-vertical hidden-phone hidden-tablet"></li>
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $reward_title;?> </a>
+									<ul class="dropdown-menu">
+										<?php
+										if($reward_status == 1){
+										?>
+										<li>
+											<a href="/rewards/activate/<?php echo $customer_id;?>">Activate Reward Program</a>
+										</li>
+										<?php
+										} else {
+										?>
+										<li>
+											<a href="/rewards/view/<?php echo $customer_id;?>">Rewards History</a>
+										</li>
+										<li>
+											<a href="/rewards/deactivate/<?php echo $customer_id;?>">De-activate Rewards Program</a>
+										</li>
+										<?php	
+										}
+										?>
+										
+									</ul>
+								</li>
+								<?php	
+								}
+								?>
+								
 								
 								<li class="divider-vertical hidden-phone hidden-tablet"></li>
 								<li class="dropdown">

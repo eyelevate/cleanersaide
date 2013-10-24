@@ -263,7 +263,7 @@ echo $this->Html->script(array(
 			
 			if($login == 'No'){
 			?>
-			<button id="newMemberButton" class="pull-left btn btn-large" type="button">New Member Resgistration</button>
+			<button id="newMemberButton" class="pull-left btn btn-large" type="button">New Member Registration</button>
 			<?php	
 			}
 			?>

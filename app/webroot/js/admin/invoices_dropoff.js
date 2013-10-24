@@ -148,6 +148,8 @@ invoice = {
 						$('#invoiceForm').attr('action','/invoices/process_dropoff_copy');
 					break;
 				}
+				var memo = $("#memo").val();
+				$("#memo_textarea").val(memo);
 				
 				$('#invoiceForm').submit();				
 			} else {

@@ -32,8 +32,17 @@ CREATE TABLE `acl_permissions` (
 ) ENGINE=InnoDB AUTO_INCREMENT=572 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-ALTER TABLE  `users` ADD  `test` INT( 11 ) NULL AFTER  `password`
+ALTER TABLE  `inventory_items` ADD  `tags` int(2) NULL AFTER  `price`;
 ALTER TABLE  `invoices` CHANGE  `rack`  `rack` VARCHAR( 11 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL;
+ALTER TABLE  `users` CHANGE  `starch`  `starch` varchar( 10 ) DEFAULT NULL;
+
+ALTER TABLE  `companies` ADD  `email` varchar( 100 ) NULL AFTER  `phone`;
+
+ALTER TABLE  `users` DROP  `ccnum`;
+
+
+select column_name from information_schema.columns where table_name='invoices';
+
 --
 -- Dumping data for table `acl_permissions`
 --

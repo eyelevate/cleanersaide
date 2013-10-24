@@ -11,6 +11,9 @@ class TaxesController extends AppController {
 	{
 		parent::beforeFilter();	
 		$this->layout = 'admin';	
+		//set username
+		$username = $this->Auth->user('username');
+		$this->set('username',$username);			
 		$this->Auth->deny('*');
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log

@@ -75,6 +75,10 @@
 	Router::connect('/groups/:action',array('controller'=>'groups'));
 	Router::connect('/groups/:action/*',array('controller'=>'groups'));
 
+	//Companies Controller
+	Router::connect('/companies',array('controller'=>'companies','action'=>'index'));
+	Router::connect('/companies/:action',array('controller'=>'companies'));
+	Router::connect('/companies/:action/*',array('controller'=>'companies'));
 	
 	//Location pages
 	Router::connect('/locations',array('controller'=>'locations','action'=>'index'));
@@ -128,9 +132,19 @@
 	Router::connect('/main',array('controller' => 'pages', 'action' => 'home', 'home'));
 	Router::connect('/main/*',array('controller' => 'pages', 'action' => 'home', 'home'));
 
+	//Rewards Controller
+	Router::connect('/rewards',array('controller'=>'rewards','action'=>'index'));
+	Router::connect('/rewards/:action',array('controller'=>'rewards'));
+	Router::connect('/rewards/:action/*',array('controller'=>'rewards'));
+	//Discounts Controller
+	Router::connect('/discounts',array('controller'=>'discounts','action'=>'index'));
+	Router::connect('/discounts/:action',array('controller'=>'discounts'));
+	Router::connect('/discounts/:action/*',array('controller'=>'discounts'));
 
-
-
+	//Transactions Controller
+	Router::connect('/transactions',array('controller'=>'transactions','action'=>'index'));
+	Router::connect('/transactions/:action',array('controller'=>'transactions'));
+	Router::connect('/transactions/:action/*',array('controller'=>'transactions'));
 	/** MUST BE AT END **/
 
  	//Router::connect('/*', array('controller' => 'pages','action'=>'url'));

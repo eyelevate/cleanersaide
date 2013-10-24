@@ -21,7 +21,6 @@ class AdminsController extends AppController {
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
 		$this->Auth->allow('login','logout');
-	
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
 		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
@@ -123,6 +122,7 @@ class AdminsController extends AppController {
 		$this->set('username',$username);
 		//set the action levels
 		$group_id = $this->Auth->user('group_id');
+		
 		
 
 

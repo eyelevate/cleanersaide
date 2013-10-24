@@ -71,13 +71,20 @@ if(!empty($error_message)){
 			if(isset($users)){
 				$first_name = $users['User']['first_name'];
 				$last_name = $users['User']['last_name'];
-				$phone = $users['User']['contact_phone'];
+				$phone = '';
+				if(isset($users['User']['contact_phone'])){
+					$phone = $users['User']['contact_phone'];	
+				}
+				
 				$address = $users['User']['contact_address'];
 				$suite = $users['User']['contact_suite'];
 				$city = $users['User']['contact_city'];
 				$state = $users['User']['contact_state'];
 				$zipcode = $users['User']['contact_zip'];
-				$email = $users['User']['email'];
+				$email = '';
+				if(isset($users['User']['email'])){
+					$email = $users['User']['email'];	
+				}
 				$special_instructions = $users['User']['special_instructions'];
 				
 				echo $this->Form->input('first_name',array(
