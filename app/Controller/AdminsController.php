@@ -55,7 +55,6 @@ class AdminsController extends AppController {
 		
 		//set autherror to page
 		$this->set('authError',$this->Auth->authError);
-
 		//check to see if the company has been logged in 
 		if(isset($_COOKIE['company_id']) && !empty($_COOKIE['company_id'])){ //company has been logged in now show the employee login
 			$this->Session->write('company_id',$_COOKIE['company_id']);
@@ -89,7 +88,6 @@ class AdminsController extends AppController {
 				
 			} 
 		}
-//setcookie('company_id', "", time()-3600);
 				
 	}
 /**

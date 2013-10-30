@@ -37,7 +37,7 @@ echo $this->Html->script(array(
 			if(count($users)>0){
 				
 				foreach ($users as $u) {
-					$user_id = $u['User']['id'];
+					$user_id = sprintf('%04d',$u['User']['id']);
 					$first_name = $u['User']['first_name'];
 					$last_name = $u['User']['last_name'];
 					//$middle_initial = $u['User']['middle_initial'];

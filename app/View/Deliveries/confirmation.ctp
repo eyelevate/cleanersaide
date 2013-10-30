@@ -19,13 +19,14 @@ $city = $deliveries['User']['contact_city'];
 $state = $deliveries['User']['contact_state'];
 $zip = $deliveries['User']['contact_zip'];
 $special_instructions = $deliveries['User']['special_instructions'];
-$deliver_date = date('D n/d/Y',strtotime($deliveries['Schedule']['deliver_date']));
-$deliver_day = $deliveries['Schedule']['day'];
+$dropoff_date = date('D n/d/Y',strtotime($deliveries['Schedule']['dropoff_date']));
+$pickup_date = date('D n/d/Y',strtotime($deliveries['Schedule']['pickup_date']));
+
 
 ?>
 
 <div class="container">
-	<div class="well well-large sixteen columns alpha">
+	<div class="well well-small sixteen columns alpha">
 		<h2>Delivery Information</h2>
 		<table class="table table-bordered span8">
 
@@ -46,12 +47,13 @@ $deliver_day = $deliveries['Schedule']['day'];
 				<td><?php echo $email;?></td>
 			</tr>	
 			<tr >
-				<th>Deliver Date</th>
-				<td><?php echo $deliver_date;?></td>	
+				<th>Pickup Date & Time</th>
+				<td><?php echo $pickup_date.' @ '.$pickup_time;?></td>	
 			</tr>
-			<tr>
-				<th>Deliver Time</th>
-				<td><?php echo $time;?></td>
+			
+			<tr >
+				<th>Dropoff Date & Time</th>
+				<td><?php echo $dropoff_date.' @ '.$dropoff_time;?></td>	
 			</tr>	
 			<tr>
 				<th>Special Instructions</th>
@@ -59,6 +61,10 @@ $deliver_day = $deliveries['Schedule']['day'];
 			</tr>	
 
 		</table>
+		<div class="sixteen columns alpha">
+			<button class="btn btn-link">Restart Delivery Form</button>	
+		</div>
+		
 	</div>
 	
 	<!-- customer payment info -->

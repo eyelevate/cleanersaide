@@ -33,12 +33,12 @@ CREATE TABLE `acl_permissions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 ALTER TABLE  `inventory_items` ADD  `tags` int(2) NULL AFTER  `price`;
-ALTER TABLE  `invoices` CHANGE  `rack`  `rack` VARCHAR( 11 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL;
+ALTER TABLE  `schedules` CHANGE  `deliver_date`  `pickup_date` datetime CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL;
 ALTER TABLE  `users` CHANGE  `starch`  `starch` varchar( 10 ) DEFAULT NULL;
 
-ALTER TABLE  `companies` ADD  `email` varchar( 100 ) NULL AFTER  `phone`;
+ALTER TABLE  `schedules` ADD  `dropoff_delivery_id` int(4) NULL AFTER  `delivery_date`;
 
-ALTER TABLE  `users` DROP  `ccnum`;
+ALTER TABLE  `schedules` DROP  `day`;
 
 
 select column_name from information_schema.columns where table_name='invoices';

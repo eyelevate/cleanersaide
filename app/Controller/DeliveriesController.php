@@ -21,7 +21,7 @@ class DeliveriesController extends AppController {
 		$menu_id = $menu_ids[0]['Menu']['id'];		
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
-		$this->Auth->allow('login','logout','index','form','confirmation','process_sad','process_login','request_date_time');
+		$this->Auth->allow('login','logout','index','form','confirmation','process_sad','process_login','request_pickup_date_time','request_dropoff_date_time');
 		//set username
 		$username = $this->Auth->user('username');
 		$this->set('username',$username);
@@ -393,7 +393,7 @@ class DeliveriesController extends AppController {
 		$find_routes = $this->Delivery->routes($zipcode,$company_id);
 		$month = date('m');
 		$year = date('Y');
-		$route_schedule = $this->Schedule->create_schedule($find_routes,$company_id,$month, $year);
+		$route_schedule = $this->Schedule->create_pickup_schedule($find_routes,$company_id,$month, $year);
 		
 		if(count($find_routes)>0){
 			$this->set('route_status','1');
@@ -402,18 +402,22 @@ class DeliveriesController extends AppController {
 			$this->set('route_status','0');
 			$this->set('routes',array());
 		}
-
 		$this->set('route_schedule',$route_schedule);
 
 		if($this->request->is('post')){
 			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
-			$date_string = $this->request->data['Schedule']['date'];
+			$dropoff_date = $this->request->data['Schedule']['dropoff_date'];
+			$dropoff_time = $this->request->data['Schedule']['dropoff_time'];
+			$pickup_date = $this->request->data['Schedule']['pickup_date'];
+			$pickup_time = $this->request->data['Schedule']['pickup_time'];
+			
 			
 			$_SESSION['Delivery']['Schedule']['customer_id'] = $customer_id;
-			$_SESSION['Delivery']['Schedule']['deliver_date'] = date('Y-m-d H:i:s',$date_string);
+			$_SESSION['Delivery']['Schedule']['pickup_date'] = date('Y-m-d H:i:s',$pickup_date);
+			$_SESSION['Delivery']['Schedule']['pickup_delivery_id'] = $pickup_time;
+			$_SESSION['Delivery']['Schedule']['dropoff_date'] = date('Y-m-d H:i:s',$dropoff_date);
+			$_SESSION['Delivery']['Schedule']['dropoff_delivery_id'] = $dropoff_time;
 			$_SESSION['Delivery']['Schedule']['company_id'] = 1;
-			$_SESSION['Delivery']['Schedule']['delivery_id'] = $this->request->data['Schedule']['time'];
-			$_SESSION['Delivery']['Schedule']['day'] = date('l',$date_string);
 			$_SESSION['Delivery']['Schedule']['status'] = 1;
 			$_SESSION['Delivery']['Schedule']['type'] = 'frontend';
 			$_SESSION['message'] = 'You have successfully selected your delivery date and time. Please confirm all the information below and submit your payment information';
@@ -422,7 +426,7 @@ class DeliveriesController extends AppController {
 	}
 
 	
-	public function request_date_time()
+	public function request_pickup_date_time()
 	{
 		if($this->request->is('ajax')){
 			$month = $this->data['month'];
@@ -434,7 +438,25 @@ class DeliveriesController extends AppController {
 			$this->set('zipcode',$zipcode);
 	
 			$find_routes = $this->Delivery->routes($zipcode,$company_id);
-			$route_schedule = $this->Schedule->create_schedule($find_routes,$company_id,$month, $year);
+			$route_schedule = $this->Schedule->create_pickup_schedule($find_routes,$company_id,$month, $year);
+			$this->set('route_schedule',$route_schedule);
+		}
+	}
+	public function request_dropoff_date_time()
+	{
+		if($this->request->is('ajax')){
+			$month = $this->data['pickup_month'];
+			$year = $this->data['pickup_year'];
+			$date = $this->data['pickup_date'];
+			$time = $this->data['pickup_time'];
+			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+			$company_id = 1;
+	
+			$zipcode = $_SESSION['Delivery']['User']['contact_zip'];
+			$this->set('zipcode',$zipcode);
+	
+			$find_routes = $this->Delivery->routes($zipcode,$company_id);
+			$route_schedule = $this->Schedule->create_dropoff_schedule($find_routes,$company_id,$month, $year, $date, $time);
 			$this->set('route_schedule',$route_schedule);
 		}
 	}
@@ -442,16 +464,27 @@ class DeliveriesController extends AppController {
 	{
 		$this->layout = 'pages';
 		$this->set('deliveries',$_SESSION['Delivery']);
-		//get delivery time 
-		$delivery_data = $this->Delivery->find('all',array('conditions'=>array('id'=>$_SESSION['Delivery']['Schedule']['delivery_id'])));
-		if(count($delivery_data)>0){
-			foreach ($delivery_data as $d) {
-				$start_time = $d["Delivery"]['start_time'];
-				$end_time = $d['Delivery']['end_time'];
+		//get pickup time 
+		$delivery_pickup_data = $this->Delivery->find('all',array('conditions'=>array('id'=>$_SESSION['Delivery']['Schedule']['pickup_delivery_id'])));
+		if(count($delivery_pickup_data)>0){
+			foreach ($delivery_pickup_data as $d) {
+				$pickup_start_time = $d["Delivery"]['start_time'];
+				$pickup_end_time = $d['Delivery']['end_time'];
 			}
-			$this->set('time',$start_time.' - '.$end_time);
+			$this->set('pickup_time',$pickup_start_time.' - '.$pickup_end_time);
 		} else {
-			$this->set('time','Not Set');
+			$this->set('pickup_time','Not Set');
+		}
+		//get dropoff time 
+		$delivery_dropoff_data = $this->Delivery->find('all',array('conditions'=>array('id'=>$_SESSION['Delivery']['Schedule']['dropoff_delivery_id'])));
+		if(count($delivery_dropoff_data)>0){
+			foreach ($delivery_dropoff_data as $d) {
+				$dropoff_start_time = $d["Delivery"]['start_time'];
+				$dropoff_end_time = $d['Delivery']['end_time'];
+			}
+			$this->set('dropoff_time',$dropoff_start_time.' - '.$dropoff_end_time);
+		} else {
+			$this->set('dropoff_time','Not Set');
 		}
 		if(!empty($_SESSION['Delivery']['User']['customer_id'])){
 			//get payment info
