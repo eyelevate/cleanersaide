@@ -152,7 +152,10 @@ foreach ($invoices as $i) {
 				foreach ($items as $item) {
 					$item_qty = $item['quantity'];
 					$item_name = $item['name'];
-					$item_colors = $item['colors'];
+					$item_colors = array();
+					if(!empty($item['colors'])){
+						$item_colors = $item['colors'];
+					}
 					$color_list = '';
 					//switch qty
 					if($item_colors > 0){
@@ -202,8 +205,8 @@ foreach ($invoices as $i) {
 				</div>
 			</div>
 			<ul id="paymentTypeUl" class="nav nav-tabs">
-				<li class="active" value="credit" ><a href="#creditLi" data-toggle="tab">Credit</a></li>
-				<li value="cash"><a href="#cashLi" data-toggle="tab">Cash</a></li>
+				<li class="active" payment="credit" ><a href="#creditLi" data-toggle="tab">Credit</a></li>
+				<li payment="cash"><a href="#cashLi" data-toggle="tab">Cash</a></li>
 				
 			</ul>
 			<ol class="unstyled tab-content">
@@ -269,7 +272,6 @@ foreach ($invoices as $i) {
 </div><!-- /.modal -->
 <!-- Modal Disount -->
 <?php
-$reward_points = 400;
 ?>
 <div class="modal fade" id="myModalDiscount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -291,40 +293,22 @@ $reward_points = 400;
 	     	<div class="control-group">
 	     		<label>Select Discount</label>
 	     		<select id="discountSelect">
-	     			<option value="" >Select Here</option>
+	     			<option value="none" >Select Here</option>
+	     			<optgroup label="Reward Program">
 	     			<?php
-	     			if($reward_points <= 100){
-	     				?>
-	     				<option value="0.1" points="100">10% Off (100 points)</option>
-	     				<?php
-	     			} elseif($reward_points <= 200) {
-	     				?>
-	     				<option value="0.1" points="100">10% Off (100 points)</option>
-	     				<option value="0.2" points="200">20% Off (200 points)</option>
-	     				<?php
-	     			} elseif($reward_points <= 300) {
-	     				?>
-	     				<option value="0.1" points="100">10% Off (100 points)</option>
-	     				<option value="0.2" points="200">20% Off (200 points)</option>
-	     				<option value="0.3" points="300">30% Off (300 points)</option>	     				
-	     				<?php
-	     			} elseif($reward_points <= 400) {
-	     				?>
-	     				<option value="0.1" points="100">10% Off (100 points)</option>
-	     				<option value="0.2" points="200">20% Off (200 points)</option>
-	     				<option value="0.3" points="300">30% Off (300 points)</option>	
-		     			<option value="0.4" points="400">40% Off (400 points)</option>	     				
-	     				<?php
-	     			} else {
-	     				?>
-	     				<option value="0.1" points="100">10% Off (100 points)</option>
-	     				<option value="0.2" points="200">20% Off (200 points)</option>
-	     				<option value="0.3" points="300">30% Off (300 points)</option>	
-		     			<option value="0.4" points="400">40% Off (400 points)</option>		
-	     				<option value="0.5" points="500">50% Off (500 points)</option>
-	     				<?php
-	     			}
-	     			?>
+	     			foreach ($rewards as $r) {
+	     				$reward_id = $r['Reward']['id'];
+						$reward_discount = $r['Reward']['discount'];
+						$reward_name = $r['Reward']['name'];
+						$reward_points = $r['Reward']['points'];
+						?>
+						<option value="<?php echo $reward_id;?>" points="<?php echo $reward_points;?>" discount="<?php echo $reward_discount;?>"><?php echo $reward_name;?></option>
+						<?php
+					}
+
+	     			?>	     				
+	     			</optgroup>
+
 
 	     		</select>
 	     	</div>
@@ -360,4 +344,4 @@ $reward_points = 400;
 	  </div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<form id="finalPickupForm" customer_id="<?php echo $customer_id;?>" method="post" action="/invoices/process_pickup"></form>
+<form id="finalPickupForm" customer_id="<?php echo $customer_id;?>" reward="<?php echo $reward_points;?>" method="post" action="/invoices/process_pickup"></form>

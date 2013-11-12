@@ -450,9 +450,11 @@ class Invoice extends AppModel {
 			$invoice[$key][48] = '\x1b\x4d\1';
 			
 			$idx = 48;
+			$item_colors = array();
 			foreach ($items as $ikey => $ivalue) {
-				
-				$item_colors = $items[$ikey]['colors'];
+				if($items[$ikey]['colors']){
+					$item_colors = $items[$ikey]['colors'];
+				}
 				$item_color = '';
 				if(count($item_colors)>0){
 					foreach ($item_colors as $item) {
@@ -513,6 +515,149 @@ class Invoice extends AppModel {
 		return $invoice;
 	}
 	
+	//set script for printing invoices
+	public function createCustomerCopyPickup($data, $quantity, $total_bt, $total_tax,$reward_selected, $total_discount,$total_at,$username, $printer,$customer, $company)
+	{
+		$invoice = array();	
+		//create needed variables
+
+		$drop_date = date('n/d/Y g:ia');
+		
+		if(count($company)>0){
+			foreach ($company as $c) {
+				$company_name = $c['Company']['name'];
+				$company_street = $c['Company']['street'];
+				$company_city = $c['Company']['city'];
+				$company_state = $c['Company']['state'];
+				$company_zip = $c['Company']['zip'];
+				$company_phone = $c['Company']['phone'];				
+			}
+		}
+		if(count($customer)>0){
+			foreach ($customer as $cu) {
+				$first_name = $cu['User']['first_name'];
+				$middle_initial = $cu['User']['middle_initial'];
+				$last_name = $cu['User']['last_name'];
+				$customer_phone = $cu['User']['contact_phone'];
+				$customer_id = $cu['User']['id'];
+				if(is_null($middle_initial)){
+					$full_name = ucfirst($first_name).' '.ucfirst($last_name);	
+				} else {
+					$full_name = ucfirst($first_name).' '.ucfirst($middle_initial).' '.ucfirst($last_name);
+				}
+				if(!is_null($cu['User']['starch'])){
+					$starch = $cu['User']['starch'];
+				} else {
+					$starch = 'L';
+				}
+				$starch_code = substr(ucfirst($last_name),0,1).$customer_id.substr(ucfirst($starch),0,1);
+				
+			
+			}
+		}
+		$invoice[0] = $printer; //set printer
+		$invoice[1] = $this->_ResetStyles(); //reset
+		$invoice[2] = $this->_CenterBody(); //center text
+		$invoice[3] = '\x1b\x4d\1'; //font
+		$invoice[4] = $this->_MakeStyle(false,false, false, false, true); //double height
+		$invoice[5] = $this->_CenterBody(); //center text
+		$invoice[6] = $company_name;
+		$invoice[7] = $this->_NewLine(); //newline
+		$invoice[8] = $this->_ResetStyles(); //reset
+		$invoice[9] = $this->_CenterBody(); //center
+		$invoice[10] = '\x1b\x4d\1'; //font
+		$invoice[11] = $company_street;
+		$invoice[12] = $this->_NewLine(); //newline
+		$invoice[13] = $company_city.', '.$company_state.' '.$company_zip;
+		$invoice[14] = $this->_NewLine(); //newline
+		$invoice[15] = $company_phone;
+		$invoice[16] = $this->_NewLine(); //newline
+		$invoice[17] = $this->_ResetStyles(); //reset
+		$invoice[18] = $this->_CenterBody(); //center
+		$invoice[19] = 'PICKED UP: '. date('D n/d/Y H:i:s');
+		$invoice[20] = $this->_NewLine();
+		$invoice[21] = $this->_ResetStyles(); //reset
+		$invoice[22] = $this->_CenterBody(); //center
+		$invoice[23] = $full_name.' \x1b\x44\35\17 \x09 \x1b\x61\x02 '.$starch_code;
+		$invoice[24] = $this->_NewLine();
+		$invoice[25] = '\x1b\x4d\1'; //font
+		$invoice[26] = $customer_phone.'\x1b\x44\47\17 \x09 \x1b\x61\x02'.$username;
+		$invoice[27] = $this->_NewLine();
+		$invoice[28] = $this->_ResetStyles(); //reset
+		$invoice[29] = '------------------------------------------';
+		$invoice[30] = $this->_NewLine();
+		$invoice[31] = $this->_ResetStyles(); //reset
+		$invoice[32] = 'ITEM          COLOR               QTY ';
+		$invoice[33] = $this->_NewLine();
+		$invoice[34] = $this->_ResetStyles(); //reset		
+		$invoice[35] = '------------------------------------------';
+		$invoice[36] = $this->_NewLine();
+		$invoice[37] = $this->_ResetStyles(); //reset	
+		$invoice[38] = '\x1b\x4d\1';
+		$idx = 38;
+		foreach ($data as $key => $value) {
+			$item_colors = array();
+			foreach ($value as $pkey => $pvalue) {
+				$item_qty = $value[$pkey]['quantity'];
+				$item_name = $value[$pkey]['name'];
+				$item_before_tax = $value[$pkey]['before_tax'];
+				$item_id = $value[$pkey]['item_id'];
+				if(isset($value[$pkey]['colors'])){
+					$item_colors = $value[$pkey]['colors'];
+				}
+				$item_color = '';
+				if(count($item_colors)>0){
+					foreach ($item_colors as $item) {
+						$color = $item['color'];
+						$qty = $item['quantity'];
+						if($qty > 1){
+							$item_color .= '('.$qty.'x) '.$color.',';
+						} else {
+							$item_color .= $color.',';
+						}
+					}
+					
+					$item_color = substr($item_color,0,-1);
+				}
+				$idx++;
+				$invoice[$idx] = $item_name.':\x1b\x44\43\17 \x09 \x1b\x61\x02'.$item_qty.'\x09 \x09 \x09 \x09 \x09 \x09 \x09 \x09 $'.$item_before_tax;
+				$idx++;
+				$invoice[$idx] = $this->_NewLine().' '.$this->_ResetStyles().' \x1b\x4d\1';
+				$idx++;
+				$invoice[$idx] = $this->_MakeTab().' '.$item_color.' '.$this->_NewLine();
+			}
+			
+		}
+		$idx++;			
+		$invoice[$idx] = $this->_ResetStyles().'------------------------------------------'.$this->_ResetStyles();
+		$idx++;
+		$invoice[$idx] = '               Total Pretax: $'.$total_bt.' '.$this->_NewLine();
+		$idx++;
+		$invoice[$idx] = '                  Total Tax: $'.$total_tax.' '.$this->_NewLine();
+		$idx++;
+		$invoice[$idx] = '             Total Discount: $'.$total_discount.' '.$this->_NewLine();
+		$idx++;
+		$invoice[$idx] = '                Total Price: $'.$total_at.' '.$this->_NewLine();
+		$idx++;
+		$invoice[$idx] = '               Total Pieces: '.$quantity.' '.$this->_NewLine();
+		$idx++;
+		$invoice[$idx] = '\x1b\x4d\1 '.$this->_CenterBody().' '.$this->_NewLine();
+		$idx++;
+		$invoice[$idx] = 'Thank you for your business. All work done on premises.'.$this->_NewLine();
+		$idx++;
+		$invoice[$idx] = $this->_ResetStyles().' '.$this->_CenterBody();
+		$idx++;
+		$invoice[$idx] = '['.$quantity.' PCS]'.$this->_NewLine();
+		$idx++;
+		$invoice[$idx] = $this->_ResetStyles().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
+		$idx++;
+		$invoice[$idx] = '\x1D\x56\x01 '.$this->_ResetStyles();
+		$idx++;
+		$invoice[$idx] = $this->_EndOfDocument();		
+		
+		
+		return $invoice;		
+	}
 	
 /*
  * Characters to use 

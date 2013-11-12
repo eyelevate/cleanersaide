@@ -70,14 +70,31 @@ $pickup_date = date('D n/d/Y',strtotime($deliveries['Schedule']['pickup_date']))
 	<!-- customer payment info -->
 	<fieldset class="sixteen columns alpha well well-small">
 		<h3>Payment Information - <span>required for all deliveries.</span></h3>
+		<?php
+		$payment_class = '';
+		if(isset($_SESSION['payment_error'])){
+			$payment_class = 'error';	
+			$payment_message = $_SESSION['payment_error']['response'];
+			?>
+			<div class="alert alert-error">
+				<?php
+				echo $payment_message;
+				?>
+			</div>				
+			<?php
+			
+		} else {
+		?>
 		<div class="alert alert-info">
 			All delivery require payment information...(finish statement)
-		</div>
+		</div>		
 		<?php
+		}
+			echo $this->Form->create('Delivery',array('action'=>'/process_final_delivery_form')); 
 		if($display_payment == 'Yes'){ 
-			echo $this->Form->create('Delivery'); 
 			
 		?>
+			<input type="hidden" name="data[Delivery][saved_profile]" value="No"/>
 			<div class="row">
 			<?php
 			echo $this->Form->input('card_full_name',array(
@@ -131,17 +148,29 @@ $pickup_date = date('D n/d/Y',strtotime($deliveries['Schedule']['pickup_date']))
 		
 			?>
 			</div>
+			<div class="control-group clearfix">
+				<label class="checkbox"><input type="checkbox" value="Yes" name="data[Delivery][payment_status]"/> I would like to save my payment information for future visits.</label>
+			</div>
+		<?php
+		} else {
+		?>
+		<input type="hidden" value="Yes" name="data[Delivery][saved_profile]"/>
+		<p>Payment information has already been saved. You may make the delivery request. </p>
+		<div class="control-group clearfix">
+			<label class="checkbox"><input type="checkbox" value="No" name="data[Delivery][payment_status]"/> I would like to stop saving my payment information.</label>
+		</div>		
+		<?php	
+		}	
+		?>	
 			<div class="row">
 				<input type="submit" class="btn btn-primary btn-large pull-right" value="Make Delivery"/>
 			</div>
 		<?php 
 			echo $this->Form->end(); 
-		} else {
 		?>
-		Payment information has been saved
-		<?php	
-		}	
-		?>	
 	</fieldset>
 
 </div>
+<?php
+unset($_SESSION['payment_error']);
+?>

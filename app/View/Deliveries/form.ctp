@@ -211,8 +211,7 @@ if($route_status == '1'){ //there are routes
 				<div id="dropoffFormCheck" class="row">
 					<hr/>
 					<p id="successfulDropoffMessage" class="hide"></p>
-					<input id="dropoffFinishFake" class="btn btn-large btn-primary pull-right disabled" type="disabled" value="Confirm Delivery"/>
-					<button id="dropoffFinish" class="btn btn-large btn-primary pull-right hide">Confirm Delivery</button>
+					<button id="dropoffFinish" class="btn btn-large btn-primary pull-right">Confirm Delivery</button>
 					
 				</div>	
 			</div>		
@@ -229,9 +228,8 @@ if($route_status == '1'){ //there are routes
 		
 		<div class="alert alert-danger">
 			<h3>Warning! There are currently no scheduled routes to your zipcode at this time! </h3>
-			<p>We apologize that we have not setup any current route to your zipcode. Although we have no direct routes to your zipcode, we may be able to provide a delivery by special request.</p>
-			
-			<a class="btn btn-large btn-danger" href="/deliveries/request">Request an out of schedule delivery</a>
+			<p>We apologize that we have not setup any current route to your zipcode. Although we have no direct routes to your zipcode, we may be able to provide a delivery by special request. Please contact us at...(finish statement)</p>
+
 		</div>
 		
 	</div>

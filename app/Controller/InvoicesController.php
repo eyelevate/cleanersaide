@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class InvoicesController extends AppController {
 
 	public $name = 'Invoices';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice', 'Inventory_item','Inventory','Tax','Company');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice', 'Inventory_item','Inventory','Tax','Company','Reward','RewardTransaction','Transaction');
 
 
 	public function beforeFilter()
@@ -239,8 +239,9 @@ class InvoicesController extends AppController {
 			}
 			$this->set('reward_status',$reward_status);
 			$this->set('reward_points',$reward_points);		
-			
-	
+			//get rewards
+			$rewards = $this->Reward->find('all',array('conditions'=>array('company_id'=>$_SESSION['company_id'],'points <='=>$reward_points)));
+			$this->set('rewards',$rewards);
 			
 			//push data to view page
 			$this->set('users',$users);
@@ -256,27 +257,178 @@ class InvoicesController extends AppController {
 	
 	function process_pickup()
 	{
-		$print = $this->request->data['Invoice']['print'];
-		$customer_id = $this->request->data['Invoice']['customer_id'];
-		$company_id = $_SESSION['company_id'];
-		$total_bt = $this->request->data['Invoice']['total_bt'];
-		$quantity = $this->request->data['Invoice']['quantity'];
-		$total_tax = $this->request->data['Invoice']['total_tax'];
-		foreach ($this->request->data['Invoice']['picked_up'] as $key => $value) {
-			$invoice_id = $value['invoice_id'];
-
-			$this->Invoice->query('update invoices set status = 5 where invoice_id ='.$invoice_id.' and company_id ='.$company_id.'');
-		}
-		
-		switch($print){
-			case 'Yes':
-				//place printing code here
-			break;
+		if($this->request->is('post')){
+			$print = $this->request->data['Invoice']['print'];
+			$customer_id = $this->request->data['Invoice']['customer_id'];
+			$company_id = $_SESSION['company_id'];
+			$total_bt = $this->request->data['Invoice']['total_bt'];
+			$total_at = $this->request->data['Invoice']['total_at'];
+			$quantity = $this->request->data['Invoice']['quantity'];
+			$total_tax = $this->request->data['Invoice']['total_tax'];
+			$invoices = $this->request->data['Invoice']['picked_up'];
+			$total_discount = $this->request->data['Invoice']['total_discount'];
+			$reward_selected = $this->request->data['Invoice']['reward_selected'];
+			$last_four = $this->request->data['Invoice']['last_four'];
+			$tendered = $this->request->data['Invoice']['tendered'];
+			$payment_type = $this->request->data['Invoice']['payment_type']; //this has not been set up in the form yet. 
+			switch($payment_type){
+				case 'credit': //type 1
+					$transaction_type = 1;
+				break;
 				
-			default:
-				$this->Session->setFlash(__('You have successfully finished a pickup reservation session.'),'default',array(),'success');
-				$this->redirect(array('controller'=>'invoices','action'=>'dropoff',$customer_id));
-			break;
+				case 'cash': //type 2
+					$transaction_type = 2;
+				break;
+				
+				case 'account': //type 3
+					$transaction_type = 3;
+				break;
+				
+				case 'merchant': //type 4
+					$transaction_type = 4;
+				break;
+			}
+			$printer = 'Epson';
+			$company = $this->Company->find('all',array('conditions'=>array('id'=>$company_id)));
+			$customer = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
+			$username = $this->Auth->user('username');	
+			$employee_id = $this->Auth->user('id');		
+			$item_arrange = array();
+			if(count($invoices)>0){
+				foreach ($invoices as $key => $value) {
+					$invoice_id = $value['invoice_id'];
+					$get_invoice = $this->Invoice->find('all',array('conditions'=>array('invoice_id'=>$invoice_id,'company_id'=>$company_id)));
+					if(count($get_invoice)>0){
+						foreach ($get_invoice as $gi) {
+							$items = json_decode($gi['Invoice']['items'],true);
+							foreach ($items as $ikey => $ivalue) {
+								$item_arrange[$ikey] = $ivalue;
+							}
+						}
+					}
+				}
+			}
+			$store_copy = $this->Inventory_item->reorganizeByInventory($item_arrange);	
+
+			//update the pickup status in invoices
+			foreach ($this->request->data['Invoice']['picked_up'] as $key => $value) {
+				$invoice_id = $value['invoice_id'];
+	
+				$this->Invoice->query('update invoices set status = 5 where invoice_id ='.$invoice_id.' and company_id ='.$company_id.'');
+			}
+			
+			//add a new row to the transaction table
+			$transaction = array();
+			
+			$transaction['Transaction'] = array(
+				'invoices'=>json_encode($invoices),
+				'company_id'=>$company_id,
+				'customer_id'=>$customer_id,
+				'pretax'=>$total_bt,
+				'tax'=>$total_tax,
+				'aftertax'=>sprintf('%.2f',$total_at + $total_discount),
+				'discount'=>$total_discount,
+				'total'=>$total_at,
+				'type'=>$transaction_type,
+				'status'=>1,
+				'last_four'=>$last_four,
+				'tendered'=>$tendered,
+			); //create the transaction array
+			$this->Transaction->save($transaction);//save the transaction into the db and get the last saved inserted id
+
+			//get customers reward total
+			$cust_prev_totals = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id,'User.company_id'=>$company_id)));
+			$reward_status = 0;
+			if(count($cust_prev_totals)>0){
+				foreach ($cust_prev_totals as $cpt) {
+					$old_reward_total = $cpt['User']['reward_points'];
+					if(is_null($old_reward_total)){
+						$old_reward_total = 0;
+					}
+					$reward_status = $cpt['User']['reward_status'];
+				}
+			} 		
+			$last_transaction = $this->Transaction->getLastInsertId(); //get the last transaction id
+			/*
+			 * Reward status 
+			 * 1. points accrued
+			 * 2. points deducted
+			 * 3. points altered
+			 */	
+			//update the reward points if any, including the users table
+			if($reward_selected == 'none'){ //no reward selected so update the rewards transaction table
+				
+				
+				if($reward_status == 2){
+					$reward_update = array();
+					$new_rewards = ceil($total_at);
+					$new_reward_total = $old_reward_total + $new_rewards;
+					$reward_update['RewardTransaction'] = array(
+						'reward_id'=>$reward_selected,
+						'customer_id'=>$customer_id,
+						'employee_id'=>$employee_id,
+						'company_id'=>$company_id,
+						'type'=>1,
+						'transaction_id'=>$last_transaction,
+						'points'=>$new_rewards,
+						'running_total'=>$new_reward_total
+						
+					);
+					$reward_user_update = array();
+					$reward_user_update['User']['reward_points'] = $new_reward_total;
+					$this->RewardTransaction->save($reward_update);
+					$this->User->id = $customer_id;
+					$this->User->save($reward_user_update);
+				}
+			} else { //there is a reward
+				//get reward amounts by id
+				$reward_points_used = 0;
+				$reward_details = $this->Reward->find('all',array('conditions'=>array('id'=>$reward_selected)));
+				if(count($reward_details)>0){
+					foreach ($reward_details as $rds) {
+						$reward_points_used = $rds['Reward']['points']; //how many points to deduct from total
+					}
+				}
+			
+			
+				if($reward_status == 2){
+					$rewards_update = array();
+					$new_reward_total = $old_reward_total - $reward_points_used;
+					$reward_update['RewardTransaction'] = array(
+						'reward_id'=>$reward_selected,
+						'customer_id'=>$customer_id,
+						'employee_id'=>$employee_id,
+						'company_id'=>$company_id,
+						'type'=>2,
+						'transaction_id'=>$last_transaction,
+						'points'=>0-$reward_points_used,
+						'running_total'=>$new_reward_total
+						
+					);
+					$reward_user_update = array();
+					$reward_user_update['User']['reward_points'] = $new_reward_total;
+					$this->RewardTransaction->save($reward_update);
+					$this->User->id = $customer_id;
+					$this->User->save($reward_user_update);
+				}
+			}
+			
+			
+			$this->set('print',$print);
+			switch($print){
+				case 'Yes':
+					//place printing code here
+					
+					$create_customer_copy = $this->Invoice->createCustomerCopyPickup($store_copy, $quantity, $total_bt, $total_tax,$reward_selected, $total_discount,$total_at,$username, $printer,$customer, $company);
+					$this->set('print_customer_copy',$create_customer_copy);
+					$this->set('customer_id',$customer_id);
+				break;
+					
+				default:
+					$this->Session->setFlash(__('You have successfully finished a pickup reservation session.'),'default',array(),'success');
+					$this->redirect(array('controller'=>'invoices','action'=>'dropoff',$customer_id));
+				break;
+			}
 		}
 	}
 	

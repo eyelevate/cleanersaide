@@ -147,76 +147,79 @@ if(!empty($taxes)){
 				</div>
 				<div id="hiddenTotalsDiv" class="hide"></div>
 			</form>
+			<div class="formRow clearfix">
+				<div class="span12 well well-small" style="margin-top:15px;">
+					<legend>Select a color</legend>
+					<ul class="colorUl unstyled clearfix">
+						<li class="span2 well well-small pull-left" style="background-color:#ffffff;" color="black">
+							<p style="text-align:center;">
+								<div style="text-align:center; background-color:#000000; height:50px; margin-bottom:5px;" class="span12"></div>
+							</p>
+							
+							<p style="text-align:center; line-height:90%;">Black</p>
+						</li>
+						<li class="span2 well well-small pull-left" style="background-color:#ffffff;" color="white">
+							<p style="text-align:center;">
+								<div style="text-align:center; background-color:#ffffff; height:50px; margin-bottom:5px;" class="span12"></div>
+							</p>
+							<p style="text-align:center; line-height:90%;">White</p>
+						</li>
+						<li class="span2 well well-small pull-left" style="background-color:#ffffff;" color="red">
+							<p style="text-align:center;">
+								<div style="text-align:center; background-color:red; height:50px; margin-bottom:5px;" class="span12"></div>
+							</p>
+							<p style="text-align:center; line-height:80%;">Red</p>
+						</li>
+						<li class="span2 well well-small pull-left" style="background-color:#ffffff;" color="green">
+							<p style="text-align:center;">
+								<div style="text-align:center; background-color:green; height:50px; margin-bottom:5px;" class="span12"></div>
+							</p>
+							<p style="text-align:center; line-height:80%;">Green</p>
+						</li>
+						<li class="span2 well well-small pull-left" style="background-color:#ffffff;" color="yellow">
+							<p style="text-align:center;">
+								<div style="text-align:center; background-color:yellow; height:50px; margin-bottom:5px;" class="span12"></div>
+							</p>
+							<p style="text-align:center; line-height:80%;">Yellow</p>
+						</li>
+						<li class="span2 well well-small pull-left" style="background-color:#ffffff;" color="blue">
+							<p style="text-align:center;">
+								<div style="text-align:center; background-color:blue; height:50px; margin-bottom:5px;" class="span12"></div>
+							</p>
+							<p style="text-align:center; line-height:80%;">Blue</p>
+						</li>
+					</ul>
+					<ul class="colorUl unstyled clearfix">
+						<li class="span2 well well-small pull-left clearfix" style="background-color:#ffffff;" color="tan">
+							<p style="text-align:center;">
+								<div style="text-align:center; background-color:tan; height:50px; margin-bottom:5px;" class="span12"></div>
+							</p>
+							<p style="text-align:center; line-height:80%;">Tan</p>
+						</li>
+						<li class="span2 well well-small pull-left" style="background-color:#ffffff;" color="pink">
+							<p style="text-align:center;">
+								<div style="text-align:center; background-color:pink; height:50px; margin-bottom:5px;" class="span12"></div>
+							</p>
+							<p style="text-align:center; line-height:80%;">Pink</p>
+						</li>			
+						<li class="span2 well well-small pull-left" style="background-color:#ffffff;" color="purple">
+							<p style="text-align:center;">
+								<div style="text-align:center; background-color:purple; height:50px; margin-bottom:5px;" class="span12"></div>
+							</p>
+							<p style="text-align:center; line-height:80%;">Purple</p>
+						</li>
+						<li class="span2 well well-small pull-left" style="background-color:#ffffff;" color="brown">
+							<p style="text-align:center;">
+								<div style="text-align:center; background-color:brown; height:50px; margin-bottom:5px;" class="span12"></div>
+							</p>
+							<p style="text-align:center; line-height:80%;">Brown</p>
+						</li>
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
-	<div class="formRow clearfix">
-		<div class="span12 well well-small" style="margin-top:15px;">
-			<legend>Select a color</legend>
-			<ul class="colorUl unstyled">
-				<li class="span1 well well-small" style="background-color:#ffffff;" color="black">
-					<p style="text-align:center;">
-						<div style="text-align:center; background-color:#000000; height:50px; margin-bottom:5px;" class="span12"></div>
-					</p>
-					
-					<p style="text-align:center; line-height:90%;">Black</p>
-				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;" color="white">
-					<p style="text-align:center;">
-						<div style="text-align:center; background-color:#ffffff; height:50px; margin-bottom:5px;" class="span12"></div>
-					</p>
-					<p style="text-align:center; line-height:90%;">White</p>
-				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;" color="red">
-					<p style="text-align:center;">
-						<div style="text-align:center; background-color:red; height:50px; margin-bottom:5px;" class="span12"></div>
-					</p>
-					<p style="text-align:center; line-height:80%;">Red</p>
-				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;" color="green">
-					<p style="text-align:center;">
-						<div style="text-align:center; background-color:green; height:50px; margin-bottom:5px;" class="span12"></div>
-					</p>
-					<p style="text-align:center; line-height:80%;">Green</p>
-				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;" color="yellow">
-					<p style="text-align:center;">
-						<div style="text-align:center; background-color:yellow; height:50px; margin-bottom:5px;" class="span12"></div>
-					</p>
-					<p style="text-align:center; line-height:80%;">Yellow</p>
-				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;" color="blue">
-					<p style="text-align:center;">
-						<div style="text-align:center; background-color:blue; height:50px; margin-bottom:5px;" class="span12"></div>
-					</p>
-					<p style="text-align:center; line-height:80%;">Blue</p>
-				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;" color="tan">
-					<p style="text-align:center;">
-						<div style="text-align:center; background-color:tan; height:50px; margin-bottom:5px;" class="span12"></div>
-					</p>
-					<p style="text-align:center; line-height:80%;">Tan</p>
-				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;" color="pink">
-					<p style="text-align:center;">
-						<div style="text-align:center; background-color:pink; height:50px; margin-bottom:5px;" class="span12"></div>
-					</p>
-					<p style="text-align:center; line-height:80%;">Pink</p>
-				</li>			
-				<li class="span1 well well-small" style="background-color:#ffffff;" color="purple">
-					<p style="text-align:center;">
-						<div style="text-align:center; background-color:purple; height:50px; margin-bottom:5px;" class="span12"></div>
-					</p>
-					<p style="text-align:center; line-height:80%;">Purple</p>
-				</li>
-				<li class="span1 well well-small" style="background-color:#ffffff;" color="brown">
-					<p style="text-align:center;">
-						<div style="text-align:center; background-color:brown; height:50px; margin-bottom:5px;" class="span12"></div>
-					</p>
-					<p style="text-align:center; line-height:80%;">Brown</p>
-				</li>
-			</ul>
-		</div>
-	</div>
+	
 	<div class="formRow ">
 		<div class="formSep"></div>
 		<form action="/invoices/process_dropoff/">

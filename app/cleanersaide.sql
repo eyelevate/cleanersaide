@@ -22,23 +22,29 @@
 DROP TABLE IF EXISTS `acl_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `acl_permissions` (
+CREATE TABLE `reward_transactions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(250) DEFAULT NULL,
-  `group_id` int(11) DEFAULT NULL,
+  `reward_id` int(11) DEFAULT NULL,
+  `customer_id` varchar(250) DEFAULT NULL,
+  `employee_id` int(11) DEFAULT NULL,
+  `company_id` int(11) DEFAULT NULL,
+  `type` int(1) DEFAULT NULL,
+  `invoices` text DEFAULT NULL,
+  `points` int(11) DEFAULT NULL,
+  `running_total` int(11) DEFAULT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=572 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 ALTER TABLE  `inventory_items` ADD  `tags` int(2) NULL AFTER  `price`;
 ALTER TABLE  `schedules` CHANGE  `deliver_date`  `pickup_date` datetime CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL;
 ALTER TABLE  `users` CHANGE  `starch`  `starch` varchar( 10 ) DEFAULT NULL;
 
-ALTER TABLE  `schedules` ADD  `dropoff_delivery_id` int(4) NULL AFTER  `delivery_date`;
+ALTER TABLE  `users` ADD  `payment_status` int(1) NULL AFTER  `profile_id`;
 
-ALTER TABLE  `schedules` DROP  `day`;
+ALTER TABLE  `reward_transactions` DROP  `invoices`;
 
 
 select column_name from information_schema.columns where table_name='invoices';

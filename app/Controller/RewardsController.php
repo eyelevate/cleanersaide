@@ -8,7 +8,7 @@ App::uses('AppController', 'Controller');
 class RewardsController extends AppController {
 	public $name = 'Rewards';
 	
-	public $uses = array('User','Page','Menu_item','Discount','Transaction','Invoice','Reward');
+	public $uses = array('User','Page','Menu_item','Discount','Transaction','Invoice','Reward','RewardTransaction');
 /**
  * Parse code before page load
  */
@@ -101,6 +101,15 @@ class RewardsController extends AppController {
 		$this->set('admin_nav',$admin_nav);
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);
+		
+		if($this->request->is('post')){
+			$this->request->data['Reward']['company_id'] = $_SESSION['company_id'];
+			
+			if($this->Reward->save($this->request->data)){
+				$this->Session->setFlash(__('You have successfully created a new reward program!'),'default',array(),'success');
+				$this->redirect(array('action'=>'index'));
+			}
+		}
 
 	}
 

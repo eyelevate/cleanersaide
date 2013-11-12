@@ -21,7 +21,7 @@ class DeliveriesController extends AppController {
 		$menu_id = $menu_ids[0]['Menu']['id'];		
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
-		$this->Auth->allow('login','logout','index','form','confirmation','process_sad','process_login','request_pickup_date_time','request_dropoff_date_time');
+		$this->Auth->allow('login','logout','index','form','confirmation','process_sad','process_login','request_pickup_date_time','request_dropoff_date_time','process_final_delivery_form');
 		//set username
 		$username = $this->Auth->user('username');
 		$this->set('username',$username);
@@ -282,18 +282,22 @@ class DeliveriesController extends AppController {
 		
 		$start = date('Y-m-d').' 00:00:00';
 		$end = date('Y-m-d').' 23:59:59';
-		$conditions = array('Schedule.deliver_date BETWEEN ? AND ?' => array($start,$end));
-		$today_schedule = $this->Schedule->find('all',array('conditions'=>$conditions));
-		$prepare_schedule = $this->Schedule->setSchedule($today_schedule);
+		$conditions_pickup= array('Schedule.pickup_date BETWEEN ? AND ?' => array($start,$end));
+		$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
+		$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($start,$end));
+		$day_dropoff = $this->Schedule->find('all',array('conditions'=>$conditions_dropoff));
+		$prepare_schedule = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
 		$this->set('date',date('n/d/Y'));
 		$this->set('today',$prepare_schedule);
 		
 		if($this->request->is('post')){
 			$delivery_start = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 00:00:00';
 			$delivery_end = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 23:59:59';
-			$conditions = array('Schedule.deliver_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end));
-			$selected_schedule = $this->Schedule->find('all',array('conditions'=>$conditions));
-			$prepare_schedule = $this->Schedule->setSchedule($selected_schedule);
+			$conditions_pickup= array('Schedule.pickup_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end));
+			$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
+			$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end));
+			$day_dropoff = $this->Schedule->find('all',array('conditions'=>$conditions_dropoff));
+			$prepare_schedule = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
 			$this->set('date',date('n/d/Y',strtotime($this->request->data['Delivery']['date'])));
 			$this->set('today',$prepare_schedule);
 			
@@ -403,7 +407,6 @@ class DeliveriesController extends AppController {
 			$this->set('routes',array());
 		}
 		$this->set('route_schedule',$route_schedule);
-
 		if($this->request->is('post')){
 			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
 			$dropoff_date = $this->request->data['Schedule']['dropoff_date'];
@@ -421,7 +424,7 @@ class DeliveriesController extends AppController {
 			$_SESSION['Delivery']['Schedule']['status'] = 1;
 			$_SESSION['Delivery']['Schedule']['type'] = 'frontend';
 			$_SESSION['message'] = 'You have successfully selected your delivery date and time. Please confirm all the information below and submit your payment information';
-			$this->redirect(array('action'=>'confirmation'));
+			$this->redirect(array('controller'=>'deliveries','action'=>'confirmation'));
 		}
 	}
 
@@ -507,14 +510,253 @@ class DeliveriesController extends AppController {
 		} else {
 			$this->set('display_payment','Yes');
 		}
-		
+		debug($_SESSION['Delivery']['Schedule']);
+	
+	}
+	public function process_final_delivery_form()
+	{
 		if($this->request->is('post')){
-			debug($_SESSION['Delivery']);
-			debug($this->request->data);
+			unset($_SESSION['payment_error']); //automatically unset the payment error array
+			//set variables
+			$user_update = array(); //create the new user data to update user table
+			$company_id = 1; //set to 1 for now change if we have multiple stores
+			$saved_payment_profile = $this->request->data['Delivery']['saved_profile'];
+			if(isset($this->request->data['Delivery']['payment_status'])){
+				$payment_status = $this->request->data['Delivery']['payment_status'];	
+			} else {
+				$payment_status = 'No change';
+			}
+			switch($payment_status){
+				case 'Yes': //we will delete the payment id and payment profile
+				$user_update['User']['payment_status'] = 2;
+				break;
+					
+				case 'No': //we will delete the payment id and payment profile after delivery completion
+				$user_update['User']['payment_status'] = 1;
+				break;
+					
+			}			
+			$phone = preg_replace("/[^0-9]/","",$_SESSION['Delivery']['User']['phone']);
+			//start logic
+			if($saved_payment_profile == 'No'): //customer does not have a saved profile
 			
-			//get payment info
-		}
-		
-		
+				
+				$ccnum = preg_replace("/[^0-9]/","",$this->request->data['Delivery']['ccnum']);
+				$exp_month = preg_replace("/[^0-9]/","",$this->request->data['Delivery']['exp_month']);
+				$exp_year = preg_replace("/[^0-9]/","",$this->request->data['Delivery']['exp_year']);
+				$cvv = preg_replace("/[^0-9]/","",$this->request->data['Delivery']['cvv']);
+				
+				$new_payment_profile = array();
+
+				//next check if its a member or a guest
+				if(!empty($_SESSION['Delivery']['User']['customer_id'])){ //this is a member
+					//get payment info
+					$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+					$users = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
+					$profile_id = '';
+					$payment_id = '';
+					
+					if(count($users)>0){
+						foreach ($users as $u) {
+							$profile_id = $u['User']['profile_id'];
+							$payment_id = $u['User']['payment_id'];
+						}
+					}
+					
+					if(is_null($profile_id) || $profile_id == 0){ //this is a new member with no profile id
+						//create a profile id
+						$profiles = $this->AuthorizeNet->createProfile($users[0]);
+						//save profile id
+						switch($profiles['status']){
+							case 'approved':
+								$profile_id = $profiles['customerProfileId'];
+								$user_update['User']['profile_id'] = $profile_id;
+										
+							break;
+								
+							case 'rejected':
+								$user_update['User']['profile_id'] = $profile_id;
+							break;
+						}
+					} 
+					if(is_null($payment_id) || $payment_id == 0){ //we will delete the payment id and payment profile
+						//create a payment_id
+						$users[0]['User']['ccnum'] = $ccnum;
+						$users[0]['User']['exp_num'] = $exp_num;
+						$users[0]['User']['exp_year'] = $exp_year;
+						$create_payment_id = $this->AuthorizeNet->createPaymentProfile($users[0],$profile_id);
+						$user_update = array();
+						$user_update['User']['payment_id'] = $create_payment_id;
+					}
+					switch($payment_status){
+						case 'Yes': //we will delete the payment id and payment profile
+						$user_update['User']['payment_status'] = '2';
+						break;
+							
+						default: //we will delete the payment id and payment profile after delivery completion
+						$user_update['User']['payment_status'] = '1';
+						break;
+							
+					}
+					//create delivery schedule
+					$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions']);
+					//update the user table with the new data
+					$this->User->id = $customer_id;
+					$this->User->save($user_update);
+	
+					
+				} else { // this is a guest
+					//lookup customer by phone number
+					$ccnum = preg_replace("/[^0-9]/","",$this->request->data['Delivery']['ccnum']);
+					$exp_month = preg_replace("/[^0-9]/","",$this->request->data['Delivery']['exp_month']);
+					$exp_year = preg_replace("/[^0-9]/","",$this->request->data['Delivery']['exp_year']);
+					$cvv = preg_replace("/[^0-9]/","",$this->request->data['Delivery']['cvv']);
+					$customer_search_conditions = array('User.contact_phone'=>$phone);
+					$customer_search = $this->User->find('all',array('conditions'=>$customer_search_conditions));					
+					if(count($customer_search)>0){ //this is a returning guest
+						debug('this is a returning guest');
+						foreach ($customer_search as $cs) {
+							$customer_id = $cs['User']['id'];
+							$profile_id = $cs['User']['profile_id'];
+							$payment_id = $cs['User']['payment_id'];
+							if(is_null($profile_id) || $profile_id ==0 || $profile_id == ''){ //this is a new member with no profile id
+								//create a profile id
+								$profiles = $this->AuthorizeNet->createProfile($customer_search[0]);
+								//save profile id
+								switch($profiles['status']){
+									case 'approved':
+										$profile_id = $profiles['customerProfileId'];
+										$user_update['User']['profile_id'] = $profile_id;
+												
+									break;
+										
+									case 'rejected':
+										$user_update['User']['profile_id'] = $profile_id;
+									break;
+								}
+								
+							}
+							
+							if(is_null($payment_id) || $payment_id == 0 || $payment_id == ''){ //we will delete the payment id and payment profile
+								//create a payment_id
+								$customer_search[0]['User']['ccnum'] = $ccnum;
+								$customer_search[0]['User']['exp_month'] = $exp_month;
+								$customer_search[0]['User']['exp_year'] = $exp_year;
+								$create_payment_id = $this->AuthorizeNet->createPaymentProfile($customer_search[0],$profile_id);
+								switch($create_payment_id['status']){
+									case 'approved':
+										$user_update['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];		
+										//debug($user_update);
+										$this->User->id = $customer_id;
+										$this->User->save($user_update);
+										//update the schedules table with the new delivery data
+										$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions']);
+
+										
+										
+										$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
+										$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));								
+									break;
+										
+									case 'rejected': //rejected create session and redirect now
+										//debug($user_update);
+										$this->Session->setFlash(__('Error: '.$create_payment_id['response']),'default',array(),'error');
+										$_SESSION['payment_error'] = $create_payment_id; 
+										$this->redirect(array('controller'=>'deliveries','action'=>'confirmation'));
+									break;
+								}
+					
+
+							} else {
+								//create delivery schedule
+								$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions']);
+								//save delivery schedule
+								$this->Schedule->save($schedules);							
+								//update user data
+								$this->User->id = $customer_id;
+								$this->User->save($user_update);
+								
+								//send email to customer
+								
+								
+								$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
+								$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));									
+							}
+
+						}
+					} else { //this is a new guest
+						$profile_id = '';
+						debug('this is a new guest');
+						$user_update['User']['group_id'] = 5;
+						$user_update['User']['company_id'] = 1;
+						$user_update['User']['email'] = $_SESSION['Delivery']['User']['contact_email'];
+						$user_update['User']['first_name'] = $_SESSION['Delivery']['User']['first_name'];
+						$user_update['User']['last_name'] = $_SESSION['Delivery']['User']['last_name'];
+						$user_update['User']['contact_address'] = $_SESSION['Delivery']['User']['contact_address'];
+						$user_update['User']['contact_suite'] = $_SESSION['Delivery']['User']['contact_suite'];
+						$user_update['User']['contact_city'] = $_SESSION['Delivery']['User']['contact_city'];
+						$user_update['User']['contact_state'] = $_SESSION['Delivery']['User']['contact_state'];
+						$user_update['User']['contact_country'] = 'USA';
+						$user_update['User']['first_name'] = $_SESSION['Delivery']['User']['first_name'];
+						$user_update['User']['contact_email'] = $_SESSION['Delivery']['User']['contact_email'];
+						$user_update['User']['contact_zip'] = $_SESSION['Delivery']['User']['contact_zip'];
+						$user_update['User']['contact_phone'] = $_SESSION['Delivery']['User']['phone'];
+						$user_update['User']['special_instructions'] = $_SESSION['Delivery']['User']['special_instructions'];
+						$profiles = $this->AuthorizeNet->createProfile($user_update);
+						//save profile id
+						switch($profiles['status']){
+							case 'approved':
+								$profile_id = $profiles['customerProfileId'];
+								$user_update['User']['profile_id'] = $profile_id;
+										
+							break;
+								
+							case 'rejected':
+								$user_update['User']['profile_id'] = $profile_id;
+							break;
+						}
+						$user_update['User']['profile_id'] = $profile_id['customerProfileId'];
+						$user_update['User']['ccnum'] = $ccnum;
+						$user_update['User']['exp_num'] = $exp_num;
+						$user_update['User']['exp_year'] = $exp_year;
+						$create_payment_id = $this->AuthorizeNet->createPaymentProfile($user_update,$profile_id);
+						switch($create_payment_id['status']){
+							case 'approved':
+								$user_update = array();
+								$user_update['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];		
+								switch($payment_status){
+									case 'Yes': //we will delete the payment id and payment profile
+									$user_update['User']['payment_status'] = 2;
+									break;
+										
+									default: //we will delete the payment id and payment profile after delivery completion
+									$user_update['User']['payment_status'] = 1;
+									break;
+										
+								}			
+				
+								//create delivery schedule
+								$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions']);			
+								
+								$this->User->id = $customer_id;
+								$this->User->save($user_update);
+								$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
+								$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));									
+							break;
+								
+							case 'rejected': //rejected create session and redirect now
+								//$this->Session->setFlash(__('Error: '.$create_payment_id['response']),'default',array(),'error');
+								$_SESSION['payment_error'] = $create_payment_id; 
+								$this->redirect(array('controller'=>'deliveries','action'=>'confirmation'));
+							break;
+						}
+					
+					}
+				}		
+			else: //customer has a saved payment profile
+			
+				
+			endif;
+		}		
 	}
 }

@@ -25,6 +25,8 @@ echo $this->Html->script(array(
 			<thead>
 				<tr>
 					<th>Route</th>
+					<th>Time</th>
+					<th>Type</th>
 					<th>Zipcode</th>
 					<th>First Name</th>
 					<th>Last Name</th>
@@ -34,26 +36,33 @@ echo $this->Html->script(array(
 			</thead>
 			<tbody>
 			<?php
-			foreach ($today as $key=>$value) {
-				$route_name = $today[$key]['route_name'];
-				$zipcode = $today[$key]['zipcode'];
-				$first_name = $today[$key]['first_name'];
-				$last_name = $today[$key]['last_name'];
-				$phone = $today[$key]['phone'];
-				?>
-				<tr>
-					<td><?php echo $route_name;?></td>
-					<td><?php echo $zipcode;?></td>
-					<td><?php echo $first_name;?></td>
-					<td><?php echo $last_name;?></td>
-					<td><?php echo $phone;?></td>
-					<td>
-						<a href="">View</a>
-						<a href="">Edit</a>
-						<a href="">Remove</a>
-					</td>
-				</tr>
-				<?php
+			foreach ($today as $tkey =>$tvalue) {
+				foreach ($today[$tkey] as $t) {
+					$route_name = $t['route_name'];
+					$zipcode = $t['zipcode'];
+					$first_name = $t['first_name'];
+					$last_name = $t['last_name'];
+					$phone = $t['phone'];	
+					$start_time = $t['start_time'];
+					$end_time = $t['end_time'];
+					$time_range = $start_time.' - '.$end_time;
+					?>
+					<tr>
+						<td><?php echo $route_name;?></td>
+						<td><?php echo $time_range;?></td>
+						<td><?php echo $tkey;?></td>
+						<td><?php echo $zipcode;?></td>
+						<td><?php echo $first_name;?></td>
+						<td><?php echo $last_name;?></td>
+						<td><?php echo $phone;?></td>
+						<td>
+							<a href="">View</a>
+							<a href="">Edit</a>
+							<a href="">Remove</a>
+						</td>
+					</tr>
+					<?php				
+				}
 			}
 			?>
 			</tbody>

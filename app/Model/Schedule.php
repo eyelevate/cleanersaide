@@ -199,77 +199,156 @@ class Schedule extends AppModel {
 
 	}
 
-	public function setSchedule($data)
+	public function setSchedule($pickup, $dropoff)
 	{
 		$delivery = array();
-		if(count($data)>0){
+		if(count($pickup)>0){
 			$idx = -1;
-			foreach ($data as $schedule) {
+			foreach ($pickup as $p) {
 				$idx++;
-				$customer_id = $schedule['Schedule']['customer_id'];
-				$delivery_id = $schedule['Schedule']['delivery_id'];
-				$delivery[$idx]['customer_id'] = $customer_id;
-				$delivery[$idx]['delivery_id'] = $delivery_id;
+				$customer_id = $p['Schedule']['customer_id'];
+				$delivery_id = $p['Schedule']['pickup_delivery_id'];
+				$delivery['Pickup'][$idx]['customer_id'] = $customer_id;
+				$delivery['Pickup'][$idx]['delivery_id'] = $delivery_id;
 				
-				$delivery[$idx]['day'] = $schedule['Schedule']['day'];
-				$delivery[$idx]['delivery_date'] = $schedule['Schedule']['deliver_date'];
-				$delivery[$idx]['special_instructions'] = $schedule['Schedule']['special_instructions'];
-				$delivery[$idx]['type'] = $schedule['Schedule']['type'];
-				$delivery[$idx]['status'] = $schedule['Schedule']['status'];
+				$delivery['Pickup'][$idx]['day'] = date('D',strtotime($p['Schedule']['pickup_date']));
+				$delivery['Pickup'][$idx]['pickup_date'] = $p['Schedule']['pickup_date'];
+				$delivery['Pickup'][$idx]['special_instructions'] = $p['Schedule']['special_instructions'];
+				$delivery['Pickup'][$idx]['type'] = $p['Schedule']['type'];
+				$delivery['Pickup'][$idx]['status'] = $p['Schedule']['status'];
 				//get customer data
-				$users = ClassRegistry::init('User')->find('all',array('conditions'=>array('id'=>$customer_id)));	
+				$users = ClassRegistry::init('User')->find('all',array('conditions'=>array('User.id'=>$customer_id,'User.company_id'=>$_SESSION['company_id'])));	
 				if(count($users)>0){
 					foreach ($users as $u) {
-						$delivery[$idx]['first_name'] = $u['User']['first_name'];
-						$delivery[$idx]['last_name'] = $u['User']['last_name'];
-						$delivery[$idx]['address'] = $u['User']['contact_address'];
-						$delivery[$idx]['suite'] = $u['User']['contact_suite'];
-						$delivery[$idx]['city'] = $u['User']['contact_city'];
-						$delivery[$idx]['state'] = $u['User']['contact_state'];
-						$delivery[$idx]['country'] = $u['User']['contact_country'];
-						$delivery[$idx]['email'] = $u['User']['contact_email'];
-						$delivery[$idx]['zipcode'] = $u['User']['contact_zip'];
-						$delivery[$idx]['phone'] = $u['User']['contact_phone'];
-						$delivery[$idx]['default_special_instructions'] = $u['User']['special_instructions'];
-						$delivery[$idx]['profile_id'] = $u['User']['profile_id'];
-						$delivery[$idx]['payment_id'] = $u['User']['payment_id'];
-						$delivery[$idx]['token'] = $u['User']['token'];
-						$delivery[$idx]['reward_status'] = $u['User']['reward_status'];
-						$delivery[$idx]['reward_points'] = $u['User']['reward_points'];
-						$delivery[$idx]['starch'] = $u['User']['starch'];
+						$delivery['Pickup'][$idx]['first_name'] = $u['User']['first_name'];
+						$delivery['Pickup'][$idx]['last_name'] = $u['User']['last_name'];
+						$delivery['Pickup'][$idx]['address'] = $u['User']['contact_address'];
+						$delivery['Pickup'][$idx]['suite'] = $u['User']['contact_suite'];
+						$delivery['Pickup'][$idx]['city'] = $u['User']['contact_city'];
+						$delivery['Pickup'][$idx]['state'] = $u['User']['contact_state'];
+						$delivery['Pickup'][$idx]['country'] = $u['User']['contact_country'];
+						$delivery['Pickup'][$idx]['email'] = $u['User']['contact_email'];
+						$delivery['Pickup'][$idx]['zipcode'] = $u['User']['contact_zip'];
+						$delivery['Pickup'][$idx]['phone'] = $u['User']['contact_phone'];
+						$delivery['Pickup'][$idx]['default_special_instructions'] = $u['User']['special_instructions'];
+						$delivery['Pickup'][$idx]['profile_id'] = $u['User']['profile_id'];
+						$delivery['Pickup'][$idx]['payment_id'] = $u['User']['payment_id'];
+						$delivery['Pickup'][$idx]['token'] = $u['User']['token'];
+						$delivery['Pickup'][$idx]['reward_status'] = $u['User']['reward_status'];
+						$delivery['Pickup'][$idx]['reward_points'] = $u['User']['reward_points'];
+						$delivery['Pickup'][$idx]['starch'] = $u['User']['starch'];
 					}
 				}	
 				//get delivery data
 				$deliveries = ClassRegistry::init('Delivery')->find('all',array('conditions'=>array('id'=>$delivery_id)));
 				if(count($deliveries)>0){
 					foreach ($deliveries as $d) {
-						$delivery[$idx]['route_name'] = $d['Delivery']['route_name'];
-						$delivery[$idx]['delivery_day'] = $d['Delivery']['day'];
-						$delivery[$idx]['limit'] = $d['Delivery']['limit'];
-						$delivery[$idx]['start_time'] = $d['Delivery']['start_time'];
-						$delivery[$idx]['end_time'] = $d['Delivery']['end_time'];
+						$delivery['Pickup'][$idx]['route_name'] = $d['Delivery']['route_name'];
+						$delivery['Pickup'][$idx]['delivery_day'] = $d['Delivery']['day'];
+						$delivery['Pickup'][$idx]['limit'] = $d['Delivery']['limit'];
+						$delivery['Pickup'][$idx]['start_time'] = $d['Delivery']['start_time'];
+						$delivery['Pickup'][$idx]['end_time'] = $d['Delivery']['end_time'];
 						if(is_null($d['Delivery']['zipcode'])){
-							$delivery[$idx]['delivery_zipcodes'] = '';
+							$delivery['Pickup'][$idx]['delivery_zipcodes'] = '';
 						} else {
-							$delivery[$idx]['delivery_zipcodes'] = json_decode($d['Delivery']['zipcode'],true);	
+							$delivery['Pickup'][$idx]['delivery_zipcodes'] = json_decode($d['Delivery']['zipcode'],true);	
 						}
 						if(is_null($d['Delivery']['blackout'])){
-							$delivery[$idx]['delivery_blackouts'] = '';
+							$delivery['Pickup'][$idx]['delivery_blackouts'] = '';
 						} else {
-							$delivery[$idx]['delivery_blackouts']= json_decode($d['Delivery']['blackout'],true);	
+							$delivery['Pickup'][$idx]['delivery_blackouts']= json_decode($d['Delivery']['blackout'],true);	
 						}
-						$delivery[$idx]['delivery_status'] = $d['Delivery']['status'];						
+						$delivery['Pickup'][$idx]['delivery_status'] = $d['Delivery']['status'];						
 						
 					}
 				}				
 				
 			}	
-			
+
+
+			$idx = -1;
+			foreach ($dropoff as $dp) {
+				$idx++;
+				$customer_id = $dp['Schedule']['customer_id'];
+				$delivery_id = $dp['Schedule']['dropoff_delivery_id'];
+				$delivery['Dropoff'][$idx]['customer_id'] = $customer_id;
+				$delivery['Dropoff'][$idx]['delivery_id'] = $delivery_id;
+				
+				$delivery['Dropoff'][$idx]['day'] = date('D',strtotime($p['Schedule']['dropoff_date']));
+				$delivery['Dropoff'][$idx]['dropoff_date'] = $p['Schedule']['dropoff_date'];
+				$delivery['Dropoff'][$idx]['special_instructions'] = $p['Schedule']['special_instructions'];
+				$delivery['Dropoff'][$idx]['type'] = $p['Schedule']['type'];
+				$delivery['Dropoff'][$idx]['status'] = $p['Schedule']['status'];
+				//get customer data
+				$users = ClassRegistry::init('User')->find('all',array('conditions'=>array('User.id'=>$customer_id,'User.company_id'=>$_SESSION['company_id'])));	
+				if(count($users)>0){
+					foreach ($users as $u) {
+						$delivery['Dropoff'][$idx]['first_name'] = $u['User']['first_name'];
+						$delivery['Dropoff'][$idx]['last_name'] = $u['User']['last_name'];
+						$delivery['Dropoff'][$idx]['address'] = $u['User']['contact_address'];
+						$delivery['Dropoff'][$idx]['suite'] = $u['User']['contact_suite'];
+						$delivery['Dropoff'][$idx]['city'] = $u['User']['contact_city'];
+						$delivery['Dropoff'][$idx]['state'] = $u['User']['contact_state'];
+						$delivery['Dropoff'][$idx]['country'] = $u['User']['contact_country'];
+						$delivery['Dropoff'][$idx]['email'] = $u['User']['contact_email'];
+						$delivery['Dropoff'][$idx]['zipcode'] = $u['User']['contact_zip'];
+						$delivery['Dropoff'][$idx]['phone'] = $u['User']['contact_phone'];
+						$delivery['Dropoff'][$idx]['default_special_instructions'] = $u['User']['special_instructions'];
+						$delivery['Dropoff'][$idx]['profile_id'] = $u['User']['profile_id'];
+						$delivery['Dropoff'][$idx]['payment_id'] = $u['User']['payment_id'];
+						$delivery['Dropoff'][$idx]['token'] = $u['User']['token'];
+						$delivery['Dropoff'][$idx]['reward_status'] = $u['User']['reward_status'];
+						$delivery['Dropoff'][$idx]['reward_points'] = $u['User']['reward_points'];
+						$delivery['Dropoff'][$idx]['starch'] = $u['User']['starch'];
+					}
+				}	
+				//get delivery data
+				$deliveries = ClassRegistry::init('Delivery')->find('all',array('conditions'=>array('id'=>$delivery_id)));
+				if(count($deliveries)>0){
+					foreach ($deliveries as $d) {
+						$delivery['Dropoff'][$idx]['route_name'] = $d['Delivery']['route_name'];
+						$delivery['Dropoff'][$idx]['delivery_day'] = $d['Delivery']['day'];
+						$delivery['Dropoff'][$idx]['limit'] = $d['Delivery']['limit'];
+						$delivery['Dropoff'][$idx]['start_time'] = $d['Delivery']['start_time'];
+						$delivery['Dropoff'][$idx]['end_time'] = $d['Delivery']['end_time'];
+						if(is_null($d['Delivery']['zipcode'])){
+							$delivery['Dropoff'][$idx]['delivery_zipcodes'] = '';
+						} else {
+							$delivery['Dropoff'][$idx]['delivery_zipcodes'] = json_decode($d['Delivery']['zipcode'],true);	
+						}
+						if(is_null($d['Delivery']['blackout'])){
+							$delivery['Dropoff'][$idx]['delivery_blackouts'] = '';
+						} else {
+							$delivery['Dropoff'][$idx]['delivery_blackouts']= json_decode($d['Delivery']['blackout'],true);	
+						}
+						$delivery['Dropoff'][$idx]['delivery_status'] = $d['Delivery']['status'];						
+						
+					}
+				}				
+				
+			}				
 
 		}
 
-		return $data;
+		return $delivery;
 
+	}
+
+	public function addSchedule($company_id, $customer_id, $data, $special_instructions)
+	{
+		$schedules = array();
+		$schedules['Schedule'] = array(
+			'company_id'=>$company_id,
+			'customer_id'=>$customer_id,
+			'pickup_date'=>$data['pickup_date'],
+			'pickup_delivery_id'=>$data['pickup_delivery_id'],
+			'dropoff_date'=>$data['dropoff_date'],
+			'dropoff_delivery_id'=>$data['dropoff_delivery_id'],
+			'special_instructions'=>$special_instructions,
+			'type'=>$data['type'],
+			'status'=>1,
+		);
+		$this->save($schedules);		
 	}
 
 	

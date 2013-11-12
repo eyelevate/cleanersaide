@@ -25,7 +25,7 @@ Class AuthorizeNetComponent extends Component {
 		//$validation_mode = 'liveMode'; //production mode
 		$validation_mode = 'testMode'; //developmental mode
 		$company_id = $data['User']['company_id'];
-		$customer_id = $data['User']['customer_id'];
+		$customer_id = $data['User']['id'];
 		$first_name = $data['User']['first_name'];
 		$last_name = $data['User']['last_name'];
 		$address = $data['User']['contact_address'];
@@ -55,10 +55,12 @@ Class AuthorizeNetComponent extends Component {
 	
 		$parsedresponse = $this->parse_api_response($response);
 		if ("Ok" == $parsedresponse->messages->resultCode) {
+			$profile['status'] = 'approved';
 			$profile['customerProfileId'] = htmlspecialchars($parsedresponse->customerProfileId);
+		} else {
+			$profile['status'] = 'rejected';
+			$profile['response'] = (string) $parsedresponse->messages->message->text;
 		}
-		
-		debug($profile);
 		return $profile;
 	}
 	
@@ -70,7 +72,7 @@ Class AuthorizeNetComponent extends Component {
 		//$validation_mode = 'liveMode'; //production mode
 		$validation_mode = 'testMode'; //developmental mode
 		$company_id = $data['User']['company_id'];
-		$customer_id = $data['User']['customer_id'];
+		$customer_id = $data['User']['id'];
 		$first_name = $data['User']['first_name'];
 		$last_name = $data['User']['last_name'];
 		$address = $data['User']['contact_address'];
@@ -82,7 +84,6 @@ Class AuthorizeNetComponent extends Component {
 		$cc_num = $data['User']['ccnum'];
 		$email = $data['User']['contact_email'];
 		$expiration = $data['User']['exp_year'].'-'.$data['User']['exp_month']; //must be YYYY-mm
-		
 		$description = '[Customer Id] = '.$customer_id.', [Full Name] = '.$first_name.' '.$last_name.', [Phone] = '.$phone;
 		//build xml to post
 		$content =
@@ -118,11 +119,14 @@ Class AuthorizeNetComponent extends Component {
 		// echo "Raw response: " . htmlspecialchars($response) . "<br><br>";
 		$parsedresponse = $this->parse_api_response($response);
 		if ("Ok" == $parsedresponse->messages->resultCode) {
+			$profile['status'] = 'approved';
 			$profile['customerPaymentProfileId'] = htmlspecialchars($parsedresponse->customerPaymentProfileId);
 
+		} else {
+			$profile['status'] = 'rejected';
+			$profile['field'] = $this->errorField($parsedresponse->messages->message->code);
+			$profile['response'] = (string) $parsedresponse->messages->message->text;
 		}
-			
-		debug($profile);
 		return $profile;
 	}
 	
@@ -332,6 +336,110 @@ Class AuthorizeNetComponent extends Component {
 	        "<name>" . $this->merchant_login . "</name>".
 	        "<transactionKey>" . $this->merchant_transaction_id . "</transactionKey>".
 	        "</merchantAuthentication>";
+	}
+	
+	static function errorField($code){
+		$response = '';
+		switch($code){
+			case 'E00003':
+				$response = 'ccnum';
+			break;
+			
+			case 'E00027':
+				$response = 'ccnum';
+			break;
+		}
+		
+		return $response;
+	}	
+	
+	static function errorMessages($code){
+		$response = '';
+		switch($code){
+			case 'E00001':
+				$response ='';
+			break;
+			case 'E00002':
+				$response ='';
+			break;
+			case 'E00003':
+				$response = 'The credit card number is invalid.';
+			break;
+			case 'E00004':
+				$response ='';
+			break;
+			case 'E00005':
+				$response ='';
+			break;
+			case 'E00006':
+				$response ='';
+			break;
+			case 'E00007':
+				$response ='';
+			break;
+			case 'E00008':
+				$response ='';
+			break;
+			case 'E00009':
+				$response ='';
+			break;	
+			case 'E00010':
+				$response ='';
+			break;
+			case 'E00011':
+				$response ='';
+			break;
+			case 'E00012':
+				$response ='';
+			break;
+			case 'E00013':
+				$response ='';
+			break;
+			case 'E00014':
+				$response ='';
+			break;
+			case 'E00015':
+				$response ='';
+			break;
+			case 'E00016':
+				$response ='';
+			break;
+			case 'E00017':
+				$response ='';
+			break;
+			case 'E00018':
+				$response ='';
+			break;
+			case 'E00019':
+				$response ='';
+			break;
+			case 'E00020':
+				$response ='';
+			break;
+			case 'E00021':
+				$response ='';
+			break;	
+			case 'E00022':
+				$response ='';
+			break;
+			case 'E00023':
+				$response ='';
+			break;
+			case 'E00024':
+				$response ='';
+			break;
+			case 'E00025':
+				$response ='';
+			break;
+			case 'E00026':
+				$response ='';
+			break;
+			case 'E00027':
+				$response = 'The credit card number is invalid.';
+			break;
+		}
+		
+		return $response;
 	}
 }
 ?>

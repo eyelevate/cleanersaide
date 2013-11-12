@@ -29,9 +29,10 @@ pickup = {
 		
 		$("#discountSelect").change(function(){
 			var discount = $(this).find('option:selected').val();
-			if(discount != ''){
+			if(discount != 'none'){
+				var discount_percent = parseFloat($(this).find('option:selected').attr('discount'));
 				var old_total = parseFloat($("#currentTotal").attr('value'));
-				var discount_total = (old_total * parseFloat(discount)) * 100;
+				var discount_total = (old_total * discount_percent) * 100;
 				var discount_total = Math.round(discount_total) / 100;
 				var discount_total = discount_total.toFixed(2);
 				var new_total = old_total - discount_total;
@@ -101,18 +102,32 @@ pickup = {
 			var total_bt = $("#total_bt").attr('value');
 			var total_tax = $("#total_tax").attr('value');
 			var total_discount = $("#discountTotal").attr('value');
-			var total_points = $("#discountSelect option:selected").attr('points');
+			var reward_selected = $("#discountSelect option:selected").val();
+			var old_reward_balance = $("#finalPickupForm").attr('reward');
+			var new_reward_points = 0;
+			if(reward_selected=='none'){
+				var new_reward_balance = old_reward_balance;
+			} else {
+				var new_reward_points = parseInt($("#discountSelect option:selected").attr('points'));
+				var new_reward_balance = old_reward_balance - new_reward_points;
+			}
+			var payment_type = $("#paymentTypeUl li[class='active']").attr('payment');
+			var last_four = $("#creditLi input").val();
+			var cash_tendered = $("#totalPaidFinal").val();
+			
 			var total_at = $("#total_at").attr('value');
 			var customer_id = $("#finalPickupForm").attr('customer_id');
-			
+			console.log(payment_type+' '+last_four+' '+cash_tendered);
+			created_invoice += '<input type="hidden" name="data[Invoice][payment_type]" value="'+payment_type+'"/>';
+			created_invoice += '<input type="hidden" name="data[Invoice][last_four]" value="'+last_four+'"/>';
+			created_invoice += '<input type="hidden" name="data[Invoice][tendered]" value="'+cash_tendered+'"/>';			
 			created_invoice += '<input type="hidden" name="data[Invoice][quantity]" value="'+total_quantity+'"/>';
 			created_invoice += '<input type="hidden" name="data[Invoice][total_bt]" value="'+total_bt+'"/>';
 			created_invoice += '<input type="hidden" name="data[Invoice][total_tax]" value="'+total_tax+'"/>';
 			created_invoice += '<input type="hidden" name="data[Invoice][total_discount]" value="'+total_discount+'"/>';
-			created_invoice += '<input type="hidden" name="data[Invoice][total_points]" value="'+total_points+'"/>';
+			created_invoice += '<input type="hidden" name="data[Invoice][reward_selected]" value="'+reward_selected+'"/>';
 			created_invoice += '<input type="hidden" name="data[Invoice][total_at]" value="'+total_at+'"/>';
 			created_invoice += '<input type="hidden" name="data[Invoice][customer_id]" value="'+customer_id+'"/>';
-			
 			$("#finalPickupForm").html(created_invoice).submit();
 		} else {
 			alert('You must have at least one invoice selected. Please select an invoice.');
