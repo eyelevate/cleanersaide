@@ -201,6 +201,160 @@ class Schedule extends AppModel {
 
 	public function setSchedule($pickup, $dropoff)
 	{
+
+		$delivery = array();
+
+		if(count($pickup)>0){
+			$idx = -1;
+			foreach ($pickup as $p) {
+				$idx++;
+				$customer_id = $p['Schedule']['customer_id'];
+				$delivery_id = $p['Schedule']['pickup_delivery_id'];
+				$delivery[$delivery_id]['Pickup'][$idx]['customer_id'] = $customer_id;
+				$delivery[$delivery_id]['Pickup'][$idx]['delivery_id'] = $delivery_id;
+				
+				$delivery[$delivery_id]['Pickup'][$idx]['day'] = date('D',strtotime($p['Schedule']['pickup_date']));
+				$delivery[$delivery_id]['Pickup'][$idx]['pickup_date'] = $p['Schedule']['pickup_date'];
+				$delivery[$delivery_id]['Pickup'][$idx]['special_instructions'] = $p['Schedule']['special_instructions'];
+				$delivery[$delivery_id]['Pickup'][$idx]['type'] = $p['Schedule']['type'];
+				$delivery[$delivery_id]['Pickup'][$idx]['status'] = $p['Schedule']['status'];
+				//get customer data
+				$users = ClassRegistry::init('User')->find('all',array('conditions'=>array('User.id'=>$customer_id,'User.company_id'=>$_SESSION['company_id'])));	
+				if(count($users)>0){
+					foreach ($users as $u) {
+						$delivery[$delivery_id]['Pickup'][$idx]['first_name'] = $u['User']['first_name'];
+						$delivery[$delivery_id]['Pickup'][$idx]['last_name'] = $u['User']['last_name'];
+						$delivery[$delivery_id]['Pickup'][$idx]['address'] = $u['User']['contact_address'];
+						$delivery[$delivery_id]['Pickup'][$idx]['suite'] = $u['User']['contact_suite'];
+						$delivery[$delivery_id]['Pickup'][$idx]['city'] = $u['User']['contact_city'];
+						$delivery[$delivery_id]['Pickup'][$idx]['state'] = $u['User']['contact_state'];
+						$delivery[$delivery_id]['Pickup'][$idx]['country'] = $u['User']['contact_country'];
+						$delivery[$delivery_id]['Pickup'][$idx]['email'] = $u['User']['contact_email'];
+						$delivery[$delivery_id]['Pickup'][$idx]['zipcode'] = $u['User']['contact_zip'];
+						$delivery[$delivery_id]['Pickup'][$idx]['phone'] = $u['User']['contact_phone'];
+						$delivery[$delivery_id]['Pickup'][$idx]['default_special_instructions'] = $u['User']['special_instructions'];
+						$delivery[$delivery_id]['Pickup'][$idx]['profile_id'] = $u['User']['profile_id'];
+						$delivery[$delivery_id]['Pickup'][$idx]['payment_id'] = $u['User']['payment_id'];
+						$delivery[$delivery_id]['Pickup'][$idx]['token'] = $u['User']['token'];
+						$delivery[$delivery_id]['Pickup'][$idx]['reward_status'] = $u['User']['reward_status'];
+						$delivery[$delivery_id]['Pickup'][$idx]['reward_points'] = $u['User']['reward_points'];
+						$delivery[$delivery_id]['Pickup'][$idx]['starch'] = $u['User']['starch'];
+					}
+				}	
+				//get delivery data
+				$deliveries = ClassRegistry::init('Delivery')->find('all',array('conditions'=>array('id'=>$delivery_id)));
+				if(count($deliveries)>0){
+					foreach ($deliveries as $d) {
+						$delivery[$delivery_id]['Pickup'][$idx]['route_name'] = $d['Delivery']['route_name'];
+						$delivery[$delivery_id]['Pickup'][$idx]['delivery_day'] = $d['Delivery']['day'];
+						$delivery[$delivery_id]['Pickup'][$idx]['limit'] = $d['Delivery']['limit'];
+						$delivery[$delivery_id]['Pickup'][$idx]['start_time'] = $d['Delivery']['start_time'];
+						$delivery[$delivery_id]['Pickup'][$idx]['end_time'] = $d['Delivery']['end_time'];
+						if(is_null($d['Delivery']['zipcode'])){
+							$delivery[$delivery_id]['Pickup'][$idx]['delivery_zipcodes'] = '';
+						} else {
+							$delivery[$delivery_id]['Pickup'][$idx]['delivery_zipcodes'] = json_decode($d['Delivery']['zipcode'],true);	
+						}
+						if(is_null($d['Delivery']['blackout'])){
+							$delivery[$delivery_id]['Pickup'][$idx]['delivery_blackouts'] = '';
+						} else {
+							$delivery[$delivery_id]['Pickup'][$idx]['delivery_blackouts']= json_decode($d['Delivery']['blackout'],true);	
+						}
+						$delivery[$delivery_id]['Pickup'][$idx]['delivery_status'] = $d['Delivery']['status'];						
+						
+					}
+				}				
+				
+			}	
+		}
+		if(count($dropoff)>0){
+			$idx = -1;
+			foreach ($dropoff as $dp) {
+				$idx++;
+				$customer_id = $dp['Schedule']['customer_id'];
+				$delivery_id = $dp['Schedule']['dropoff_delivery_id'];
+				$delivery[$delivery_id]['Dropoff'][$idx]['customer_id'] = $customer_id;
+				$delivery[$delivery_id]['Dropoff'][$idx]['delivery_id'] = $delivery_id;
+				
+				$delivery[$delivery_id]['Dropoff'][$idx]['day'] = date('D',strtotime($dp['Schedule']['dropoff_date']));
+				$delivery[$delivery_id]['Dropoff'][$idx]['dropoff_date'] = $dp['Schedule']['dropoff_date'];
+				$delivery[$delivery_id]['Dropoff'][$idx]['special_instructions'] = $dp['Schedule']['special_instructions'];
+				$delivery[$delivery_id]['Dropoff'][$idx]['type'] = $dp['Schedule']['type'];
+				$delivery[$delivery_id]['Dropoff'][$idx]['status'] = $dp['Schedule']['status'];
+				//get customer data
+				$users = ClassRegistry::init('User')->find('all',array('conditions'=>array('User.id'=>$customer_id,'User.company_id'=>$_SESSION['company_id'])));	
+				if(count($users)>0){
+					foreach ($users as $u) {
+						$delivery[$delivery_id]['Dropoff'][$idx]['first_name'] = $u['User']['first_name'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['last_name'] = $u['User']['last_name'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['address'] = $u['User']['contact_address'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['suite'] = $u['User']['contact_suite'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['city'] = $u['User']['contact_city'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['state'] = $u['User']['contact_state'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['country'] = $u['User']['contact_country'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['email'] = $u['User']['contact_email'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['zipcode'] = $u['User']['contact_zip'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['phone'] = $u['User']['contact_phone'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['default_special_instructions'] = $u['User']['special_instructions'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['profile_id'] = $u['User']['profile_id'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['payment_id'] = $u['User']['payment_id'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['token'] = $u['User']['token'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['reward_status'] = $u['User']['reward_status'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['reward_points'] = $u['User']['reward_points'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['starch'] = $u['User']['starch'];
+					}
+				}	
+				//get delivery data
+				$deliveries = ClassRegistry::init('Delivery')->find('all',array('conditions'=>array('id'=>$delivery_id)));
+				if(count($deliveries)>0){
+					foreach ($deliveries as $d) {
+						$delivery[$delivery_id]['Dropoff'][$idx]['route_name'] = $d['Delivery']['route_name'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['delivery_day'] = $d['Delivery']['day'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['limit'] = $d['Delivery']['limit'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['start_time'] = $d['Delivery']['start_time'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['end_time'] = $d['Delivery']['end_time'];
+						if(is_null($d['Delivery']['zipcode'])){
+							$delivery[$delivery_id]['Dropoff'][$idx]['delivery_zipcodes'] = '';
+						} else {
+							$delivery[$delivery_id]['Dropoff'][$idx]['delivery_zipcodes'] = json_decode($d['Delivery']['zipcode'],true);	
+						}
+						if(is_null($d['Delivery']['blackout'])){
+							$delivery[$delivery_id]['Dropoff'][$idx]['delivery_blackouts'] = '';
+						} else {
+							$delivery[$delivery_id]['Dropoff'][$idx]['delivery_blackouts']= json_decode($d['Delivery']['blackout'],true);	
+						}
+						$delivery[$delivery_id]['Dropoff'][$idx]['delivery_status'] = $d['Delivery']['status'];						
+						
+					}
+				}				
+				
+			}				
+
+		}
+
+
+		return $delivery;
+
+	}
+
+	public function addSchedule($company_id, $customer_id, $data, $special_instructions)
+	{
+		$schedules = array();
+		$schedules['Schedule'] = array(
+			'company_id'=>$company_id,
+			'customer_id'=>$customer_id,
+			'pickup_date'=>$data['pickup_date'],
+			'pickup_delivery_id'=>$data['pickup_delivery_id'],
+			'dropoff_date'=>$data['dropoff_date'],
+			'dropoff_delivery_id'=>$data['dropoff_delivery_id'],
+			'special_instructions'=>$special_instructions,
+			'type'=>$data['type'],
+			'status'=>1,
+		);
+		$this->save($schedules);		
+	}
+	public function createDeliveryScheduleForCsv($pickup, $dropoff)
+	{
 		$delivery = array();
 		if(count($pickup)>0){
 			$idx = -1;
@@ -264,8 +418,8 @@ class Schedule extends AppModel {
 				}				
 				
 			}	
-
-
+		}
+		if(count($dropoff)>0){
 			$idx = -1;
 			foreach ($dropoff as $dp) {
 				$idx++;
@@ -274,11 +428,11 @@ class Schedule extends AppModel {
 				$delivery['Dropoff'][$idx]['customer_id'] = $customer_id;
 				$delivery['Dropoff'][$idx]['delivery_id'] = $delivery_id;
 				
-				$delivery['Dropoff'][$idx]['day'] = date('D',strtotime($p['Schedule']['dropoff_date']));
-				$delivery['Dropoff'][$idx]['dropoff_date'] = $p['Schedule']['dropoff_date'];
-				$delivery['Dropoff'][$idx]['special_instructions'] = $p['Schedule']['special_instructions'];
-				$delivery['Dropoff'][$idx]['type'] = $p['Schedule']['type'];
-				$delivery['Dropoff'][$idx]['status'] = $p['Schedule']['status'];
+				$delivery['Dropoff'][$idx]['day'] = date('D',strtotime($dp['Schedule']['dropoff_date']));
+				$delivery['Dropoff'][$idx]['dropoff_date'] = $dp['Schedule']['dropoff_date'];
+				$delivery['Dropoff'][$idx]['special_instructions'] = $dp['Schedule']['special_instructions'];
+				$delivery['Dropoff'][$idx]['type'] = $dp['Schedule']['type'];
+				$delivery['Dropoff'][$idx]['status'] = $dp['Schedule']['status'];
 				//get customer data
 				$users = ClassRegistry::init('User')->find('all',array('conditions'=>array('User.id'=>$customer_id,'User.company_id'=>$_SESSION['company_id'])));	
 				if(count($users)>0){
@@ -330,25 +484,8 @@ class Schedule extends AppModel {
 
 		}
 
-		return $delivery;
 
-	}
-
-	public function addSchedule($company_id, $customer_id, $data, $special_instructions)
-	{
-		$schedules = array();
-		$schedules['Schedule'] = array(
-			'company_id'=>$company_id,
-			'customer_id'=>$customer_id,
-			'pickup_date'=>$data['pickup_date'],
-			'pickup_delivery_id'=>$data['pickup_delivery_id'],
-			'dropoff_date'=>$data['dropoff_date'],
-			'dropoff_delivery_id'=>$data['dropoff_delivery_id'],
-			'special_instructions'=>$special_instructions,
-			'type'=>$data['type'],
-			'status'=>1,
-		);
-		$this->save($schedules);		
+		return $delivery;		
 	}
 
 	

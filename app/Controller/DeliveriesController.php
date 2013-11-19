@@ -286,10 +286,10 @@ class DeliveriesController extends AppController {
 		$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
 		$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($start,$end));
 		$day_dropoff = $this->Schedule->find('all',array('conditions'=>$conditions_dropoff));
-		$prepare_schedule = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
+		$prepare_schedule_today = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
 		$this->set('date',date('n/d/Y'));
-		$this->set('today',$prepare_schedule);
-		
+		$this->set('today',$prepare_schedule_today);
+
 		if($this->request->is('post')){
 			$delivery_start = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 00:00:00';
 			$delivery_end = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 23:59:59';
@@ -297,9 +297,11 @@ class DeliveriesController extends AppController {
 			$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
 			$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end));
 			$day_dropoff = $this->Schedule->find('all',array('conditions'=>$conditions_dropoff));
-			$prepare_schedule = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
+
+			$prepare_schedule_date = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
+
 			$this->set('date',date('n/d/Y',strtotime($this->request->data['Delivery']['date'])));
-			$this->set('today',$prepare_schedule);
+			$this->set('today',$prepare_schedule_date);
 			
 			// //prepare csv
 			// $csv = new csvHelper();
@@ -349,6 +351,16 @@ class DeliveriesController extends AppController {
 			// unlink ($fullfilename);
 // 		
 			// exit();
+		}
+	}
+
+	public function create_delivery_csv(){
+		if($this->request->is('post')){
+		    $this->layout = null;
+		   	$this->autoLayout = false;		
+
+			$this->set('delivery',$this->request->data);
+			
 		}
 	}
 	
