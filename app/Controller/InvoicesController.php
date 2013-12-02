@@ -110,8 +110,7 @@ class InvoicesController extends AppController {
 
 		// //get inventory group_data
 		$inv_groups = $this->Inventory->find('all',array('conditions'=>array('company_id'=>$company_id)));
-		$inv_items = $this->Inventory_item->find('all',array('conditions'=>array('company_id'=>$company_id)));
-
+		$inv_items =$this->Inventory_item->redoInventoryItemsByInventory($inv_groups);
 		//tax
 		$taxes = $this->Tax->find('all',array('conditions'=>array('company_id'=>$company_id)));
 		

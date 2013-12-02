@@ -522,7 +522,6 @@ class DeliveriesController extends AppController {
 		} else {
 			$this->set('display_payment','Yes');
 		}
-		debug($_SESSION['Delivery']['Schedule']);
 	
 	}
 	public function process_final_delivery_form()

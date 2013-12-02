@@ -346,6 +346,17 @@ class Inventory_item extends AppModel {
 	
 
 	}
+	public function redoInventoryItemsByInventory($data)
+	{
+		$inv_items = array();
+		if(count($data)>0){
+			foreach ($data as $inv) {
+				$inventory_id = $inv['Inventory']['id'];
+				$inv_items[$inventory_id] = $this->find('all',array('conditions'=>array('inventory_id'=>$inventory_id),'order'=>'name asc'));
+			}
+		}
+		return $inv_items;
+	}
 
 }
 

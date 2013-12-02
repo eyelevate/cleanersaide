@@ -73,7 +73,7 @@ if(!empty($taxes)){
 				?>
 				<div id="inventory-<?php echo $inventory_id;?>" class="<?php echo $active_class;?>">
 				<?php				
-				foreach ($inv_items as $ii) {
+				foreach ($inv_items[$inventory_id] as $ii) {
 					$ii_id = $ii['Inventory_item']['id'];
 					$ii_inv_id = $ii['Inventory_item']['inventory_id'];
 					$ii_name = $ii['Inventory_item']['name'];

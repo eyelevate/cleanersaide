@@ -160,29 +160,43 @@ echo $this->Html->script(array(
 				$zipcode = $customers['User']['contact_zip'];
 				$special_instructions = $customers['User']['special_instructions'];					
 			} else {
-				if(isset($guest_form)){
-					$first_name = $guest_form['User']['first_name'];
-					$last_name = $guest_form['User']['last_name'];
-					$phone = $guest_form['User']['contact_phone'];
-					$zipcode = $guest_form['User']['contact_zip'];
-					$email = $guest_form['User']['contact_email'];
-					$street = '';
-					$suite = '';
-					$city = '';
-					$state = '';
-					$special_instructions = '';	
+				if(isset($_SESSION['Delivery'])){
+					$first_name = $_SESSION['Delivery']['User']['first_name'];
+					$last_name = $_SESSION['Delivery']['User']['last_name'];
+					$phone = $_SESSION['Delivery']['User']['phone'];
+					$zipcode = $_SESSION['Delivery']['User']['contact_zip'];
+					$email = $_SESSION['Delivery']['User']['contact_email'];
+					$street = $_SESSION['Delivery']['User']['contact_address'];
+					$suite = $_SESSION['Delivery']['User']['contact_suite'];
+					$city = $_SESSION['Delivery']['User']['contact_city'];
+					$state = $_SESSION['Delivery']['User']['contact_state'];
+					$special_instructions = $_SESSION['Delivery']['User']['special_instructions'];						
 				} else {
-					$first_name = '';
-					$last_name = '';
-					$phone = '';
-					$email = '';
-					$street = '';
-					$suite = '';
-					$city = '';
-					$state = '';
-					$zipcode = '';
-					$special_instructions = '';						
+					if(isset($guest_form)){
+						$first_name = $guest_form['User']['first_name'];
+						$last_name = $guest_form['User']['last_name'];
+						$phone = $guest_form['User']['contact_phone'];
+						$zipcode = $guest_form['User']['contact_zip'];
+						$email = $guest_form['User']['contact_email'];
+						$street = '';
+						$suite = '';
+						$city = '';
+						$state = '';
+						$special_instructions = '';	
+					} else {
+						$first_name = '';
+						$last_name = '';
+						$phone = '';
+						$email = '';
+						$street = '';
+						$suite = '';
+						$city = '';
+						$state = '';
+						$zipcode = '';
+						$special_instructions = '';						
+					}					
 				}
+
 				
 				
 			}
