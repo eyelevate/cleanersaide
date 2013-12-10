@@ -25,18 +25,36 @@ echo $this->Html->script(array(
 		<script type="text/javascript">
 			var qz = document.getElementById('qz');
 			<?php
-			foreach ($create_store_copy as $csc) {
-				foreach ($csc as $skey => $svalue) {
-					if($skey==0){ //set the printer initiate printing
+			foreach ($create_customer_copy as $ccc) {
+				foreach ($ccc as $ckey => $cvalue) {
+					
+					if($ckey==0){ //set the printer initiate printing
 						?>
 						if (qz != null) {
-							qz.findPrinter('<?php echo $svalue;?>');
+							qz.findPrinter('<?php echo $cvalue;?>');
 						}
 						<?php
 					} else { //setup the reste of the printing
 						?>
 						if (qz != null) {
+							qz.append('<?php echo $cvalue;?>');
+							
+						}
+						<?php
+						
+					}				
+				}			
+			}
+			foreach ($create_store_copy as $csc) {
+				foreach ($csc as $skey => $svalue) {
+
+					if($skey==0){ //set the printer initiate printing
+
+					} else { //setup the reste of the printing
+						?>
+						if (qz != null) {
 							qz.append('<?php echo $svalue;?>');
+							
 						}
 						<?php
 					}				
@@ -46,35 +64,7 @@ echo $this->Html->script(array(
 			qz.print();				
 		</script>
 	</div>	
-	<!-- set store copy -->
-	<div class="formRow">
-		<script type="text/javascript">
-			var qz = document.getElementById('qz');
-			<?php
-			foreach ($create_store_copy as $csc) {
-				foreach ($csc as $skey => $svalue) {
-					if($skey==0){ //set the printer initiate printing
-						?>
-						if (qz != null) {
-							qz.findPrinter('<?php echo $svalue;?>');
-						}
-						<?php
-					} else { //setup the reste of the printing
-						?>
-						if (qz != null) {
-							qz.append('<?php echo $svalue;?>');
-						}
-						<?php
-					}				
-				}			
-			}
-			?>
-			qz.print();				
-		</script>
-		
 
-
-	</div>
 	
 	
 	<!-- printing script -->

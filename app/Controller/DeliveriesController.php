@@ -21,7 +21,7 @@ class DeliveriesController extends AppController {
 		$menu_id = $menu_ids[0]['Menu']['id'];		
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
-		$this->Auth->allow('login','logout','index','form','confirmation','process_sad','process_login','request_pickup_date_time','request_dropoff_date_time','process_final_delivery_form');
+		$this->Auth->allow('login','logout','index','form','confirmation','process_sad','process_login','request_pickup_date_time','request_dropoff_date_time','process_final_delivery_form','restart');
 		//set username
 		$username = $this->Auth->user('username');
 		$this->set('username',$username);
@@ -405,11 +405,11 @@ class DeliveriesController extends AppController {
 
 		$zipcode = $_SESSION['Delivery']['User']['contact_zip'];
 		$this->set('zipcode',$zipcode);
-
-		$find_routes = $this->Delivery->routes($zipcode,$company_id);
+		$base_routes = $this->Delivery->routes($zipcode,$company_id);
+		$find_routes = $this->Delivery->view_schedule($this->Delivery->routes($zipcode,$company_id));
 		$month = date('m');
 		$year = date('Y');
-		$route_schedule = $this->Schedule->create_pickup_schedule($find_routes,$company_id,$month, $year);
+		$route_schedule = $this->Schedule->create_pickup_schedule($base_routes,$company_id,$month, $year);
 		
 		if(count($find_routes)>0){
 			$this->set('route_status','1');
@@ -428,9 +428,9 @@ class DeliveriesController extends AppController {
 			
 			
 			$_SESSION['Delivery']['Schedule']['customer_id'] = $customer_id;
-			$_SESSION['Delivery']['Schedule']['pickup_date'] = date('Y-m-d H:i:s',$pickup_date);
+			$_SESSION['Delivery']['Schedule']['pickup_date'] = date('Y-m-d H:i:s',strtotime($pickup_date));
 			$_SESSION['Delivery']['Schedule']['pickup_delivery_id'] = $pickup_time;
-			$_SESSION['Delivery']['Schedule']['dropoff_date'] = date('Y-m-d H:i:s',$dropoff_date);
+			$_SESSION['Delivery']['Schedule']['dropoff_date'] = date('Y-m-d H:i:s',strtotime($dropoff_date));
 			$_SESSION['Delivery']['Schedule']['dropoff_delivery_id'] = $dropoff_time;
 			$_SESSION['Delivery']['Schedule']['company_id'] = 1;
 			$_SESSION['Delivery']['Schedule']['status'] = 1;
@@ -444,8 +444,7 @@ class DeliveriesController extends AppController {
 	public function request_pickup_date_time()
 	{
 		if($this->request->is('ajax')){
-			$month = $this->data['month'];
-			$year = $this->data['year'];
+			$pickup_date = $this->data['pickup_date'];
 			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
 			$company_id = 1;
 	
@@ -453,15 +452,14 @@ class DeliveriesController extends AppController {
 			$this->set('zipcode',$zipcode);
 	
 			$find_routes = $this->Delivery->routes($zipcode,$company_id);
-			$route_schedule = $this->Schedule->create_pickup_schedule($find_routes,$company_id,$month, $year);
+			$route_schedule = $this->Schedule->create_pickup_schedule($find_routes,$company_id, $pickup_date);
 			$this->set('route_schedule',$route_schedule);
+			$this->set('pickup_date',$pickup_date);
 		}
 	}
 	public function request_dropoff_date_time()
 	{
 		if($this->request->is('ajax')){
-			$month = $this->data['pickup_month'];
-			$year = $this->data['pickup_year'];
 			$date = $this->data['pickup_date'];
 			$time = $this->data['pickup_time'];
 			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
@@ -471,7 +469,7 @@ class DeliveriesController extends AppController {
 			$this->set('zipcode',$zipcode);
 	
 			$find_routes = $this->Delivery->routes($zipcode,$company_id);
-			$route_schedule = $this->Schedule->create_dropoff_schedule($find_routes,$company_id,$month, $year, $date, $time);
+			$route_schedule = $this->Schedule->create_dropoff_schedule($find_routes,$company_id, $date, $time);
 			$this->set('route_schedule',$route_schedule);
 		}
 	}
@@ -769,5 +767,11 @@ class DeliveriesController extends AppController {
 				
 			endif;
 		}		
+	}
+	public function restart()
+	{
+		unset($_SESSION['Delivery']);
+		$this->Session->setFlash(__('Your delivery session has been reset'),'default',array(),'success');
+		$this->redirect(array('action'=>'index'));
 	}
 }

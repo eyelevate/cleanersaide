@@ -6,18 +6,22 @@
 class Schedule extends AppModel {
     public $name = 'Schedule';
 
-	public function create_pickup_schedule($data,$company_id, $month,$year)
+	public function create_pickup_schedule($data,$company_id, $pickup_date)
 	{
+		$month = date('m',$pickup_date);
+		$year = date('Y',$pickup_date);
 		$first_dom = $year.'-'.$month.'-01 00:00:00';
 		$first_dom_string = strtotime($first_dom);
 		$last_dom = date('Y-m-t',$first_dom_string).' 00:00:00';
 		$last_dom_string = strtotime($last_dom);
+
 		//first restructure the array to fit a schedule array
 		$schedule = array();
 		$blackouts = array();
 		$time = array();
 		$days = array();
 		$idx = -1;
+		
 		if(count($data)>0){
 			foreach ($data as $key => $value) {
 				$idx++;
@@ -85,11 +89,13 @@ class Schedule extends AppModel {
 
 	}
 
-	public function create_dropoff_schedule($data,$company_id, $month,$year, $date, $time)
+	public function create_dropoff_schedule($data,$company_id, $date, $time)
 	{
 		//set first available day make it a 90 day range
 		$date_zero_hour = strtotime(date('Y-m-d',$date).' 00:00:00');
 		$day_of_week = date('w',$date_zero_hour);
+		$month = date('m',strtotime($date));
+		$year = date('Y',strtotime($date));
 		//get dropoff schedule
 		
 		//set days
@@ -142,6 +148,7 @@ class Schedule extends AppModel {
 				$schedule[$day][$idx] = $value; 
 			}
 		}
+		
 
 		foreach ($schedule as $skey => $svalue) { //loop through first key
 			for ($i=$day_due; $i <= $day_last; $i+=86400) { //loop through month
@@ -150,19 +157,20 @@ class Schedule extends AppModel {
 					foreach ($schedule[$skey] as $sskey => $ssvalue) { //loop through next dimension of array
 						$delivery_id = $schedule[$skey][$sskey]['id'];
 						$delivery_start = date('G',strtotime(date('Y-m-d ',$i).$schedule[$skey][$sskey]['start']));
-						$blackouts = $schedule[$skey][$sskey]['blackouts'];
-						foreach ($blackouts as $bkey => $bvalue) { //loop through the blackout dates
-							if($i != strtotime($bvalue)){ //if blackout dates do not exist for this day then add to the array
-								$find_dropoff = $this->find('all',array('conditions'=>array('dropoff_delivery_id'=>$delivery_id,'company_id'=>$company_id,'dropoff_date'=>date('Y-m-d H:i:s',$i))));
-								$find_pickup = $this->find('all',array('conditions'=>array('pickup_delivery_id'=>$delivery_id,'company_id'=>$company_id,'pickup_date'=>date('Y-m-d H:i:s',$i))));
-								$delivery_limit = count($find_dropoff) + count($find_pickup); //adds the sum count of all delivery and pickup with the specified date and id
-								
-								
-								$schedule[$skey][$sskey]['service_days'][$i]['date'] = date('Y-m-d H:i:s',$i);
-								$schedule[$skey][$sskey]['service_days'][$i]['limit'] = $delivery_limit;
-								$schedule[$skey][$sskey]['service_days'][$i]['time'] = $delivery_start;
-							}
-						}	
+						//$blackouts = $schedule[$skey][$sskey]['blackouts'];
+
+						if(count($blackouts[$i])==0){
+							$find_dropoff = $this->find('all',array('conditions'=>array('dropoff_delivery_id'=>$delivery_id,'company_id'=>$company_id,'dropoff_date'=>date('Y-m-d H:i:s',$i))));
+							$find_pickup = $this->find('all',array('conditions'=>array('pickup_delivery_id'=>$delivery_id,'company_id'=>$company_id,'pickup_date'=>date('Y-m-d H:i:s',$i))));
+							$delivery_limit = count($find_dropoff) + count($find_pickup); //adds the sum count of all delivery and pickup with the specified date and id
+							
+							
+							$schedule[$skey][$sskey]['service_days'][$i]['date'] = date('Y-m-d H:i:s',$i);
+							$schedule[$skey][$sskey]['service_days'][$i]['limit'] = $delivery_limit;
+							$schedule[$skey][$sskey]['service_days'][$i]['time'] = $delivery_start;									
+						}
+
+
 
 					}
 				}

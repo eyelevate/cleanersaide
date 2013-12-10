@@ -336,6 +336,8 @@ class Invoice extends AppModel {
 			$idx++;
 			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_ResetStyles();
 			$idx++;
+			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_MakeCut('partial');
+			$idx++;
 			$invoice[$key][$idx] = $this->_EndOfDocument();
 			
 		}
@@ -505,6 +507,8 @@ class Invoice extends AppModel {
 			$invoice[$key][$idx] = $this->_ResetStyles().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
 			$idx++;
 			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_ResetStyles();
+			$idx++;
+			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_MakeCut('partial');
 			$idx++;
 			$invoice[$key][$idx] = $this->_EndOfDocument();
 			

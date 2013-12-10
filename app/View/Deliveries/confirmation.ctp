@@ -22,7 +22,6 @@ $special_instructions = $deliveries['User']['special_instructions'];
 $dropoff_date = date('D n/d/Y',strtotime($deliveries['Schedule']['dropoff_date']));
 $pickup_date = date('D n/d/Y',strtotime($deliveries['Schedule']['pickup_date']));
 
-
 ?>
 
 <div class="container">
@@ -62,7 +61,7 @@ $pickup_date = date('D n/d/Y',strtotime($deliveries['Schedule']['pickup_date']))
 
 		</table>
 		<div class="sixteen columns alpha">
-			<button class="btn btn-link">Restart Delivery Form</button>	
+			<a class="btn btn-link" href="/deliveries/restart">Restart Delivery Form</a>	
 		</div>
 		
 	</div>

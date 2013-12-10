@@ -456,6 +456,7 @@ class InvoicesController extends AppController {
 				$create_store_copy = $this->Invoice->createStoreCopyInvoice($invoice_split,$username, $printer,$customer, $company);
 			
 				$this->set('customer',$this->request->data);
+				$this->set('customer_id',$customer_id);
 				$this->set('store',$store_copy);	
 				$this->set('create_store_copy',$create_store_copy);	
 
@@ -493,6 +494,7 @@ class InvoicesController extends AppController {
 				$this->set('store',$store_copy);	
 				$this->set('create_store_copy',$create_store_copy);	
 				$this->set('create_customer_copy',$create_customer_copy);	
+
 			}
 		}
 	}

@@ -205,6 +205,24 @@ class Delivery extends AppModel {
 		
 		return $routes;
 	}
+
+	public function view_schedule($data)
+	{
+
+		$schedule = array();
+		if(count($data)>0){
+			foreach ($data as $key => $value) {
+				$route_id = $data[$key]['id'];
+				$route_name = $data[$key]['name'];
+				$day = $data[$key]['day'];
+				$limit = $data[$key]['limit'];
+				$start = $data[$key]['start'];
+				$end = $data[$key]['end'];	
+				$schedule[$day][$key] = $value;			
+			}
+		}
+		return $schedule;
+	}
 	
 	
 }

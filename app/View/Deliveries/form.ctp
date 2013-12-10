@@ -10,9 +10,12 @@ $this->Html->css(array(
 );
 
 echo $this->Html->script(array(
+	'timezone/src/date.js',
+	'frontend/plugins/jquery-ui/js/jquery-ui-1.10.1.custom.js', //jquery-ui file
 	'admin/plugins/jquerypriceformat/jquery.price_format.1.7.min.js',
 	'admin/plugins/phone_mask/phone_mask.js',
-	'frontend/deliveries_form.js'),FALSE);
+	'frontend/deliveries_form.js'
+	),FALSE);
 	
 if(isset($_SESSION['message'])){
 	?>
@@ -35,190 +38,178 @@ if($route_status == '1'){ //there are routes
 	
 		
 		<div class="row six columns alpha">
-			<table class="table table-bordered table-hover table-striped">
+			<table id="deliveryScheduleTable" class="table table-bordered table-hover table-striped">
 				<thead>
 					<tr>
 						<th>Day</th>
-						<th>Start Time</th>
-						<th>End Time</th>
+						<th>Time Schedule</th>
+						<th>Blackout Dates</th>
 					</tr>
 				</thead>
 				<tbody>
 				<?php
-				foreach ($routes as $r) {
-					$route_id = $r['id'];
-					$route_name = $r['name'];
-					$day = $r['day'];
-					$limit = $r['limit'];
-					$start = $r['start'];
-					$end = $r['end'];
+				foreach ($routes as $rkey => $rvalue) {
+					$index = 0;
+					switch($rkey){
+						case 'Monday':
+							$date_day = 1;
+						break;
+							
+						case 'Tuesday':
+							$date_day = 2;
+						break;
+						
+						case 'Wednesday':
+							$date_day = 3;
+						break;
+							
+						case 'Thursday':
+							$date_day = 4;
+						break;
+							
+						case 'Friday':
+							$date_day = 5;
+						break;
+						
+						case 'Saturday':
+							$date_day = 6;
+						break;
+							
+						case 'Sunday':
+							$date_day = 0;
+						break;	
+					
+					}
 					?>
-					<tr>
-						<td><?php echo $day;?></td>
-						<td><?php echo $start;?></td>
-						<td><?php echo $end;?></td>
-					</tr>
-					<?php	
-				}
-				?>
+					<tr day="<?php echo $date_day;?>">
+						<td><?php echo $rkey;?></td>
+						<td>
+							<ul>							
+							<?php
+							foreach ($rvalue as $key => $value) {
+								$index++;
+								$route_id = $rvalue[$key]['id'];
+								$route_name = $rvalue[$key]['name'];
+								$day = $rvalue[$key]['day'];
+								$limit = $rvalue[$key]['limit'];
+								$start = $rvalue[$key]['start'];
+								$end = $rvalue[$key]['end'];
+								?>
+								<li><?php echo $start.' - '.$end;?></li>
+								<?php
+							
+							}
+							?>
+							</ul>
+						</td>
+						<td>
+							<ul id="blackoutUl-<?php echo $rkey;?>">							
+							<?php
+							foreach ($rvalue as $key => $value) {
+								$blkout = $rvalue[$key]['blackouts'];
+								foreach ($blkout as $bkey => $bvalue) {
+									if(strtotime(date('Y-m-d H:i:s')) < strtotime($bvalue)){
+									$blk_date = date('D n/d/Y', strtotime($bvalue));
+									
+										?>
+										<li class="blackoutLi" blackout="<?php echo date('n/d/Y',strtotime($bvalue));?>"><?php echo $blk_date;?></li>
+										<?php
+									}
+								}
+							
+							}
+							?>
+							</ul>							
+						</td>
+					</tr>	
+						<?php	
+					}
+	
+					?>
+					
+				
 				</tbody>
 			</table>			
 		</div>
 
 	</div>
 	<form id="dateTimeForm" action="/deliveries/form" method="post">	
-		<div class="alert span12" style="margin-left:0px">
-			<h3>Delivery Pickup Request Form</h3>
-			<h5>(1) Search for delivery pickup dates</h5>
+		<div class="well well-large sixteen columns alpha" style="margin-left:0px">
+			<h2>Delivery Request Form</h2>
 			
-			<div class="row">
-				
-				<div class="control-group four columns alpha">
-					<label>Select Month</label>
-					<select id="selectPickupMonth" name="data[Schedule][pickup_month]">
-						<?php
-						$months = array();
-						$months[1] = 'January';
-						$months[2] = 'February';
-						$months[3] = 'March';
-						$months[4] = 'April';
-						$months[5] = 'May';
-						$months[6] = 'June';
-						$months[7] = 'July';
-						$months[8] = 'August';
-						$months[9] = 'September';
-						$months[10] = 'October';
-						$months[11] = 'November';
-						$months[12] = 'December';
-						foreach ($months as $key => $value) {
-							if(date('m') == $key){
-							?>
-							<option value="<?php echo $key;?>" selected="selected"><?php echo $value;?></option>
-							<?php							
-							} else {
-							?>
-							<option value="<?php echo $key;?>"><?php echo $value;?></option>
-							<?php							
-							}
+			<div id="step1Div" class="row stepDiv alert alert-info">
+				<h3>(Step 1) Select delivery pickup date and time</h3>	
+				<em>Place Step 1 description here</em>
+				<br/>
+				<?php
 	
-						}
-						?>
-					</select>
-					<span class="help-block"></span>
-				</div>
-				<div class="control-group four columns alpha">
-					<label>Select Year</label>
-					<select id="selectPickupYear" name="data[Schedule][pickup_year]">
-					<?php
-						$years[date('Y')] = date('Y');
-						$years[date('Y')+1] = date('Y') + 1;
-						foreach ($years as $key => $value) {
-							if(date('Y') == $key){
-							?>
-							<option value="<?php echo $key;?>" selected="selected"><?php echo $value;?></option>
-							<?php
-							} else {
-							?>
-							<option value="<?php echo $key;?>"><?php echo $value;?></option>
-							<?php					
-	
-							}
-	
-						}
-					?>
-				
-					</select>
-				</div>
-			</div>
-			<h5>(2) Select delivery pickup date and time</h5>
+				echo $this->Form->input('Schedule.pickup_date',array(
+					'div'=>array('class'=>'pickupDateDiv control-group ten columns alpha'),
+					'label'=>false,
+					'class'=>'pickupDate',
+					'type'=>'text',
+					'style'=>'cursor:pointer; width:250px;',
+					'before'=>'<label>Select Pickup Date <span class="required">*</span></label><div class="input-append">',
+					'after'=>'<span class="add-on pointer"><i class="small-icon-calendar"></i></span></div><span class="help-block"></span>',
+					'error'=>array('attributes' => array('class' => 'help-block')),
+				));
 			
-			<div class="row">
-			
-				<div id="deliveryDateDiv" class="control-group four columns alpha">
-					<label>Select Pickup Date <span class="required">*</span></label>
-					<select id="schedule_pickup_date" name="data[Schedule][pickup_date]">
-						<option value="">Select pickup date</option>
-					<?php
-					if(count($route_schedule)){
-						$today = strtotime(date('Y-m-d H:i:s'));
-						foreach ($route_schedule as $rkey => $rvalue) {
-							$date = date('l n/d/Y',$rkey);
-							if($rkey > $today){
-							?>
-							<option value="<?php echo $rkey;?>"><?php echo $date;?></option>
-							<?php
-							}
-						}
-					}
-					?>
-					</select>	
-					<span class="help-block"></span>
-				</div>
-				<div id="deliveryTimeDiv" class="control-group four columns alpha">
+				?>		
+				<div id="deliveryTimeDiv" class="control-group ten columns alpha">
 					<label>Select Pickup Time <span class="required">*</span></label>
-					<select id="schedule_pickup_time" name="data[Schedule][pickup_time]">
-						<option value="">Select pickup time</option>
+					<select id="schedule_pickup_time" name="data[Schedule][pickup_time]" style="width:250px;">
+						<option value="none">Select pickup time</option>
 	
 					</select>
 					<span class="help-block"></span>
+				</div>				
+				
+				<div id="step1ButtonDiv" class="row stepButtonDiv fifteen columns alpha">
+					<hr/>
+					<p id="successfulPickupMessage" class="hide"></p>
+					<button id="step1Button" class="btn btn-primary pull-right disabled" type="button">Next</button>
 				</div>
 			</div>
 			
-			<div id="pickupFormCheck" class="row">
-				<hr/>
-				<p id="successfulPickupMessage" class="hide"></p>
-				<input id="pickupFinishFake" class="btn btn-large pull-right disabled" type="disabled" value="Set Pickup"/>
-				<button id="pickupFinish" class="btn btn-large btn-primary pull-right hide" type="button">Next</button>
-				
-			</div>			
-		</div>
-		<div id="dropoffFormDiv" class="alert alert-info span12 hide" style="margin-left:0px;">
-			<h3>Delivery Dropoff Request Form</h3>
-			<p><span class="required">*</span> Dropoff must be within 90 days of pickup date</p>
 
+			<div id="step2Div" class="row stepDiv alert alert-info hide">
+				<h3>(Step 2) Select delivery dropoff date and time</h3>
+				<em>Place Step 2 description here</em>
+				<br/>
+				<?php
+	
+				echo $this->Form->input('Schedule.dropoff_date',array(
+					'div'=>array('class'=>'dropoffDateDiv control-group ten columns alpha'),
+					'label'=>false,
+					'class'=>'dropoffDate',
+					'style'=>'cursor:pointer; width:250px;',
+					'type'=>'text',
+					'before'=>'<label>Select Dropoff Date <span class="required">*</span></label><div class="input-append">',
+					'after'=>'<span class="add-on pointer calendar-icon"><i class="small-icon-calendar"></i></span></div><span class="help-block"></span>',
+					'error'=>array('attributes' => array('class' => 'help-block')),
+				));
 			
-			
-			<div class="row">
-			
-				<div id="deliveryDateDiv" class="control-group four columns alpha">
-					<label>Select Dropoff Date <span class="required">*</span></label>
-					<select id="schedule_dropoff_date" name="data[Schedule][dropoff_date]">
-						<option value="">Select dropoff date</option>
-					<?php
-					if(count($route_schedule)){
-						$today = strtotime(date('Y-m-d H:i:s'));
-						foreach ($route_schedule as $rkey => $rvalue) {
-							$date = date('l n/d/Y',$rkey);
-							if($rkey > $today){
-							?>
-							<option value="<?php echo $rkey;?>"><?php echo $date;?></option>
-							<?php
-							}
-						}
-					}
-					?>
-					</select>	
-					<span class="help-block"></span>
-				</div>
-				<div id="deliveryTimeDiv" class="control-group four columns alpha">
+				?>
+				<div id="deliveryTimeDiv" class="control-group ten columns alpha">
 					<label>Select Dropoff Time <span class="required">*</span></label>
-					<select id="schedule_dropoff_time" name="data[Schedule][dropoff_time]">
+					<select id="schedule_dropoff_time" name="data[Schedule][dropoff_time]" style="width:250px;">
 						<option value="">Select dropoff time</option>
 	
 					</select>
 					<span class="help-block"></span>
 				</div>
-				<div id="dropoffFormCheck" class="row">
-					<hr/>
-					<p id="successfulDropoffMessage" class="hide"></p>
-					<button id="dropoffFinish" class="btn btn-large btn-primary pull-right">Confirm Delivery</button>
-					
-				</div>	
-			</div>		
-			
-			
-						
+
+			</div>			
+			<div id="pickupFormCheck" class="row">
+				<hr/>
+				
+				<p id="successfulDropoffMessage" class="hide"></p>
+				<input id="pickupFinishFake" class="btn btn-large pull-right disabled" type="disabled" value="Set Delivery"/>
+				<input id="deliveryFinish" class="btn btn-large btn-primary pull-right hide" value="Set Delivery"/>
+				
+			</div>			
 		</div>
+
 
 	</form>
 	<?php

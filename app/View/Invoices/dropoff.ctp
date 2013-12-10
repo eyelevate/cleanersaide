@@ -259,8 +259,8 @@ if(!empty($taxes)){
 	    </div>
 	    <div class="modal-footer">
 	      <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-	      <button id="printCustomerCopy-No" type="button" class="printCustomerCopy btn btn-danger pull-right">Customer Copy + Store Copy</button>
-	      <button id="printCustomerCopy-Yes" type="button" class=" printCustomerCopy btn btn-primary pull-right">Store Copy Only</button>
+	      <button id="printCustomerCopy-Yes" type="button" class="printCustomerCopy btn btn-danger pull-right">Customer Copy + Store Copy</button>
+	      <button id="printCustomerCopy-No" type="button" class=" printCustomerCopy btn btn-primary pull-right">Store Copy Only</button>
 	    </div>
 	  </div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->

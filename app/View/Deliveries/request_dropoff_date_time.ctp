@@ -4,7 +4,7 @@
 $today = strtotime(date('Y-m-d H:i:s'));
 if(count($route_schedule)){
 	foreach ($route_schedule as $rkey => $rvalue) {
-		$date = date('l n/d/Y',$rkey);
+		$date = date('n/d/Y',$rkey);
 		if($today < $rkey){
 		?>
 		<option value="<?php echo $rkey;?>"><?php echo $date;?></option>
