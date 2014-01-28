@@ -133,6 +133,9 @@ echo $this->Form->create();
 		</div>
 
 		<div>
+			<?php
+			debug($parents);
+			?>
 			<h4 class="heading">Select Parent Page</h4>
 			<select id="parentUrlSelect" name="data[Page][parent_id]">
 				<option id="parentUrlOption-none" class="parentUrlOption" value="0">No Parent</option>

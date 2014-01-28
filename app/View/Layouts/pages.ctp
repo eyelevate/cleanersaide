@@ -96,15 +96,16 @@ $cakeDescription = __d('Eyelevate', 'Jays Cleaners');
   	<div id="header" class="container">
 
 	  <div class="header clearfix row">
-			<div class="eight columns header_left">
-				<a href="/"><img src="/img/frontend/logo.png"/></a>
+			<div class="eight columns header_left alpha">
+				<a href="/" class="pull-left"><img src="/img/frontend/jaysLogo2.png"/></a>
 			</div>
 			<div class="eight columns">
 				<div class="header_right clearfix">
-				    <a href='http://www.twitter.com/mvcoho' target='_blank' class='icon_tweet' title='Follow Us on Twitter'>Follow Us on Twitter</a>
+					<a id="image_header_right" href="/deliveries"><img src="/img/frontend/jaysDeliveryTruck.png"/></a>
+				    <!-- <a href='http://www.twitter.com/mvcoho' target='_blank' class='icon_tweet' title='Follow Us on Twitter'>Follow Us on Twitter</a>
 				    <a href='http://www.facebook.com/mvcoho' target='_blank' class='icon_facebook' title='Follow Us on Facebook'>Follow Us on Facebook</a>
 					<a href="/contact-us" class="header_link first">Contact Us</a>
-					<a href="/frequently-asked-questions" class="header_link">FAQ</a>
+					<a href="/frequently-asked-questions" class="header_link">FAQ</a> -->
 				</div>
 			</div>
 		</div>
@@ -125,10 +126,17 @@ $cakeDescription = __d('Eyelevate', 'Jays Cleaners');
 								$mainHeader = $key;
 								$name = $primary_nav[$mainHeader]['name'];
 								$url = str_replace('/index','',$primary_nav[$mainHeader]['url']);
+								
 								$icon = $primary_nav[$mainHeader]['icon'];
 								$collapse_id = $collapse_id+1;
+								
+								if($url == 'Home Page'){
+									$href="href='/'";
+								} else {
+									$href="";
+								}
 								?>
-								<li><a href="<?php echo $url; ?>"><?php echo $name; ?></a>
+								<li><a <?php echo $href;?> style="cursor:pointer;"><?php echo $name; ?></a>
 									<?php
 									if($primary_nav[$mainHeader]['next'] != 'empty'){ ?>
 										<div>

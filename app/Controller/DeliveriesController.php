@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class DeliveriesController extends AppController {
 
 	public $name = 'Deliveries';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Delivery','Schedule');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Delivery','Schedule','Payment');
 
 	public $helpers = array('Csv'); 
 
@@ -400,7 +400,10 @@ class DeliveriesController extends AppController {
 	{
 		$this->layout = 'pages';
 		$customer_id = $_SESSION['Delivery']['User']['customer_id'];
-
+		$page_url = '/deliveries/form';
+		$primary_nav = $this->Menu_item->arrangeByTiers(4);	
+		$primary_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $primary_nav);
+		$this->set('primary_nav',$primary_nav);	
 		$company_id = 1;
 
 		$zipcode = $_SESSION['Delivery']['User']['contact_zip'];
@@ -476,7 +479,17 @@ class DeliveriesController extends AppController {
 	public function confirmation()
 	{
 		$this->layout = 'pages';
-		$this->set('deliveries',$_SESSION['Delivery']);
+		$page_url = '/deliveries/form';
+		$primary_nav = $this->Menu_item->arrangeByTiers(4);	
+		$primary_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $primary_nav);
+		$this->set('primary_nav',$primary_nav);			
+		
+		if(isset($_SESSION['Delivery'])){
+			$this->set('deliveries',$_SESSION['Delivery']);	
+		} else {
+			$this->set('deliveries',array());
+		}
+		
 		//get pickup time 
 		$delivery_pickup_data = $this->Delivery->find('all',array('conditions'=>array('id'=>$_SESSION['Delivery']['Schedule']['pickup_delivery_id'])));
 		if(count($delivery_pickup_data)>0){
@@ -520,11 +533,32 @@ class DeliveriesController extends AppController {
 		} else {
 			$this->set('display_payment','Yes');
 		}
+		
+		/**
+		 * post data for initial form validation
+		 */
+		if($this->request->is('post')){
+			$this->Payment->set($this->request->data);
+			//$this->Payment->validate($this->request->data);
+			if ($this->Payment->validates()) {
+			    // it validated logic
+			    $_SESSION['Delivery_data'] = $this->request->data;
+			   
+			} else {
+			    // didn't validate logic
+			    $errors = $this->Payment->validationErrors;
+			}
+		}
 	
 	}
+	/**
+	 * Delivery form processing
+	 * - includes saving delivery data, customer data, and payment data with authorize.net
+	 */
 	public function process_final_delivery_form()
 	{
-		if($this->request->is('post')){
+
+		if($this->request->is('post')){ //form handling from /delivery/confirmation
 			unset($_SESSION['payment_error']); //automatically unset the payment error array
 			//set variables
 			$user_update = array(); //create the new user data to update user table
@@ -545,8 +579,9 @@ class DeliveriesController extends AppController {
 				break;
 					
 			}			
-			$phone = preg_replace("/[^0-9]/","",$_SESSION['Delivery']['User']['phone']);
-			//start logic
+			$phone = preg_replace("/[^0-9]/","",$_SESSION['Delivery']['User']['phone']); //strip phone to just numbers
+			
+			//start authorize.net logic
 			if($saved_payment_profile == 'No'): //customer does not have a saved profile
 			
 				
@@ -555,7 +590,7 @@ class DeliveriesController extends AppController {
 				$exp_year = preg_replace("/[^0-9]/","",$this->request->data['Delivery']['exp_year']);
 				$cvv = preg_replace("/[^0-9]/","",$this->request->data['Delivery']['cvv']);
 				
-				$new_payment_profile = array();
+				$new_payment_profile = array(); //since there is no payment profile we will create one from scratch
 
 				//next check if its a member or a guest
 				if(!empty($_SESSION['Delivery']['User']['customer_id'])){ //this is a member
@@ -623,7 +658,7 @@ class DeliveriesController extends AppController {
 					$customer_search_conditions = array('User.contact_phone'=>$phone);
 					$customer_search = $this->User->find('all',array('conditions'=>$customer_search_conditions));					
 					if(count($customer_search)>0){ //this is a returning guest
-						debug('this is a returning guest');
+
 						foreach ($customer_search as $cs) {
 							$customer_id = $cs['User']['id'];
 							$profile_id = $cs['User']['profile_id'];
@@ -695,7 +730,6 @@ class DeliveriesController extends AppController {
 						}
 					} else { //this is a new guest
 						$profile_id = '';
-						debug('this is a new guest');
 						$user_update['User']['group_id'] = 5;
 						$user_update['User']['company_id'] = 1;
 						$user_update['User']['email'] = $_SESSION['Delivery']['User']['contact_email'];

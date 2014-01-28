@@ -78,7 +78,7 @@ class PagesController extends AppController {
 	    parent::beforeFilter();
 		$this->set('username',AuthComponent::user('username'));
 		$this->Auth->allow('home','login','url','test');
-	
+
 	}
 /**
  * 
@@ -233,6 +233,7 @@ class PagesController extends AppController {
 		} else {
 			//find preview parent pages
 			$findUrls = $this->Page->find('all',array('order'=>array('Page.url ASC')));
+
 			$this->set('parents',$findUrls);
 			
 			//find all menus
@@ -468,7 +469,6 @@ class PagesController extends AppController {
  */
 	public function view($id = null)
 	{
-
 		//set the admin navigation
 		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
 		$page_url = '/pages/view';
@@ -673,7 +673,6 @@ class PagesController extends AppController {
  
 	public function preview($url1 = null, $url2 = null, $url3 = null, $url4 = null, $url5 = null)
 	{
-		
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
 		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
@@ -779,7 +778,6 @@ class PagesController extends AppController {
  */
 	public function url($urlFirst = null,$urlSecond = null, $urlThird = null, $urlFourth = null, $urlFifth = null)
 	{
-
 		//set the url parameters to match db url names
 		$url = $this->Page->fixUrl($urlFirst, $urlSecond, $urlThird, $urlFourth, $urlFifth);
 
@@ -790,6 +788,7 @@ class PagesController extends AppController {
 			//All necessary variables from db
 			$pageFind = $this->Page->find('all',array('conditions'=>array('url'=>$url)));
 			foreach ($pageFind as $page) {
+				$page_url = $page['Page']['url'];
 				$page_id = $page['Page']['id'];
 				$title = $page['Page']['title'];
 				$description = $page['Page']['description'];
@@ -797,10 +796,14 @@ class PagesController extends AppController {
 				$keywords = $page['Page']['keywords'];
 				$menu_id = $page['Page']['menu_id'];
 				
-			}			
+			}		
+			if(is_null($menu_id)){
+				$menu_id = 4;
+			}
+
+			
 		//Set up Primary navigation -------------------------------------------------------------
-		$page_url = '/hotels-attractions';
-		$primary_nav = $this->Menu_item->arrangeByTiers(1);	
+		$primary_nav = $this->Menu_item->arrangeByTiers($menu_id);	
 		$primary_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $primary_nav);
 		$this->set('primary_nav',$primary_nav);
 		
@@ -817,36 +820,7 @@ class PagesController extends AppController {
 				$this->layout = $layout;
 				//send which type of layout we are using to the view page. 
 				$this->set('layout',$layout);
-				//setup sidebar
-				$form_session = $this->Session->read('Reservation_ferry');
-				$hotel_session = $this->Session->read('Reservation_hotel');
-				$attraction_session = $this->Session->read('Reservation_attraction');
-				$package_session = $this->Session->read('Reservation_package');
-				if(!empty($form_session)){
-					$ferry_sidebar = $this->Reservation->sidebar_ferry($form_session);
-				} else {
-					$ferry_sidebar = array();
-				}	
-				$this->set('ferry_sidebar',$ferry_sidebar);		
-				if($this->Session->check('Reservation_hotel')== true){
-					$hotel_sidebar = $this->Reservation->sidebar_hotel($hotel_session);
-				} else {
-					$hotel_sidebar = array();
-				}
-				$this->set('hotel_sidebar',$hotel_sidebar);
-				if($this->Session->check('Reservation_attraction')== true){
-					$attraction_sidebar = $this->Reservation->sidebar_attraction($attraction_session);
-				} else {
-					$attraction_sidebar = array();
-				}
-				$this->set('attraction_sidebar',$attraction_sidebar);
-				
-				if($this->Session->check('Reservation_package')==true){
-					$package_sidebar = $this->Reservation->sidebar_package($package_session);
-				} else {
-					$package_sidebar = array();
-				}
-				$this->set('package_sidebar',$package_sidebar);		
+	
 			}
 
 

@@ -11,7 +11,7 @@ class Payment extends AppModel {
 	
 	//form verification
 	public $validate = array(
-		'vdata'=>array(
+		'ccnum'=>array(
 			'notEmpty'=>array(
 				'rule'=>'notEmpty',
 				'message'=>'This field cannot be left blank'				
@@ -28,7 +28,7 @@ class Payment extends AppModel {
 			)
 		),
 
-		'card_cvv'=>array(
+		'cvv'=>array(
 			'notEmpty'=>array(
 				'rule'=>'notEmpty',
 				'message'=>'This field cannot be left blank'
@@ -44,6 +44,45 @@ class Payment extends AppModel {
 		    'maxLength'=>array(
 				'rule'=>array('maxLength',4),
 				'message'=>'CVV must at least 3 to 4 digits in length'
+			)
+			
+		),
+		'exp_month'=>array(
+			'notEmpty'=>array(
+				'rule'=>'notEmpty',
+				'message'=>'This field cannot be left blank'
+			),
+		    'numeric' => array(
+		        'rule'    => 'numeric',
+		        'message' => 'CVV must be numeric digit'
+		    ),
+		    'minLength' => array(
+		        'rule'    => array('minLength', 2),
+		        'message' => 'Expiration month must be at least 2 digits in length'
+		    ),
+		    'maxLength'=>array(
+				'rule'=>array('maxLength',2),
+				'message'=>'Expiration month must at least 2 digits in length'
+			)
+			
+		),		
+
+		'exp_year'=>array(
+			'notEmpty'=>array(
+				'rule'=>'notEmpty',
+				'message'=>'This field cannot be left blank'
+			),
+		    'numeric' => array(
+		        'rule'    => 'numeric',
+		        'message' => 'CVV must be numeric digit'
+		    ),
+		    'minLength' => array(
+		        'rule'    => array('minLength', 4),
+		        'message' => 'Expiration year must be at least 4 digits in length'
+		    ),
+		    'maxLength'=>array(
+				'rule'=>array('maxLength',4),
+				'message'=>'Expiration year must at least 4 digits in length'
 			)
 			
 		),

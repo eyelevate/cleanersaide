@@ -57,8 +57,8 @@ $(document).ready(function() {
 				<div id="trip_planner">
 					<div class="trip_planner_title">Schedule a delivery</div>
 						<ul class="nav nav-pills" id="myTab">
-						  <li class="active"><a href="#guest">Guest Delivery</a></li>
-						  <li><a href="#login">Member Login</a></li>
+						  <li class="active" style="margin-left:25px;"><a href="#guest">Guest Delivery</a></li>
+						  <li><a href="#login" >Member Login</a></li>
 						</ul>
 						<div class="tab-content">
 		  					<div class="tab-pane active" id="guest">
@@ -67,12 +67,12 @@ $(document).ready(function() {
 									
 								<div class="row-fluid">
 									<div class="control-group span6">
-										<label class="sub-label">First Name:</label>
+										<label class="sub-label">First Name</label>
 										<input name="data[User][first_name]" type="text">
 									</div>
 									
 									<div id="onewaydiv" class="control-group span6">
-										<label class="sub-label">Last Name:</label>
+										<label class="sub-label">Last Name</label>
 										<input name="data[User][last_name]" type="text">
 									</div>
 									
@@ -91,7 +91,7 @@ $(document).ready(function() {
 									</div>
 								</div>
 								<div class="row-fluid">
-									<div class="control-group span8">
+									<div class="control-group span12">
 										<label class="sub-label">Email</label>
 										<input type="text" name="data[User][contact_email]">
 									</div>									
@@ -121,7 +121,7 @@ $(document).ready(function() {
 										</div>									
 									</div>
 									<div class="row-fluid">
-										<a href="/users/forgot" style="font-style: italic">Forgot Login Information? - Click Here</a>
+										<a href="/users/forgot" style="font-style: italic; color:#ffffff; text-decoration: underline">Forgot Login Information? - Click Here</a>
 									</div>							
 								<?php
 								echo $this->Form->submit(__('Login'),array(
@@ -132,38 +132,20 @@ $(document).ready(function() {
 								</form>
 							  </div>
 						</div>
-				</div>
+					</div>
 
 				<div id="sequence" class="nomobile">
-	
-					<ul>
-						<li>
-							<img class="slider_bgr animate-in" src="/img/frontend/CohoBanner.jpg"/>
-							<img class="slider_img animate-in" src="/img/frontend/1_1.png"/>
-						</li>
-						<li>
-							<img class="slider_bgr" src="/img/frontend/SeattleBanner.jpg" />
-							<img class="slider_img" src="/img/frontend/1_1.png"/>
-						</li>
-						<li>
-							<img class="slider_bgr" src="/img/frontend/OlympicPeninsula.jpg" />
-							<img class="slider_img" src="/img/frontend/1_1.png"/>
-						</li>
-						<li>
-							<img class="slider_bgr" src="/img/frontend/VictoriaBanner.jpg" />
-							<img class="slider_img" src="/img/frontend/1_1.png"/>
-						</li>
-										
-					</ul>
- 
-				<div class="slider_nav_holder">
-					<span class="slider_nav"></span>
-					<span class="slider_nav"></span>
-					<span class="slider_nav"></span>
-					<span class="slider_nav"></span>
-				</div>
+					<div id="homeBodyDiv1" class="span6 pull-left">
+						
+					</div>
+					<div id="homeBodyDiv2" class="span6 pull-left">
+						<br/><br/>
+						<p id="homeBody1">Toxin-Free</p>
+						<p id="homeBody2">Eco-Friendly</p>
+						<p id="homeBody3">Cleaning</p>
+					</div>						
 
-			</div>
+				</div>
 		</div>
 		<!-- Sequence Slider::END-->
 	</div>

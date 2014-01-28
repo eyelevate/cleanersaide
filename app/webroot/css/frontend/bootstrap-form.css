@@ -2729,6 +2729,14 @@ input[type="submit"].btn.btn-mini {
   line-height: 14px;
 }
 
+.nav-pills > li > a {
+	color:#ffffff;
+}
+.nav-pills > li > a:hover {
+	color:#B10000;
+}
+
+
 .nav-tabs {
   border-bottom: 1px solid #ddd;
 }

@@ -32,9 +32,9 @@
 			<h1><?php echo $title_for_layout;?></h1>
 		</div>
 
-
 		<div id="content">
 			<div id="navigation">
+				<h1>h1n1</h1>
 				<?php
 				if(isset($menus)):
 				?>

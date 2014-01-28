@@ -89,59 +89,68 @@ $pickup_date = date('D n/d/Y',strtotime($deliveries['Schedule']['pickup_date']))
 		</div>		
 		<?php
 		}
-			echo $this->Form->create('Delivery',array('action'=>'/process_final_delivery_form')); 
+		echo $this->Form->create();
+			//echo $this->Form->create('Delivery',array('action'=>'/process_final_delivery_form')); 
 		if($display_payment == 'Yes'){ 
 			
 		?>
-			<input type="hidden" name="data[Delivery][saved_profile]" value="No"/>
+			<input type="hidden" name="data[Payment][saved_profile]" value="No"/>
 			<div class="row">
 			<?php
-			echo $this->Form->input('card_full_name',array(
+			echo $this->Form->input('Payment.card_full_name',array(
 				'label'=>'Name on Card <span class="f_req">*</span>',
 				'div'=>array('class'=>'control-group eight columns alpha'),
 				'after'=>'<span class="help-block"></span>',
 				'error'=>array('attributes' => array('class' => 'help-block')),
 				'placeholder'=>'Full name as it appears on your credit card',
+				'required'=>'required',
 	
 			));					
 			?>
 			</div>
 			<div class="row">
 			<?php
-			echo $this->Form->input('ccnum',array(
+			echo $this->Form->input('Payment.ccnum',array(
 				'label'=>'Credit Card Number <span class="f_req">*</span>',
 				'div'=>array('class'=>'control-group eight columns alpha'),
 				'after'=>'<span class="help-block"></span>',
 				'error'=>array('attributes' => array('class' => 'help-block')),
 				'placeholder'=>'credit card number as it is shown on your card',
+				'required'=>'required',
 
 			));					
 			?>
 			</div>
 			<div class="row">
 			<?php
-			echo $this->Form->input('exp_month',array(
+			echo $this->Form->input('Payment.exp_month',array(
 				'label'=>'Expired Month <span class="f_req">*</span>',
 				'div'=>array('class'=>'control-group two columns alpha'),
 				'after'=>'<span class="help-block"></span>',
 				'error'=>array('attributes' => array('class' => 'help-block')),
 				'placeholder'=>'mm',
+				'required'=>'required',
+				'maxlength'=>2
 
 			));		
-			echo $this->Form->input('exp_year',array(
+			echo $this->Form->input('Payment.exp_year',array(
 				'label'=>'Expired Year <span class="f_req">*</span>',
 				'div'=>array('class'=>'control-group two columns alpha'),
 				'after'=>'<span class="help-block"></span>',
 				'error'=>array('attributes' => array('class' => 'help-block')),
 				'placeholder'=>'yyyy',
+				'required'=>'required',
+				'maxlength'=>4
 	
 			));					
-			echo $this->Form->input('cvv',array(
+			echo $this->Form->input('Payment.cvv',array(
 				'label'=>'CVV <span class="f_req">*</span>',
 				'div'=>array('class'=>'control-group two columns alpha'),
 				'after'=>'<span class="help-block"></span>',
 				'error'=>array('attributes' => array('class' => 'help-block')),
 				'placeholder'=>'ex. 123',
+				'required'=>'required',
+				'maxlength'=>5
 	
 			));				
 		
@@ -153,10 +162,10 @@ $pickup_date = date('D n/d/Y',strtotime($deliveries['Schedule']['pickup_date']))
 		<?php
 		} else {
 		?>
-		<input type="hidden" value="Yes" name="data[Delivery][saved_profile]"/>
+		<input type="hidden" value="Yes" name="data[Payment][saved_profile]"/>
 		<p>Payment information has already been saved. You may make the delivery request. </p>
 		<div class="control-group clearfix">
-			<label class="checkbox"><input type="checkbox" value="No" name="data[Delivery][payment_status]"/> I would like to stop saving my payment information.</label>
+			<label class="checkbox"><input type="checkbox" value="No" name="data[Payment][payment_status]"/> I would like to stop saving my payment information.</label>
 		</div>		
 		<?php	
 		}	

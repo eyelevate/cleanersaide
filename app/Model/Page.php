@@ -175,7 +175,7 @@ public $validate = array(
 			}
 			
 			$data['Page'][$key]['relationship'] = '1'; //parent page needs updating later
-			$data['Page'][$Key]['status'] = '1';			
+			$data['Page'][$key]['status'] = '1';			
 		}
 
 		return $data;
