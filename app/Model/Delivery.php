@@ -224,6 +224,61 @@ class Delivery extends AppModel {
 		return $schedule;
 	}
 	
+	public function deliveryString($customer_id, $data, $token)
+	{
+		$string = '';
+		
+		$reschedule_link = 'www.webupons.com/deliveries/reschedule/'.$token;
+		if(isset($data)){
+			if(empty($customer_id)){
+				$customer_id = $data['User']['customer_id'];	
+			}
+			
+			$first_name = ucfirst($data['User']['first_name']);
+			$last_name = ucfirst($data['User']['last_name']);
+			$phone = $data['User']['phone'];
+			$email = $data['User']['contact_email'];
+			$address = $data['User']['contact_address'];
+			$suite = $data['User']['contact_suite'];
+			$city = $data['User']['contact_city'];
+			$state = $data['User']['contact_state'];
+			$zip = $data['User']['contact_zip'];
+			$special_instructions = $data['User']['special_instructions'];
+			$dropoff_date = date('D n/d/Y',strtotime($data['Schedule']['dropoff_date']));
+			$pickup_date = date('D n/d/Y',strtotime($data['Schedule']['pickup_date']));	
+			$string .= '<tr><td><legend>'.$first_name.' '.$last_name.'</td></tr>';	
+			$string .= '<tr><td><p>Thank you for making a delivery request with us. You have requested a pickup on '.$pickup_date.' and a dropoff on '.$dropoff_date.'. '.
+				'If these dates are not accurate or you would like to request a change in the pickup/dropoff dates you may <a href="'.$reschedule_link.'" style="color:blue;">Click Here</a>, or contact us at (206) 453-5930. '.
+				'Thank you!';	
+		}
+
+		return $string;
+	}
+	function get_random_string($valid_chars, $length)
+	{
+	    // start with an empty random string
+	    $random_string = "";
+	
+	    // count the number of chars in the valid chars string so we know how many choices we have
+	    $num_valid_chars = strlen($valid_chars);
+	
+	    // repeat the steps until we've created a string of the right length
+	    for ($i = 0; $i < $length; $i++)
+	    {
+	        // pick a random number from 1 up to the number of valid chars
+	        $random_pick = mt_rand(1, $num_valid_chars);
+	
+	        // take the random character out of the string of valid chars
+	        // subtract 1 from $random_pick because strings are indexed starting at 0, and we started picking at 1
+	        $random_char = $valid_chars[$random_pick-1];
+	
+	        // add the randomly-chosen char onto the end of our string so far
+	        $random_string .= $random_char;
+	    }
+	
+	    // return our finished random string
+	    return $random_string;
+	}
 	
 }
 ?>

@@ -157,7 +157,7 @@ $pickup_date = date('D n/d/Y',strtotime($deliveries['Schedule']['pickup_date']))
 			?>
 			</div>
 			<div class="control-group clearfix">
-				<label class="checkbox"><input type="checkbox" value="Yes" name="data[Delivery][payment_status]"/> I would like to save my payment information for future visits.</label>
+				<label class="checkbox"><input type="checkbox" value="Yes" name="data[Payment][payment_status]"/> I would like to save my payment information for future visits.</label>
 			</div>
 		<?php
 		} else {

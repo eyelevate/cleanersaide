@@ -345,7 +345,7 @@ class Schedule extends AppModel {
 
 	}
 
-	public function addSchedule($company_id, $customer_id, $data, $special_instructions)
+	public function addSchedule($company_id, $customer_id, $data, $special_instructions, $token)
 	{
 		$schedules = array();
 		$schedules['Schedule'] = array(
@@ -357,10 +357,38 @@ class Schedule extends AppModel {
 			'dropoff_delivery_id'=>$data['dropoff_delivery_id'],
 			'special_instructions'=>$special_instructions,
 			'type'=>$data['type'],
+			'token'=>$token,
 			'status'=>1,
 		);
 		$this->save($schedules);		
 	}
+	public function editSchedule($company_id, $customer_id, $data, $special_instructions, $old_token,$new_token)
+	{
+		//get schedule_id
+		$getSI = $this->find('all',array('conditions'=>array('token'=>$old_token)));
+		if(count($getSI)>0){
+			foreach ($getSI as $si) {
+				$si_id = $si['Schedule']['id'];
+			}
+		}
+
+		$schedules = array();
+		$schedules['Schedule'] = array(
+			'company_id'=>$company_id,
+			'customer_id'=>$customer_id,
+			'pickup_date'=>$data['pickup_date'],
+			'pickup_delivery_id'=>$data['pickup_delivery_id'],
+			'dropoff_date'=>$data['dropoff_date'],
+			'dropoff_delivery_id'=>$data['dropoff_delivery_id'],
+			'special_instructions'=>$special_instructions,
+			'type'=>$data['type'],
+			'token'=>$new_token,
+			'status'=>1,
+		);
+		$this->id = $si_id;
+		$this->save($schedules);		
+	}	
+	
 	public function createDeliveryScheduleForCsv($pickup, $dropoff)
 	{
 		$delivery = array();

@@ -12,7 +12,7 @@ Class AuthorizeNetComponent extends Component {
 	public function __construct()
 	{
 		$this->merchant_login = '5x2GcpC8RJ';
-		$this->merchant_transaction_id = '4zt33MUvNR25s8uP';
+		$this->merchant_transaction_id = '5Jb5QWnk65WX7u8u';
 		$this->merchant_apihost = 'apitest.authorize.net';
 		$this->merchant_apipath = "/xml/v1/request.api";
 	}
@@ -50,9 +50,8 @@ Class AuthorizeNetComponent extends Component {
 			"</profile>".
 			"</createCustomerProfileRequest>";
 
-
 		$response = $this->send_xml_request($content);
-	
+
 		$parsedresponse = $this->parse_api_response($response);
 		if ("Ok" == $parsedresponse->messages->resultCode) {
 			$profile['status'] = 'approved';
@@ -245,8 +244,9 @@ Class AuthorizeNetComponent extends Component {
 	//There is more than one way to send https requests in PHP.
 	private function send_xml_request($content)
 	{
-
 		return $this->send_request_via_fsockopen($this->merchant_apihost,$this->merchant_apipath,$content);
+		
+		//return $this->send_request_via_curl($this->merchant_apihost, $this->merchant_apipath, $content);
 	}
 	
 	//function to send xml request via fsockopen

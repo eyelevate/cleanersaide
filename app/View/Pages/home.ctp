@@ -36,16 +36,7 @@ $(document).ready(function() {
 	  e.preventDefault();
 	  $(this).tab('show');
 	})
-	
-	$('.tripRadio').change(function(){
-    	if($('#oneway').is(':checked')) { 
-			$('#ReservationReturns').prop('disabled', true);
-			$('#onewaydiv').hide();
-		} else {
-			$('#ReservationReturns').prop('disabled', false);
-			$('#onewaydiv').show();
-		}
-	});
+
 });
 	
 </script>
@@ -68,12 +59,12 @@ $(document).ready(function() {
 								<div class="row-fluid">
 									<div class="control-group span6">
 										<label class="sub-label">First Name</label>
-										<input name="data[User][first_name]" type="text">
+										<input name="data[User][first_name]" type="text" style="color:#000000; font-size:12px;">
 									</div>
 									
 									<div id="onewaydiv" class="control-group span6">
 										<label class="sub-label">Last Name</label>
-										<input name="data[User][last_name]" type="text">
+										<input name="data[User][last_name]" type="text" style="color:#000000; font-size:12px;">
 									</div>
 									
 								</div>
@@ -83,17 +74,17 @@ $(document).ready(function() {
 								<div class="row-fluid">
 									<div class="control-group span6">
 										<label class="sub-label">Phone</label>
-										<input  type="text" name="data[User][contact_phone]">
+										<input  type="text" name="data[User][contact_phone]" style="color:#000000; font-size:12px;">
 									</div>		
 									<div class="control-group span4">
 										<label class="sub-label">Zipcode</label>
-										<input type="text" name="data[User][contact_zip]">
+										<input type="text" name="data[User][contact_zip]" style="color:#000000; font-size:12px;">
 									</div>
 								</div>
 								<div class="row-fluid">
 									<div class="control-group span12">
 										<label class="sub-label">Email</label>
-										<input type="text" name="data[User][contact_email]">
+										<input type="text" name="data[User][contact_email]" style="color:#000000; font-size:12px;">
 									</div>									
 								</div>
 
@@ -111,13 +102,13 @@ $(document).ready(function() {
 									<div class="row-fluid">
 										<div class="control-group span8">
 											<label class="sub-label">Username</label>
-											<input type="text" name="data[User][username]">
+											<input type="text" name="data[User][username]" style="color:#000000; font-size:12px;">
 										</div>									
 									</div>
 									<div class="row-fluid">
 										<div class="control-group span8">
 											<label class="sub-label">Password</label>
-											<input type="password" name="data[User][password]">
+											<input type="password" name="data[User][password]" style="color:#000000; font-size:12px;">
 										</div>									
 									</div>
 									<div class="row-fluid">

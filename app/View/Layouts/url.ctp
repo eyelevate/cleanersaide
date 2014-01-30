@@ -34,7 +34,7 @@
 
 		<div id="content">
 			<div id="navigation">
-				<h1>h1n1</h1>
+				<h1></h1>
 				<?php
 				if(isset($menus)):
 				?>

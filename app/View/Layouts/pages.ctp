@@ -94,10 +94,12 @@ $cakeDescription = __d('Eyelevate', 'Jays Cleaners');
 <body>
   <div id="wrapper">
   	<div id="header" class="container">
-
+		
 	  <div class="header clearfix row">
+
 			<div class="eight columns header_left alpha">
 				<a href="/" class="pull-left"><img src="/img/frontend/jaysLogo2.png"/></a>
+				<span id="rooseveltName" class="twelve columns alpha"><strong><em>ROOSEVELT</em></strong></span>		
 			</div>
 			<div class="eight columns">
 				<div class="header_right clearfix">
@@ -184,7 +186,14 @@ $cakeDescription = __d('Eyelevate', 'Jays Cleaners');
 
 	<!-- <div class="container"> -->
 
-			<?php echo $this->Session->flash(); ?>
+			<!-- any flash messages goes here -->
+			<?php
+			echo $this->TwitterBootstrap->flashes(array(
+			    "auth" => true,
+			    "closable"=>true
+			    )
+			);
+			?>
 
 			<?php echo $this->fetch('content'); ?>
 		<div class="clear"></div>

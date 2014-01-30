@@ -428,8 +428,8 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('Successfully deleted profile.'),'default',array(),'success');		
 			break;
 		}
-		debug($delete_status);
-		//$this->redirect('/');
+		
+		$this->redirect('/');
 		
 	}
 	

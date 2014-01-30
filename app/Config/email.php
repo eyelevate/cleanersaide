@@ -57,12 +57,12 @@ class EmailConfig {
     // );
 	public $gmail = array(
         'transport' => 'Smtp',
-        'host' => 'ssl://mail.cohoferry.com',
-        'port' => 465,
-        'from' => array('reservations@cohoferry.com' => 'Coho Ferry Reservations'),
+        'host' => 'mail.cleanersaide.com',
+        'port' => 25,
+        'from' => array('delivery@cleanersaide.com' => 'Jays Cleaners Delivery'),
         //'timeout' => 30000,
-        'username' => 'reservations@cohoferry.com',
-        'password' => 'cat3dog!emmm',
+        'username' => 'NoReply@cleanersaide.com',
+        'password' => 'dylan2008',
         //'client' => null,
         //'log' => true
         //'charset' => 'utf-8',
@@ -70,22 +70,21 @@ class EmailConfig {
     );
 	public $default = array(
         'transport' => 'Smtp',
-        'host' => 'ssl://murena.websitewelcome.com',
-        'port' => 465,
-        'from' => array('reservations@cohoferryemail.com' => 'Coho Ferry Reservations'),
-        'username' => 'reservations@cohoferryemail.com',
-        'password' => 'backup',
+        'host' => 'mail.cleanersaide.com',
+        'port' => 25,
+        'from' => array('delivery@cleanersaide.com' => 'Jays Cleaners Delivery'),
+        'username' => 'NoReply@cleanersaide.com',
+        'password' => 'dylan2008',
 
 	);
 
 	public $smtp = array(
-		'transport' => 'Smtp',
-		'from' => array('reservations@cohoferry.com' => 'Coho Ferry Reservations'),
-		'host' => 'ssl://mail.cohoferry.com',
-		'port' => 25,
-		//'timeout' => 30,
-		'username' => 'reservations@cohoferry.com',
-		'password' => 'cat3dog!e',
+ 		'host' => 'mail.cleanersaide.com',
+        'port' => 25,
+        'from' => array('delivery@cleanersaide.com' => 'Jays Cleaners Delivery'),
+        //'timeout' => 30000,
+        'username' => 'NoReply@cleanersaide.com',
+        'password' => 'dylan2008',
 		//'client' => null,
 		//'log' => false,
 

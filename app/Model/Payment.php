@@ -54,7 +54,7 @@ class Payment extends AppModel {
 			),
 		    'numeric' => array(
 		        'rule'    => 'numeric',
-		        'message' => 'CVV must be numeric digit'
+		        'message' => 'Expiration month must be numeric digit'
 		    ),
 		    'minLength' => array(
 		        'rule'    => array('minLength', 2),
@@ -74,7 +74,7 @@ class Payment extends AppModel {
 			),
 		    'numeric' => array(
 		        'rule'    => 'numeric',
-		        'message' => 'CVV must be numeric digit'
+		        'message' => 'Expiration year must be numeric digit'
 		    ),
 		    'minLength' => array(
 		        'rule'    => array('minLength', 4),
