@@ -1130,4 +1130,42 @@ class DeliveriesController extends AppController {
 		$this->set('primary_nav',$primary_nav);	
 	
 	}
+	
+	public function finish()
+	{
+		//set the admin navigation
+		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
+		$page_url = '/deliveries/finish';
+		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
+		$this->set('admin_nav',$admin_nav);
+		$this->set('admin_pages',$page_url);
+		$this->set('admin_check',$admin_check);		
+		$company_id = 1;	
+		
+		$start = date('Y-m-d').' 00:00:00';
+		$end = date('Y-m-d').' 23:59:59';
+		$conditions_pickup= array('Schedule.pickup_date BETWEEN ? AND ?' => array($start,$end));
+		$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
+		$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($start,$end));
+		$day_dropoff = $this->Schedule->find('all',array('conditions'=>$conditions_dropoff));
+		$prepare_schedule_today = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
+		$this->set('date',date('n/d/Y'));
+		$this->set('today',$prepare_schedule_today);
+
+		if($this->request->is('post')){
+			$delivery_start = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 00:00:00';
+			$delivery_end = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 23:59:59';
+			$conditions_pickup= array('Schedule.pickup_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end));
+			$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
+			$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end));
+			$day_dropoff = $this->Schedule->find('all',array('conditions'=>$conditions_dropoff));
+
+			$prepare_schedule_date = $this->Schedule->setSchedule(array(), $day_dropoff);
+
+			$this->set('date',date('n/d/Y',strtotime($this->request->data['Delivery']['date'])));
+			$this->set('today',$prepare_schedule_date);
+			
+
+		}
+	}
 }

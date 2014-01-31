@@ -123,11 +123,32 @@ echo $this->Html->script(array(
 		}		
 		if(isset($form_errors['phone'])){
 			$contact_phone_errors = 'error';
-			$contact_phone_error_message = $form_errors['phone'][0];
+			$contact_phone_error_message = $form_errors['starch'][0];
 		} else {
 			$contact_phone_errors = '';
 			$contact_phone_error_message = '';			
-		}			
+		}
+		if(isset($form_errors['shirt'])){
+			$contact_shirt_errors = 'error';
+			$contact_shirt_error_message = $form_errors['shirt'][0];			
+		} else {
+			$contact_shirt_errors = '';
+			$contact_shirt_error_message = '';				
+		}		
+		if(isset($form_errors['starch'])){
+			$contact_starch_errors = 'error';
+			$contact_starch_error_message = $form_errors['starch'][0];			
+		} else {
+			$contact_starch_errors = '';
+			$contact_starch_error_message = '';				
+		}	
+		if(isset($form_errors['intercom'])){
+			$contact_intercom_errors = 'error';
+			$contact_intercom_error_message = $form_errors['intercom'][0];			
+		} else {
+			$contact_intercom_errors = '';
+			$contact_intercom_error_message = '';				
+		}	
 		if($login == 'Yes'){
 			
 			foreach ($customers as $c) {
@@ -140,6 +161,9 @@ echo $this->Html->script(array(
 				$city = $c['User']['contact_city'];
 				$state = $c['User']['contact_state'];
 				$zipcode = $c['User']['contact_zip'];
+				$intercom = $c['User']['intercom'];
+				$shirt_preference = $c['User']['shirt'];
+				$starch = $c['User']['starch'];
 				$special_instructions = $c['User']['special_instructions'];
 				
 			}
@@ -158,6 +182,9 @@ echo $this->Html->script(array(
 				$city = $customers['User']['contact_city'];
 				$state = $customers['User']['contact_state'];
 				$zipcode = $customers['User']['contact_zip'];
+				$intercom = $customers['User']['intercom'];
+				$shirt_preference = $customes['User']['shirt'];
+				$starch = $customers['User']['starch'];
 				$special_instructions = $customers['User']['special_instructions'];					
 			} else {
 				if(isset($_SESSION['Delivery'])){
@@ -170,6 +197,9 @@ echo $this->Html->script(array(
 					$suite = $_SESSION['Delivery']['User']['contact_suite'];
 					$city = $_SESSION['Delivery']['User']['contact_city'];
 					$state = $_SESSION['Delivery']['User']['contact_state'];
+					$intercom = $_SESSION['Delivery']['User']['intercom'];
+					$shirt_preference = $_SESSION['Delivery']['User']['shirt'];
+					$starch = $_SESSION['Delivery']['User']['starch'];
 					$special_instructions = $_SESSION['Delivery']['User']['special_instructions'];						
 				} else {
 					if(isset($guest_form)){
@@ -182,6 +212,9 @@ echo $this->Html->script(array(
 						$suite = '';
 						$city = '';
 						$state = '';
+						$intercom = '';
+						$shirt_preference = 'hanger';
+						$starch = 'none';
 						$special_instructions = '';	
 					} else {
 						$first_name = '';
@@ -193,6 +226,9 @@ echo $this->Html->script(array(
 						$city = '';
 						$state = '';
 						$zipcode = '';
+						$intercom = '';
+						$shirt_preference = 'hanger';
+						$starch = 'none';
 						$special_instructions = '';						
 					}					
 				}
@@ -230,6 +266,11 @@ echo $this->Html->script(array(
 				<input class="phone" type="text" name="data[User][phone]" value="<?php echo $phone;?>"/>
 				<span class="help-block"><?php echo $contact_phone_error_message;?></span>
 			</div>		
+			<div class="control-group <?php echo $contact_intercom_errors;?> three columns alpha">
+				<label>Intercom <em>(optional)</em></label>
+				<input type="text" name="data[User][intercom]" value="<?php echo $intercom;?>"/>
+				<span class="help-block"><?php echo $contact_intercom_error_message;?></span>
+			</div>
 		</div>
 		<div class="row">
 			<div class="control-group <?php echo $contact_email_errors;?> six columns alpha">
@@ -265,6 +306,89 @@ echo $this->Html->script(array(
 				<input type="text" name="data[User][contact_zip]" value="<?php echo $zipcode;?>"/>
 				<span class="help-block"><?php echo $contact_zip_error_message;?></span>
 			</div>
+		</div>
+		<div class="row">
+			<div class="control-group <?php echo $contact_shirt_errors;?> four columns alpha">
+				<label>Shirt Preference <span class="required">*</span></label>
+				<select name="data[User][shirt]">
+				<?php
+				switch($shirt_preference){
+					case 'hanger':
+					?>
+					<option value="hanger" default="default">On Hanger</option>
+					<option value="box">Boxed</option>
+					<option value="fold">Folded</option>					
+					<?php	
+					break;				
+					case 'box':
+					?>
+					<option value="hanger" >On Hanger</option>
+					<option value="box" default="default">Boxed</option>
+					<option value="fold">Folded</option>					
+					<?php								
+					break;
+						
+					case 'fold':
+					?>
+					<option value="hanger" >On Hanger</option>
+					<option value="box">Boxed</option>
+					<option value="fold" default="default">Folded</option>					
+					<?php								
+					break;
+				}
+				?>
+				</select>
+				<span class="help-block"><?php echo $contact_shirt_error_message;?></span>
+			</div>
+			<div class="control-group <?php echo $contact_starch_errors;?> two columns alpha">
+				<label>Starch <span class="required">*</span></label>
+				<select name="data[User][starch]">
+				<?php
+				switch($starch){
+					
+					case 'none':
+					?>					
+					<option value="none" default"default">None</option>
+					<option value="light">Light</option>
+					<option value="medium">Medium</option>
+					<option value="heavy">Heavy</option>
+					<?php
+					break;
+						
+					case 'light':
+					?>					
+					<option value="none">None</option>
+					<option value="light" default="default">Light</option>
+					<option value="medium">Medium</option>
+					<option value="heavy">Heavy</option>
+					<?php						
+					break;
+						
+					case 'medium':
+					?>					
+					<option value="none">None</option>
+					<option value="light">Light</option>
+					<option value="medium" default="default">Medium</option>
+					<option value="heavy">Heavy</option>
+					<?php						
+					break;
+						
+					case 'heavy':
+					?>					
+					<option value="none">None</option>
+					<option value="light">Light</option>
+					<option value="medium">Medium</option>
+					<option value="heavy" default="default">Heavy</option>
+					<?php						
+					break;
+					
+				}
+				
+				?>
+				</select>
+				<span class="help-block"><?php echo $contact_starch_error_message;?></span>
+			</div>
+		
 		</div>
 		<div class="row">
 			<div class="control-group eight columns alpha">

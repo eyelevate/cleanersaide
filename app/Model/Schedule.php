@@ -271,8 +271,7 @@ class Schedule extends AppModel {
 						$delivery[$delivery_id]['Pickup'][$idx]['delivery_status'] = $d['Delivery']['status'];						
 						
 					}
-				}				
-				
+				}		
 			}	
 		}
 		if(count($dropoff)>0){
@@ -334,7 +333,23 @@ class Schedule extends AppModel {
 						$delivery[$delivery_id]['Dropoff'][$idx]['delivery_status'] = $d['Delivery']['status'];						
 						
 					}
-				}				
+				}
+				$invdx = -1;
+				$invoice_ids = array();
+				$inv_total = 0;
+				$invoices = ClassRegistry::init('Invoice')->find('all',array('conditions'=>array('customer_id'=>$customer_id,'company_id'=>$_SESSION['company_id'],'status <'=>5)));		
+				if(count($invoices)>0){
+					foreach ($invoices as $inv) {
+						$invdx++;
+						$invoice_id = $inv['Invoice']['invoice_id'];
+						$totals = $inv['Invoice']['total'];
+						$inv_total += $totals;
+						$invoice_ids[$invdx] = array('invoice_id'=>$invoice_id,'total'=>$totals);
+					}
+				}	
+				
+				$delivery[$delivery_id]['Dropoff'][$idx]['invoices'] = $invoice_ids;	
+				$delivery[$delivery_id]['Dropoff'][$idx]['total'] = sprintf('%.2f',$inv_total);	
 				
 			}				
 

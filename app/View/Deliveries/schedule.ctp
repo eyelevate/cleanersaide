@@ -21,28 +21,27 @@ echo $this->Html->script(array(
 		
 	</div>
 	<div class="formRow">
-
-		<?php
+		<form target="_blank" action="/deliveries/create_delivery_csv" method="post">
+		<?php 
+		$idx = -1;
 		foreach ($today as $tkey =>$tvalue) {
 			
-			?>
-			<form target="_blank" action="/deliveries/create_delivery_csv" method="post">
-				<table class="table table-bordered table-striped table-hover">
-					<thead>
-						<tr>
-							<th>Route</th>
-							<th>Time</th>
-							<th>Type</th>
-							<th>Zipcode</th>
-							<th>First Name</th>
-							<th>Last Name</th>
-							<th>Phone</th>
-							<th>Action</th>
-						</tr>
-					</thead>
-					<tbody>				
+		?>
+			<table class="table table-bordered table-striped table-hover">
+				<thead>
+					<tr>
+						<th>Route</th>
+						<th>Time</th>
+						<th>Type</th>
+						<th>Zipcode</th>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Phone</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>				
 				<?php
-				$idx = -1;
 				
 				foreach ($tvalue as $ttkey => $ttvalue) {
 					$type = $ttkey; //what type of dropoff or pickup
@@ -108,11 +107,14 @@ echo $this->Html->script(array(
 				?>
 					</tbody>
 				</table>
-
-				<button type="button" class="submit_csv btn btn-primary btn-large pull-right">Create Delivery CSV</button>
-			<form/>
 			<?php
-		}
-		?>
+			}
+			?>
+			<button type="button" class="submit_csv btn btn-primary btn-large pull-left">Create Delivery CSV</button>
+		</form>
+		<form action="/deliveries/finish" method="post">
+			<input type="hidden" value="<?php echo $date;?>" name="data[Delivery][date]"/>
+			<input type="submit" class="btn btn-large btn-success pull-right" value="Finish Delivery"/>
+		</form>
 	</div>
 </div>

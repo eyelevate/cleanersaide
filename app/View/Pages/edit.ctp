@@ -80,7 +80,7 @@ echo $this->Form->create();
 		?>
 		<div id="createUrlDiv">
 			<h5 id="createUrlH4">Link:</h5>
-			<p id="createUrlA" name="<?php echo $url;?>">http://www.cohoferry.com<span id="createParentSpan"><?php echo $parentName_selected;?></span><span id="createUrlSpan"><?php echo '/'.$created_url;?></span></p>
+			<p id="createUrlA" name="<?php echo $url;?>">http://www.webupons.com<span id="createParentSpan"><?php echo $parentName_selected;?></span><span id="createUrlSpan"><?php echo '/'.$created_url;?></span></p>
 		</div>
 		<button id="createUrlClear">Clear URL</button>
 
