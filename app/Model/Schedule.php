@@ -216,11 +216,14 @@ class Schedule extends AppModel {
 			$idx = -1;
 			foreach ($pickup as $p) {
 				$idx++;
+				$schedule_id = $p['Schedule']['id'];
+				$schedule_status = $p['Schedule']['status'];
 				$customer_id = $p['Schedule']['customer_id'];
 				$delivery_id = $p['Schedule']['pickup_delivery_id'];
 				$delivery[$delivery_id]['Pickup'][$idx]['customer_id'] = $customer_id;
 				$delivery[$delivery_id]['Pickup'][$idx]['delivery_id'] = $delivery_id;
-				
+				$delivery[$delivery_id]['Pickup'][$idx]['schedule_id'] = $schedule_id;
+
 				$delivery[$delivery_id]['Pickup'][$idx]['day'] = date('D',strtotime($p['Schedule']['pickup_date']));
 				$delivery[$delivery_id]['Pickup'][$idx]['pickup_date'] = $p['Schedule']['pickup_date'];
 				$delivery[$delivery_id]['Pickup'][$idx]['special_instructions'] = $p['Schedule']['special_instructions'];
@@ -230,6 +233,7 @@ class Schedule extends AppModel {
 				$users = ClassRegistry::init('User')->find('all',array('conditions'=>array('User.id'=>$customer_id,'User.company_id'=>$_SESSION['company_id'])));	
 				if(count($users)>0){
 					foreach ($users as $u) {
+						
 						$delivery[$delivery_id]['Pickup'][$idx]['first_name'] = $u['User']['first_name'];
 						$delivery[$delivery_id]['Pickup'][$idx]['last_name'] = $u['User']['last_name'];
 						$delivery[$delivery_id]['Pickup'][$idx]['address'] = $u['User']['contact_address'];
@@ -239,9 +243,10 @@ class Schedule extends AppModel {
 						$delivery[$delivery_id]['Pickup'][$idx]['country'] = $u['User']['contact_country'];
 						$delivery[$delivery_id]['Pickup'][$idx]['email'] = $u['User']['contact_email'];
 						$delivery[$delivery_id]['Pickup'][$idx]['zipcode'] = $u['User']['contact_zip'];
-						$delivery[$delivery_id]['Pickup'][$idx]['phone'] = $u['User']['contact_phone'];
+						$delivery[$delivery_id]['Pickup'][$idx]['phone'] = ClassRegistry::init('Delivery')->formatPhoneNumber($u['User']['contact_phone']);
 						$delivery[$delivery_id]['Pickup'][$idx]['default_special_instructions'] = $u['User']['special_instructions'];
 						$delivery[$delivery_id]['Pickup'][$idx]['profile_id'] = $u['User']['profile_id'];
+						$delivery[$delivery_id]['Pickup'][$idx]['payment_status'] = $u['User']['payment_status'];
 						$delivery[$delivery_id]['Pickup'][$idx]['payment_id'] = $u['User']['payment_id'];
 						$delivery[$delivery_id]['Pickup'][$idx]['token'] = $u['User']['token'];
 						$delivery[$delivery_id]['Pickup'][$idx]['reward_status'] = $u['User']['reward_status'];
@@ -253,6 +258,7 @@ class Schedule extends AppModel {
 				$deliveries = ClassRegistry::init('Delivery')->find('all',array('conditions'=>array('id'=>$delivery_id)));
 				if(count($deliveries)>0){
 					foreach ($deliveries as $d) {
+	
 						$delivery[$delivery_id]['Pickup'][$idx]['route_name'] = $d['Delivery']['route_name'];
 						$delivery[$delivery_id]['Pickup'][$idx]['delivery_day'] = $d['Delivery']['day'];
 						$delivery[$delivery_id]['Pickup'][$idx]['limit'] = $d['Delivery']['limit'];
@@ -279,9 +285,11 @@ class Schedule extends AppModel {
 			foreach ($dropoff as $dp) {
 				$idx++;
 				$customer_id = $dp['Schedule']['customer_id'];
+				$schedule_id = $dp['Schedule']['id'];
 				$delivery_id = $dp['Schedule']['dropoff_delivery_id'];
 				$delivery[$delivery_id]['Dropoff'][$idx]['customer_id'] = $customer_id;
 				$delivery[$delivery_id]['Dropoff'][$idx]['delivery_id'] = $delivery_id;
+				$delivery[$delivery_id]['Dropoff'][$idx]['schedule_id'] = $schedule_id;
 				
 				$delivery[$delivery_id]['Dropoff'][$idx]['day'] = date('D',strtotime($dp['Schedule']['dropoff_date']));
 				$delivery[$delivery_id]['Dropoff'][$idx]['dropoff_date'] = $dp['Schedule']['dropoff_date'];
@@ -301,9 +309,10 @@ class Schedule extends AppModel {
 						$delivery[$delivery_id]['Dropoff'][$idx]['country'] = $u['User']['contact_country'];
 						$delivery[$delivery_id]['Dropoff'][$idx]['email'] = $u['User']['contact_email'];
 						$delivery[$delivery_id]['Dropoff'][$idx]['zipcode'] = $u['User']['contact_zip'];
-						$delivery[$delivery_id]['Dropoff'][$idx]['phone'] = $u['User']['contact_phone'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['phone'] = ClassRegistry::init('Delivery')->formatPhoneNumber($u['User']['contact_phone']);
 						$delivery[$delivery_id]['Dropoff'][$idx]['default_special_instructions'] = $u['User']['special_instructions'];
 						$delivery[$delivery_id]['Dropoff'][$idx]['profile_id'] = $u['User']['profile_id'];
+						$delivery[$delivery_id]['Dropoff'][$idx]['payment_status'] = $u['User']['payment_status'];
 						$delivery[$delivery_id]['Dropoff'][$idx]['payment_id'] = $u['User']['payment_id'];
 						$delivery[$delivery_id]['Dropoff'][$idx]['token'] = $u['User']['token'];
 						$delivery[$delivery_id]['Dropoff'][$idx]['reward_status'] = $u['User']['reward_status'];

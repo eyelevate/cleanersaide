@@ -81,6 +81,9 @@ if(!empty($error_message)){
 				$city = $users['User']['contact_city'];
 				$state = $users['User']['contact_state'];
 				$zipcode = $users['User']['contact_zip'];
+				$intercom = $users['User']['intercom'];
+				$shirt = $users['User']['shirt'];
+				$starch = $users['User']['starch'];
 				$email = '';
 				if(isset($users['User']['email'])){
 					$email = $users['User']['email'];	
@@ -115,6 +118,15 @@ if(!empty($error_message)){
 					'error'=>array('attributes' => array('class' => 'help-block')),
 					'placeholder'=>'Phone',
 					'value'=>$phone			
+				));	
+				echo $this->Form->input('intercom',array(
+					'class'=>'intercom',
+					'label'=>'Intercom #',
+					'div'=>array('class'=>'control-group four columns alpha'),
+					'after'=>'<span class="help-block"></span>',
+					'error'=>array('attributes' => array('class' => 'help-block')),
+					'placeholder'=>'Intercom # for building',
+					'value'=>$intercom
 				));			
 				?>	
 				</div>
@@ -180,6 +192,42 @@ if(!empty($error_message)){
 				</div>
 				<div class="row">
 				<?php
+				$shirts_array = array(
+					'hanger'=>'On Hanger',
+					'box'=>'Boxed',
+					'fold'=>'Folded'
+				);		
+				echo $this->Form->input('shirt',array(
+					'class'=>'shirt',
+					'label'=>'Shirt Preference <span class="f_req">*</span>',
+					'div'=>array('class'=>'control-group four columns alpha'),
+					'after'=>'<span class="help-block"></span>',
+					'options'=>$shirts_array,
+					'default'=>$shirt,
+					'error'=>array('attributes' => array('class' => 'help-block')),
+
+				));	
+				
+				$starch_array = array(
+					'none'=>'None',
+					'light'=>'Light',
+					'medium'=>'Medium',
+					'heavy'=>'Heavy'
+				);
+				echo $this->Form->input('starch',array(
+					'class'=>'starch',
+					'label'=>'Starch <span class="f_req">*</span>',
+					'div'=>array('class'=>'control-group two columns alpha'),
+					'after'=>'<span class="help-block"></span>',
+					'options'=>$starch_array,
+					'default'=>$starch,
+					'error'=>array('attributes' => array('class' => 'help-block')),
+				));					
+				
+				?>
+				</div>
+				<div class="row">
+				<?php
 				echo $this->Form->input('special_instructions',array(
 					'type'=>'textarea',
 					'label'=>'Special Delivery Instructions',
@@ -218,7 +266,16 @@ if(!empty($error_message)){
 					'after'=>'<span class="help-block"></span>',
 					'error'=>array('attributes' => array('class' => 'help-block')),
 					'placeholder'=>'Phone',
-				));			
+				));	
+				echo $this->Form->input('intercom',array(
+					'class'=>'intercom',
+					'label'=>'Intercom #',
+					'div'=>array('class'=>'control-group four columns alpha'),
+					'after'=>'<span class="help-block"></span>',
+					'error'=>array('attributes' => array('class' => 'help-block')),
+					'placeholder'=>'Intercom # for building',
+				));					
+				
 				?>	
 				</div>
 				<div class="row">
@@ -275,6 +332,41 @@ if(!empty($error_message)){
 				));
 				?>	
 				</div>
+				<div class="row">
+				<?php
+				$shirts_array = array(
+					'hanger'=>'On Hanger',
+					'boxed'=>'Boxed',
+					'folded'=>'Folded'
+				);		
+				echo $this->Form->input('shirt',array(
+					'class'=>'shirt',
+					'label'=>'Shirt Preference <span class="f_req">*</span>',
+					'div'=>array('class'=>'control-group four columns alpha'),
+					'after'=>'<span class="help-block"></span>',
+					'options'=>$shirts_array,
+					'error'=>array('attributes' => array('class' => 'help-block')),
+
+				));	
+				
+				$starch_array = array(
+					'none'=>'None',
+					'light'=>'Light',
+					'medium'=>'Medium',
+					'heavy'=>'Heavy'
+				);
+				echo $this->Form->input('starch',array(
+					'class'=>'starch',
+					'label'=>'Starch <span class="f_req">*</span>',
+					'div'=>array('class'=>'control-group two columns alpha'),
+					'after'=>'<span class="help-block"></span>',
+					'options'=>$starch_array,
+					'error'=>array('attributes' => array('class' => 'help-block')),
+				));					
+				
+				?>
+				</div>
+					
 				<div class="row">
 				<?php
 				echo $this->Form->input('special_instructions',array(

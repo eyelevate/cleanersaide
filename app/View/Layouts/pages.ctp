@@ -205,11 +205,7 @@ $cakeDescription = __d('Eyelevate', 'Jays Cleaners');
   <div class="footer_btm container">
   	<div class="footer_btm_inner">  
 	  	<div id="footer_nav">
-	  		<a href="/reservations/ferry" >Fares + Schedules</a>
-	  		<a href="/packages/home" >Package Deals</a>
-	  		<a href="/hotels-attractions" >Hotels + Attractions</a>
-	  		<a href="/MV-Coho" >The Ship</a>
-	  		<a href="/Frequently-Asked-Questions" >Travel Info</a>
+
 	  	</div>
 	</div>	  
   </div>

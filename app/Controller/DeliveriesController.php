@@ -8,7 +8,7 @@ App::uses('CakeEmail','Network/Email'); //cakes email class
 class DeliveriesController extends AppController {
 
 	public $name = 'Deliveries';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Delivery','Schedule','Payment');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Delivery','Schedule','Payment','Transaction');
 
 	public $helpers = array('Csv'); 
 
@@ -290,7 +290,7 @@ class DeliveriesController extends AppController {
 		$prepare_schedule_today = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
 		$this->set('date',date('n/d/Y'));
 		$this->set('today',$prepare_schedule_today);
-
+		unset($_SESSION['finish_date']);
 		if($this->request->is('post')){
 			$delivery_start = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 00:00:00';
 			$delivery_end = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 23:59:59';
@@ -303,55 +303,7 @@ class DeliveriesController extends AppController {
 
 			$this->set('date',date('n/d/Y',strtotime($this->request->data['Delivery']['date'])));
 			$this->set('today',$prepare_schedule_date);
-			
-			// //prepare csv
-			// $csv = new csvHelper();
-// 			
-			// //$csv->addRow($a);
-			// $date = date('mdy');
-			// $filename = 'delivery-'.$date;
-			// $fullfilename = '/tmp/'.$filename.'.csv';
-			// $csv->save($fullfilename);
-// 			
-			// $sendTo = array('onedough83@gmail.com');
-// 	
-			// $subject = 'delivery schedule ('.date('n/d/Y',strtotime($this->request->data['Delivery']['date'])).'): '.$filename;
-// 			
-			// $Email = new CakeEmail('gmail');
-// 						
-			// //primary email settings
-// 			
-			// $Email->template('customs')
-			   	// ->emailFormat('text')
-			    // ->to($sendTo)
-				// //->bcc(array('bbtpackage@seanet.com','john@treenumbertwo.com'))
-				// ->attachments(array( ($filename.'.csv') => $fullfilename ))
-				// ->subject($subject);
-// 			
-			// //backup email settings
-			// $Backup = new CakeEmail('default');
-			// //$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
-			// $Backup->template('customs')
-			    // ->emailFormat('text')
-			    // ->to($sendTo)
-				// //->bcc(array('bbtpackage@seanet.com','john@treenumbertwo.com'))
-				// ->attachments(array( ($filename.'.csv') => $fullfilename ))
-				// ->subject($subject);
-// 			
-// 			
-			// //simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
-			// try
-			// {
-				// $Email->send();
-			// } 
-			// catch (SocketException $e)
-			// {
-				// $Backup->send();	
-			// }	
-// 	
-			// unlink ($fullfilename);
-// 		
-			// exit();
+			unset($_SESSION['finish_date']);
 		}
 	}
 
@@ -525,7 +477,8 @@ class DeliveriesController extends AppController {
 					$payment_id = $u['User']['payment_id'];
 				}
 			}
-			if(is_null($payment_id)){
+
+			if(is_null($payment_id) || empty($payment_id)){
 				$this->set('display_payment','Yes');
 			} else {
 				$this->set('display_payment','No');
@@ -546,7 +499,7 @@ class DeliveriesController extends AppController {
 	
 			    //$_SESSION['Delivery_data'] = $this->request->data;
 			    if(isset($_SESSION['reschedule']) && $_SESSION['reschedule'] == 'Yes'){
-			    	debug('reschedule YES');
+			    	
 			    	return $this->process_resend_delivery_form($this->request->data);
 			    } else {
 			    	return $this->process_final_delivery_form($this->request->data);	
@@ -588,7 +541,7 @@ class DeliveriesController extends AppController {
 			}
 
 			switch($payment_status){
-				case 'Yes': //we will delete the payment id and payment profile
+				case 'Yes': //we will keep the payment id and payment profile
 				$user_update['User']['payment_status'] = 2;
 				break;
 					
@@ -600,160 +553,202 @@ class DeliveriesController extends AppController {
 
 			$phone = preg_replace("/[^0-9]/","",$_SESSION['Delivery']['User']['phone']); //strip phone to just numbers
 
-			//start authorize.net logic
-			if($saved_payment_profile == 'No'): //customer does not have a saved profile
+			if(!empty($_SESSION['Delivery']['User']['customer_id'])){
+				$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+				$users = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
+				$profile_id = '';
+				$payment_id = '';
 				
-				$ccnum = preg_replace("/[^0-9]/","",$this->request->data['Payment']['ccnum']);
-				$exp_month = preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_month']);
-				$exp_year = preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_year']);
-				$cvv = preg_replace("/[^0-9]/","",$this->request->data['Payment']['cvv']);
-				
-				$new_payment_profile = array(); //since there is no payment profile we will create one from scratch
-				//next check if its a member or a guest
-				if(!empty($_SESSION['Delivery']['User']['customer_id'])){ //this is a member
-					//get payment info
-					$customer_id = $_SESSION['Delivery']['User']['customer_id'];
-					$users = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
-					$profile_id = '';
-					$payment_id = '';
-					
-					if(count($users)>0){
-						foreach ($users as $u) {
-							$profile_id = $u['User']['profile_id'];
-							$payment_id = $u['User']['payment_id'];
-						}
+				if(count($users)>0){
+					foreach ($users as $u) {
+						$profile_id = $u['User']['profile_id'];
+						$payment_id = $u['User']['payment_id'];
 					}
-			
-					if(is_null($profile_id) || $profile_id == 0){ //this is a new member with no profile id
-						//create a profile id
-						$profiles = $this->AuthorizeNet->createProfile($users[0]);
-						//save profile id
-						switch($profiles['status']){
-							case 'approved':
-								$profile_id = $profiles['customerProfileId'];
-								$user_update['User']['profile_id'] = $profile_id;
-										
-							break;
-								
-							case 'rejected':
-								$user_update['User']['profile_id'] = $profile_id;
-							break;
-						}
-					} 
-					if(is_null($payment_id) || $payment_id == 0){ //we will delete the payment id and payment profile
+				}	
+				if($profile_id != null && $profile_id != 0 && $profile_id != ''){
+
+					//check payment
+					if($payment_id != null && $payment_id != 0 && $payment_id != ''){ //there is a payment id and a profile id just save and send email 
+
+						$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $token);
+						//create delivery schedule
+						$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $token);
+						//update the user table with the new data
+						$this->User->id = $customer_id;
+						$this->User->save($user_update);
+		
+						//primary email settings
+						$Email = new CakeEmail('gmail');
+						$Email->template('delivery-notification','delivery-notification')
+						    ->emailFormat('html')
+							->viewVars(compact('delivery_string'))
+							//->to('onedough83@gmail.com')
+						    ->to($sendTo)
+							->bcc($bcc)
+							->subject($subject);
+						
+						//backup email settings
+						$Backup = new CakeEmail('default');
+						//$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
+						$Backup->template('delivery-notification','delivery-notification')
+						    ->emailFormat('html')
+							->viewVars(compact(''))
+							//->to('onedough83@gmail.com')
+						    ->to($sendTo)
+							->bcc($bcc)
+							->subject($subject);
+		
+		
+						//simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
+						try
+						{
+							$Email->send();
+						} 
+						catch (SocketException $e)
+						{
+							$Backup->send();	
+						}		
+						unset($_SESSION['Delivery']);
+						unset($_SESSION['reschedule']);
+						$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
+						$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));						
+					} else { //there is a profile id but no payment_id
+
 						//create a payment_id
-						$users[0]['User']['ccnum'] = $ccnum;
-						$users[0]['User']['exp_num'] = $exp_num;
-						$users[0]['User']['exp_year'] = $exp_year;
+						$users[0]['User']['ccnum'] =preg_replace("/[^0-9]/","",$this->request->data['Payment']['ccnum']);
+						$users[0]['User']['exp_month'] = preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_month']);
+						$users[0]['User']['exp_year'] = preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_year']);
 						$users[0]['User']['token'] = $token;
+		
 						$create_payment_id = $this->AuthorizeNet->createPaymentProfile($users[0],$profile_id);
-						$user_update = array();
-						$user_update['User']['payment_id'] = $create_payment_id;
-					}
-					switch($payment_status){
-						case 'Yes': //we will delete the payment id and payment profile
-						$user_update['User']['payment_status'] = '2';
-						break;
-							
-						default: //we will delete the payment id and payment profile after delivery completion
-						$user_update['User']['payment_status'] = '1';
-						break;
-							
-					}
-					$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $token);
-					//create delivery schedule
-					$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $token);
-					//update the user table with the new data
-					$this->User->id = $customer_id;
-					$this->User->save($user_update);
-
-					//primary email settings
-					$Email = new CakeEmail('gmail');
-					$Email->template('delivery-notification','delivery-notification')
-					    ->emailFormat('html')
-						->viewVars(compact('delivery_string'))
-						//->to('onedough83@gmail.com')
-					    ->to($sendTo)
-						->bcc($bcc)
-						->subject($subject);
-					
-					//backup email settings
-					$Backup = new CakeEmail('default');
-					//$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
-					$Backup->template('delivery-notification','delivery-notification')
-					    ->emailFormat('html')
-						->viewVars(compact(''))
-						//->to('onedough83@gmail.com')
-					    ->to($sendTo)
-						->bcc($bcc)
-						->subject($subject);
-
-
-					//simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
-					try
-					{
-						$Email->send();
-					} 
-					catch (SocketException $e)
-					{
-						$Backup->send();	
-					}		
-					unset($_SESSION['Delivery']);
-					unset($_SESSION['reschedule']);
-				} else { // this is a guest
-
-					//lookup customer by phone number
-					$ccnum = preg_replace("/[^0-9]/","",$this->request->data['Payment']['ccnum']);
-					$exp_month = preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_month']);
-					$exp_year = preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_year']);
-					$cvv = preg_replace("/[^0-9]/","",$this->request->data['Payment']['cvv']);
-
-					$customer_search_conditions = array('User.contact_phone'=>$phone);
-					$customer_search = $this->User->find('all',array('conditions'=>$customer_search_conditions));	
-
-					if(count($customer_search)>0){ //this is a returning guest
-
-						foreach ($customer_search as $cs) {
-							$customer_id = $cs['User']['id'];
-							$profile_id = $cs['User']['profile_id'];
-							$payment_id = $cs['User']['payment_id'];
-							
-							if(is_null($profile_id) || $profile_id ==0 || $profile_id == ''){ //this is a new member with no profile id
-								//create a profile id
-								$profiles = $this->AuthorizeNet->createProfile($customer_search[0]);
-								//save profile id
-								switch($profiles['status']){
-									case 'approved':
-										$profile_id = $profiles['customerProfileId'];
-										$user_update['User']['profile_id'] = $profile_id;
-										$user_update['User']['token'] = $token;
-												
-									break;
-										
-									case 'rejected':
-										$user_update['User']['profile_id'] = $profile_id;
-									break;
-								}
+						$user_update['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];		
+						
+						switch($create_payment_id['status']){
+							case 'approved':
+						
+								$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $token);
+								//create delivery schedule
+								$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $token);
+								//update the user table with the new data
+								$this->User->id = $customer_id;
+								$this->User->save($user_update);
+			
+								//primary email settings
+								$Email = new CakeEmail('gmail');
+								$Email->template('delivery-notification','delivery-notification')
+								    ->emailFormat('html')
+									->viewVars(compact('delivery_string'))
+									//->to('onedough83@gmail.com')
+								    ->to($sendTo)
+									->bcc($bcc)
+									->subject($subject);
 								
-							}
+								//backup email settings
+								$Backup = new CakeEmail('default');
+								//$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
+								$Backup->template('delivery-notification','delivery-notification')
+								    ->emailFormat('html')
+									->viewVars(compact(''))
+									//->to('onedough83@gmail.com')
+								    ->to($sendTo)
+									->bcc($bcc)
+									->subject($subject);
+			
+			
+								//simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
+								try
+								{
+									$Email->send();
+								} 
+								catch (SocketException $e)
+								{
+									$Backup->send();	
+								}		
+								unset($_SESSION['Delivery']);
+								unset($_SESSION['reschedule']);
+								$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
+								$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));								
+							break;
+								
+							default:
+								//debug($user_update);
+								$this->Session->setFlash(__('Error: '.$create_payment_id['response']),'default',array(),'error');
+								$_SESSION['payment_error'] = $create_payment_id; 
+								$this->redirect(array('controller'=>'deliveries','action'=>'confirmation'));								
+							break;
+								
+						}											
+						
+					}
+				} else { //there is no profile id 
+
+					//create a profile id
+					$profiles = $this->AuthorizeNet->createProfile($users[0]);
+
+					//save profile id
+					switch($profiles['status']){
+						case 'approved':
 							
-							if(is_null($payment_id) || $payment_id == 0 || $payment_id == ''){ //we will delete the payment id and payment profile
+							$profile_id = $profiles['customerProfileId'];
+							$user_update['User']['profile_id'] = $profile_id;
+							if($payment_id != null && $payment_id != 0 && $payment_id != ''){ //there is a payment id and a profile id just save and send email 
+								$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $token);
+								//create delivery schedule
+								$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $token);
+								//update the user table with the new data
+								$this->User->id = $customer_id;
+								$this->User->save($user_update);
+								//primary email settings
+								$Email = new CakeEmail('gmail');
+								$Email->template('delivery-notification','delivery-notification')
+								    ->emailFormat('html')
+									->viewVars(compact('delivery_string'))
+									//->to('onedough83@gmail.com')
+								    ->to($sendTo)
+									->bcc($bcc)
+									->subject($subject);
+								
+								//backup email settings
+								$Backup = new CakeEmail('default');
+								//$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
+								$Backup->template('delivery-notification','delivery-notification')
+								    ->emailFormat('html')
+									->viewVars(compact(''))
+									//->to('onedough83@gmail.com')
+								    ->to($sendTo)
+									->bcc($bcc)
+									->subject($subject);
+			
+			
+								//simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
+								try
+								{
+									$Email->send();
+								} 
+								catch (SocketException $e)
+								{
+									$Backup->send();	
+								}		
+								unset($_SESSION['Delivery']);
+								unset($_SESSION['reschedule']);
+								$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
+								$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));								
+							} else { //there is no poyment id then make one
+
 								//create a payment_id
-								$customer_search[0]['User']['ccnum'] = $ccnum;
-								$customer_search[0]['User']['exp_month'] = $exp_month;
-								$customer_search[0]['User']['exp_year'] = $exp_year;
-								$create_payment_id = $this->AuthorizeNet->createPaymentProfile($customer_search[0],$profile_id);
+								$users[0]['User']['ccnum'] =preg_replace("/[^0-9]/","",$this->request->data['Payment']['ccnum']);
+								$users[0]['User']['exp_month'] = preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_month']);
+								$users[0]['User']['exp_year'] = preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_year']);
+								$users[0]['User']['token'] = $token;
+								$create_payment_id = $this->AuthorizeNet->createPaymentProfile($users[0],$profile_id);
+								
 								switch($create_payment_id['status']){
 									case 'approved':
-										$user_update['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];		
-										//debug($user_update);
-										$this->User->id = $customer_id;
-										$this->User->save($user_update);
-										//update the schedules table with the new delivery data
-										$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $token);
 
+										$user_update['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];										
 										$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $token);
-
+										//create delivery schedule
+										$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $token);
 										//update the user table with the new data
 										$this->User->id = $customer_id;
 										$this->User->save($user_update);
@@ -788,184 +783,298 @@ class DeliveriesController extends AppController {
 										catch (SocketException $e)
 										{
 											$Backup->send();	
-										}												
+										}		
 										unset($_SESSION['Delivery']);
 										unset($_SESSION['reschedule']);
 										$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
 										$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));								
 									break;
 										
-									case 'rejected': //rejected create session and redirect now
+									default:
 										//debug($user_update);
 										$this->Session->setFlash(__('Error: '.$create_payment_id['response']),'default',array(),'error');
-										$_SESSION['payment_error'] = $create_payment_id; 
-										$this->redirect(array('controller'=>'deliveries','action'=>'confirmation'));
-									break;
-								}
-					
 
-							} else {
-								//create delivery schedule
-								$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $token);
-						
-								//update user data
-								$this->User->id = $customer_id;
-								$this->User->save($user_update);
-								
-								//send email to customer
-								$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $token);
-
-								//update the user table with the new data
-								$this->User->id = $customer_id;
-								$this->User->save($user_update);
-			
-								//primary email settings
-								$Email = new CakeEmail('gmail');
-								$Email->template('delivery-notification','delivery-notification')
-								    ->emailFormat('html')
-									->viewVars(compact('delivery_string'))
-								    ->to($sendTo)
-									->bcc($bcc)
-									->subject($subject);
-								
-								//backup email settings
-								$Backup = new CakeEmail('default');
-								//$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
-								$Backup->template('delivery-notification','delivery-notification')
-								    ->emailFormat('html')
-									->viewVars(compact(''))
-								    ->to($sendTo)
-									->bcc($bcc)
-									->subject($subject);
-			
-			
-								//simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
-								try
-								{
-									$Email->send();
-								} 
-								catch (SocketException $e)
-								{
-									$Backup->send();	
-								}										
-								unset($_SESSION['Delivery']);
-								unset($_SESSION['reschedule']);
-								$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
-								$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));									
-							}
-
-						}
-					} else { //this is a new guest
-						$profile_id = '';
-						$user_update['User']['group_id'] = 5;
-						$user_update['User']['company_id'] = 1;
-						$user_update['User']['email'] = $_SESSION['Delivery']['User']['contact_email'];
-						$user_update['User']['first_name'] = $_SESSION['Delivery']['User']['first_name'];
-						$user_update['User']['last_name'] = $_SESSION['Delivery']['User']['last_name'];
-						$user_update['User']['contact_address'] = $_SESSION['Delivery']['User']['contact_address'];
-						$user_update['User']['contact_suite'] = $_SESSION['Delivery']['User']['contact_suite'];
-						$user_update['User']['contact_city'] = $_SESSION['Delivery']['User']['contact_city'];
-						$user_update['User']['contact_state'] = $_SESSION['Delivery']['User']['contact_state'];
-						$user_update['User']['contact_country'] = 'USA';
-						$user_update['User']['first_name'] = $_SESSION['Delivery']['User']['first_name'];
-						$user_update['User']['contact_email'] = $_SESSION['Delivery']['User']['contact_email'];
-						$user_update['User']['contact_zip'] = $_SESSION['Delivery']['User']['contact_zip'];
-						$user_update['User']['contact_phone'] = $_SESSION['Delivery']['User']['phone'];
-						$user_update['User']['special_instructions'] = $_SESSION['Delivery']['User']['special_instructions'];
-						
-						$profiles = $this->AuthorizeNet->createProfile($user_update);
-						//save profile id
-						switch($profiles['status']){
-							case 'approved':
-								$profile_id = $profiles['customerProfileId'];
-								$user_update['User']['profile_id'] = $profile_id;
-								$user_update['User']['token'] = $token;		
-							break;
-								
-							case 'rejected':
-								$user_update['User']['profile_id'] = $profile_id;
-							break;
-						}
-						$user_update['User']['profile_id'] = $profile_id['customerProfileId'];
-						$user_update['User']['ccnum'] = $ccnum;
-						$user_update['User']['exp_num'] = $exp_num;
-						$user_update['User']['exp_year'] = $exp_year;
-						$create_payment_id = $this->AuthorizeNet->createPaymentProfile($user_update,$profile_id);
-						switch($create_payment_id['status']){
-							case 'approved':
-								$user_update = array();
-								$user_update['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];		
-								switch($payment_status){
-									case 'Yes': //we will delete the payment id and payment profile
-									$user_update['User']['payment_status'] = 2;
+										$this->redirect(array('controller'=>'deliveries','action'=>'confirmation'));								
 									break;
 										
-									default: //we will delete the payment id and payment profile after delivery completion
-									$user_update['User']['payment_status'] = 1;
-									break;
-								}			
-								//create delivery schedule
-								$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $token);			
+								}									
+							}	
 								
-								$this->User->id = $customer_id;
-								$this->User->save($user_update);
-								
-								$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $token);
+						break;
+							
+						case 'rejected': //profile creation has been rejected please try again
+							$this->Session->setFlash(__('Error: '.$create_payment_id['response']),'default',array(),'error');
 
-								//update the user table with the new data
-								$this->User->id = $customer_id;
-								$this->User->save($user_update);
+							$this->redirect(array('controller'=>'deliveries','action'=>'confirmation'));									
+						break;
+					}			
+
 			
-								//primary email settings
-								$Email = new CakeEmail('gmail');
-								$Email->template('delivery-notification','delivery-notification')
-								    ->emailFormat('html')
-									->viewVars(compact('delivery_string'))
-									//->to('onedough83@gmail.com')
-								    ->to($sendTo)
-									->bcc($bcc)
-									->subject($subject);
-								
-								//backup email settings
-								$Backup = new CakeEmail('default');
-								//$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
-								$Backup->template('delivery-notification','delivery-notification')
-								    ->emailFormat('html')
-									->viewVars(compact(''))
-									//->to('onedough83@gmail.com')
-								    ->to($sendTo)
-									->bcc($bcc)
-									->subject($subject);
-			
-			
-								//simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
-								try
-								{
-									$Email->send();
-								} 
-								catch (SocketException $e)
-								{
-									$Backup->send();	
-								}										
+				}
+							
+			} else {
+				//lookup customer by phone number
+				$ccnum = preg_replace("/[^0-9]/","",$this->request->data['Payment']['ccnum']);
+				$exp_month = preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_month']);
+				$exp_year = preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_year']);
+				$cvv = preg_replace("/[^0-9]/","",$this->request->data['Payment']['cvv']);
+
+				$customer_search_conditions = array('User.contact_phone'=>$phone);
+				$customer_search = $this->User->find('all',array('conditions'=>$customer_search_conditions));	
+
+				if(count($customer_search)>0){ //this is a returning guest
+
+					foreach ($customer_search as $cs) {
+						$customer_id = $cs['User']['id'];
+						$profile_id = $cs['User']['profile_id'];
+						$payment_id = $cs['User']['payment_id'];
+						
+						if(is_null($profile_id) || $profile_id ==0 || $profile_id == ''){ //this is a new member with no profile id
+							//create a profile id
+							$profiles = $this->AuthorizeNet->createProfile($customer_search[0]);
+							//save profile id
+							switch($profiles['status']){
+								case 'approved':
+									$profile_id = $profiles['customerProfileId'];
+									$user_update['User']['profile_id'] = $profile_id;
+									$user_update['User']['token'] = $token;
 											
-								unset($_SESSION['Delivery']);
-								unset($_SESSION['reschedule']);
-								$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
-								$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));									
-							break;
-								
-							case 'rejected': //rejected create session and redirect now
-								//$this->Session->setFlash(__('Error: '.$create_payment_id['response']),'default',array(),'error');
-								$_SESSION['payment_error'] = $create_payment_id; 
-								$this->redirect(array('controller'=>'deliveries','action'=>'confirmation'));
-							break;
+								break;
+									
+								case 'rejected':
+									$user_update['User']['profile_id'] = $profile_id;
+								break;
+							}
+							
 						}
-					
-					}
-				}		
-			else: //customer has a saved payment profile
+						
+						if(is_null($payment_id) || $payment_id == 0 || $payment_id == ''){ //we will delete the payment id and payment profile
+							//create a payment_id
+							$customer_search[0]['User']['ccnum'] = $ccnum;
+							$customer_search[0]['User']['exp_month'] = $exp_month;
+							$customer_search[0]['User']['exp_year'] = $exp_year;
+							$create_payment_id = $this->AuthorizeNet->createPaymentProfile($customer_search[0],$profile_id);
+							switch($create_payment_id['status']){
+								case 'approved':
+									$user_update['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];		
+									//debug($user_update);
+									$this->User->id = $customer_id;
+									$this->User->save($user_update);
+									//update the schedules table with the new delivery data
+									$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $token);
 
-			endif;
+									$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $token);
+
+									//update the user table with the new data
+									$this->User->id = $customer_id;
+									$this->User->save($user_update);
+				
+									//primary email settings
+									$Email = new CakeEmail('gmail');
+									$Email->template('delivery-notification','delivery-notification')
+									    ->emailFormat('html')
+										->viewVars(compact('delivery_string'))
+										//->to('onedough83@gmail.com')
+									    ->to($sendTo)
+										->bcc($bcc)
+										->subject($subject);
+									
+									//backup email settings
+									$Backup = new CakeEmail('default');
+									//$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
+									$Backup->template('delivery-notification','delivery-notification')
+									    ->emailFormat('html')
+										->viewVars(compact(''))
+										//->to('onedough83@gmail.com')
+									    ->to($sendTo)
+										->bcc($bcc)
+										->subject($subject);
+				
+				
+									//simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
+									try
+									{
+										$Email->send();
+									} 
+									catch (SocketException $e)
+									{
+										$Backup->send();	
+									}												
+									unset($_SESSION['Delivery']);
+									unset($_SESSION['reschedule']);
+									$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
+									$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));								
+								break;
+									
+								case 'rejected': //rejected create session and redirect now
+									//debug($user_update);
+									$this->Session->setFlash(__('Error: '.$create_payment_id['response']),'default',array(),'error');
+									$_SESSION['payment_error'] = $create_payment_id; 
+									$this->redirect(array('controller'=>'deliveries','action'=>'confirmation'));
+								break;
+							}
+				
+
+						} else {
+							//create delivery schedule
+							$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $token);
+					
+							//update user data
+							$this->User->id = $customer_id;
+							$this->User->save($user_update);
+							
+							//send email to customer
+							$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $token);
+
+							//update the user table with the new data
+							$this->User->id = $customer_id;
+							$this->User->save($user_update);
+		
+							//primary email settings
+							$Email = new CakeEmail('gmail');
+							$Email->template('delivery-notification','delivery-notification')
+							    ->emailFormat('html')
+								->viewVars(compact('delivery_string'))
+							    ->to($sendTo)
+								->bcc($bcc)
+								->subject($subject);
+							
+							//backup email settings
+							$Backup = new CakeEmail('default');
+							//$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
+							$Backup->template('delivery-notification','delivery-notification')
+							    ->emailFormat('html')
+								->viewVars(compact(''))
+							    ->to($sendTo)
+								->bcc($bcc)
+								->subject($subject);
+		
+		
+							//simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
+							try
+							{
+								$Email->send();
+							} 
+							catch (SocketException $e)
+							{
+								$Backup->send();	
+							}										
+							unset($_SESSION['Delivery']);
+							unset($_SESSION['reschedule']);
+							$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
+							$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));									
+						}
+
+					}
+				} else { //this is a new guest
+					$profile_id = '';
+					$user_update['User']['group_id'] = 5;
+					$user_update['User']['company_id'] = 1;
+					$user_update['User']['email'] = $_SESSION['Delivery']['User']['contact_email'];
+					$user_update['User']['first_name'] = $_SESSION['Delivery']['User']['first_name'];
+					$user_update['User']['last_name'] = $_SESSION['Delivery']['User']['last_name'];
+					$user_update['User']['contact_address'] = $_SESSION['Delivery']['User']['contact_address'];
+					$user_update['User']['contact_suite'] = $_SESSION['Delivery']['User']['contact_suite'];
+					$user_update['User']['contact_city'] = $_SESSION['Delivery']['User']['contact_city'];
+					$user_update['User']['contact_state'] = $_SESSION['Delivery']['User']['contact_state'];
+					$user_update['User']['contact_country'] = 'USA';
+					$user_update['User']['first_name'] = $_SESSION['Delivery']['User']['first_name'];
+					$user_update['User']['contact_email'] = $_SESSION['Delivery']['User']['contact_email'];
+					$user_update['User']['contact_zip'] = $_SESSION['Delivery']['User']['contact_zip'];
+					$user_update['User']['contact_phone'] = $_SESSION['Delivery']['User']['phone'];
+					$user_update['User']['special_instructions'] = $_SESSION['Delivery']['User']['special_instructions'];
+					
+					$profiles = $this->AuthorizeNet->createProfile($user_update);
+					//save profile id
+					switch($profiles['status']){
+						case 'approved':
+							$profile_id = $profiles['customerProfileId'];
+							$user_update['User']['profile_id'] = $profile_id;
+							$user_update['User']['token'] = $token;		
+						break;
+							
+						case 'rejected':
+							$user_update['User']['profile_id'] = $profile_id;
+						break;
+					}
+					$user_update['User']['profile_id'] = $profile_id['customerProfileId'];
+					$user_update['User']['ccnum'] = $ccnum;
+					$user_update['User']['exp_num'] = $exp_num;
+					$user_update['User']['exp_year'] = $exp_year;
+					$create_payment_id = $this->AuthorizeNet->createPaymentProfile($user_update,$profile_id);
+					switch($create_payment_id['status']){
+						case 'approved':
+
+							$user_update['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];		
+							switch($payment_status){
+								case 'Yes': //we will delete the payment id and payment profile
+								$user_update['User']['payment_status'] = 2;
+								break;
+									
+								default: //we will delete the payment id and payment profile after delivery completion
+								$user_update['User']['payment_status'] = 1;
+								break;
+							}			
+							//create delivery schedule
+							$schedules = $this->Schedule->addSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $token);			
+							
+							$this->User->id = $customer_id;
+							$this->User->save($user_update);
+							
+							$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $token);
+
+							//update the user table with the new data
+							$this->User->id = $customer_id;
+							$this->User->save($user_update);
+		
+							//primary email settings
+							$Email = new CakeEmail('gmail');
+							$Email->template('delivery-notification','delivery-notification')
+							    ->emailFormat('html')
+								->viewVars(compact('delivery_string'))
+								//->to('onedough83@gmail.com')
+							    ->to($sendTo)
+								->bcc($bcc)
+								->subject($subject);
+							
+							//backup email settings
+							$Backup = new CakeEmail('default');
+							//$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
+							$Backup->template('delivery-notification','delivery-notification')
+							    ->emailFormat('html')
+								->viewVars(compact(''))
+								//->to('onedough83@gmail.com')
+							    ->to($sendTo)
+								->bcc($bcc)
+								->subject($subject);
+		
+		
+							//simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
+							try
+							{
+								$Email->send();
+							} 
+							catch (SocketException $e)
+							{
+								$Backup->send();	
+							}										
+										
+							unset($_SESSION['Delivery']);
+							unset($_SESSION['reschedule']);
+							$this->Session->setFlash(__('Thank you for making a reservation with us. We have sent you an email with all of the delivery information.','default',array(),'success'));
+							$this->redirect(array('controller'=>'deliveries','action'=>'thank_you'));									
+						break;
+							
+						case 'rejected': //rejected create session and redirect now
+							//$this->Session->setFlash(__('Error: '.$create_payment_id['response']),'default',array(),'error');
+							$_SESSION['payment_error'] = $create_payment_id; 
+							$this->redirect(array('controller'=>'deliveries','action'=>'confirmation'));
+						break;
+					}
+				
+				}
+			}		
+
 		}		
 	}
 
@@ -990,12 +1099,13 @@ class DeliveriesController extends AppController {
 		
 			unset($_SESSION['payment_error']); //automatically unset the payment error array
 			
+			$user_update = array(); //start user array
 			
 			$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $new_token);
 			//create delivery schedule
 			$schedules = $this->Schedule->editSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $old_token, $new_token);
 			//update the user table with the new data
-			$user_update = array();
+
 			$user_update['User']['token'] = $new_token;
 			$this->User->id = $customer_id;
 			$this->User->save($user_update);
@@ -1141,31 +1251,161 @@ class DeliveriesController extends AppController {
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);		
 		$company_id = 1;	
-		
-		$start = date('Y-m-d').' 00:00:00';
-		$end = date('Y-m-d').' 23:59:59';
+		if(isset($_SESSION['finish_date'])){
+			$start = date('Y-m-d',strtotime($_SESSION['finish_date'])).' 00:00:00';
+			$end = date('Y-m-d', strtotime($_SESSION['finish_date'])).' 23:59:59';	
+			$date = $_SESSION['finish_date'];			
+		} else {
+			$start = date('Y-m-d').' 00:00:00';
+			$end = date('Y-m-d').' 23:59:59';	
+			$date = date('n/d/Y');
+		}
+
 		$conditions_pickup= array('Schedule.pickup_date BETWEEN ? AND ?' => array($start,$end));
 		$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
 		$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($start,$end));
 		$day_dropoff = $this->Schedule->find('all',array('conditions'=>$conditions_dropoff));
 		$prepare_schedule_today = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
-		$this->set('date',date('n/d/Y'));
+		$this->set('date',$date);
 		$this->set('today',$prepare_schedule_today);
+		unset($_SESSION['finish_date']);
 
 		if($this->request->is('post')){
 			$delivery_start = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 00:00:00';
 			$delivery_end = date('Y-m-d',strtotime($this->request->data['Delivery']['date'])).' 23:59:59';
+			$date = date('n/d/Y',strtotime($this->request->data['Delivery']['date']));
 			$conditions_pickup= array('Schedule.pickup_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end));
 			$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
 			$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end));
 			$day_dropoff = $this->Schedule->find('all',array('conditions'=>$conditions_dropoff));
 
-			$prepare_schedule_date = $this->Schedule->setSchedule(array(), $day_dropoff);
+			$prepare_schedule_date = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
+			
+			$this->set('date',$date);
+			$this->set('today',$prepare_schedule_date);	
 
-			$this->set('date',date('n/d/Y',strtotime($this->request->data['Delivery']['date'])));
-			$this->set('today',$prepare_schedule_date);
 			
 
+		}
+	}
+
+
+	/**
+	 * Drop off delivery order and make payment
+	 * 
+	 */
+	public function dropoff_order()
+	{
+		if($this->request->is('post')){
+			$date = $this->request->data['Schedule']['date'];
+			$schedule_id = $this->request->data['Schedule']['id'];
+			$profile_id = $this->request->data['Schedule']['profile_id'];
+			$payment_id = $this->request->data['Schedule']['payment_id'];
+			$payment_status = $this->request->data['Schedule']['payment_status'];
+			$total = $this->request->data['Schedule']['total'];
+			$new_status = $this->request->data['Schedule']['status'];
+			$this->request->data['Schedule']['invoices'] = json_decode($this->request->data['Schedule']['invoices'],true);
+			$payment_data = $this->request->data;
+			unset($this->request->data['Schedule']);
+			$schedule = array();
+			$schedule['Schedule']['status'] = $new_status;
+			$this->Schedule->id = $schedule_id;
+			if($this->Schedule->save($schedule)){
+				//make payment
+				$this->Session->setFlash(__('Successfully finished and received payment for schedule id #'.$schedule_id),'default',array(),'success');
+				$payment_status = $this->AuthorizeNet->createTransaction($payment_data);
+				$_SESSION['finish_date'] = $date;
+				$this->redirect(array('controller'=>'deliveries','action'=>'finish'));
+		
+			}
+
+		}
+	}
+	public function dropoff_revert_order()
+	{
+		if($this->request->is('post')){
+			$date = $this->request->data['Schedule']['date'];
+			$schedule_id = $this->request->data['Schedule']['id'];
+			
+			$get_trans = $this->Transaction->find('all',array('conditions'=>array('schedule_id'=>$schedule_id)));
+			if(count($get_trans)>0){
+				foreach ($get_trans as $t) {
+					$this->request->data['Schedule']['invoices'] = json_decode($t['Transaction']['invoices'],true);
+				}
+			} else {
+				$this->request->data['Schedule']['invoices'] = array();
+			}
+			$profile_id = $this->request->data['Schedule']['profile_id'];
+			$payment_id = $this->request->data['Schedule']['payment_id'];
+			$payment_status = $this->request->data['Schedule']['payment_status'];
+			$total = $this->request->data['Schedule']['total'];
+			$new_status = $this->request->data['Schedule']['status'];
+			$payment_data = $this->request->data;
+			unset($this->request->data['Schedule']);
+	
+			$schedule = array();
+			$schedule['Schedule']['status'] = $new_status;
+			$this->Schedule->id = $schedule_id;
+			if($this->Schedule->save($schedule)){
+				$this->Session->setFlash(__('Successfully reverted order for schedule id #'.$schedule_id),'default',array(),'success');
+				//make revert payment and invoice data
+				$this->Transaction->revertDeliveryPayment($payment_data);
+				//send email reciept
+				$_SESSION['finish_date'] = $date;
+				$this->redirect(array('controller'=>'deliveries','action'=>'finish'));
+				// $this->request->data['Delivery']['date'] = $date;	
+				// return $this->finish($this->request->data);		
+			}
+		}
+	}
+	public function pickup_order()
+	{
+		if($this->request->is('post')){
+			$date = $this->request->data['Schedule']['date'];
+			$schedule_id = $this->request->data['Schedule']['id'];
+			$profile_id = $this->request->data['Schedule']['profile_id'];
+			$payment_id = $this->request->data['Schedule']['payment_id'];
+			$payment_status = $this->request->data['Schedule']['payment_status'];
+			$total = $this->request->data['Schedule']['total'];
+			$new_status = $this->request->data['Schedule']['status'];
+			$this->Session->write('date',$date);
+			unset($this->request->data['Schedule']);
+	
+			$schedule = array();
+			$schedule['Schedule']['status'] = $new_status;
+			$this->Schedule->id = $schedule_id;
+			if($this->Schedule->save($schedule)){
+				$_SESSION['finish_date'] = $date;
+				$this->Session->setFlash(__('Successfully picked up for schedule id #'.$schedule_id),'default',array(),'success');
+				$this->redirect(array('controller'=>'deliveries','action'=>'finish'));
+				// $this->request->data['Delivery']['date'] = $date;	
+				// return $this->finish($this->request->data);		
+			}
+		}
+	}
+	public function pickup_revert_order()
+	{
+		if($this->request->is('post')){
+			$date = $this->request->data['Schedule']['date'];
+			$schedule_id = $this->request->data['Schedule']['id'];
+			$profile_id = $this->request->data['Schedule']['profile_id'];
+			$payment_id = $this->request->data['Schedule']['payment_id'];
+			$payment_status = $this->request->data['Schedule']['payment_status'];
+			$total = $this->request->data['Schedule']['total'];
+			$new_status = $this->request->data['Schedule']['status'];
+			$this->Session->write('date',$date);
+			unset($this->request->data['Schedule']);
+	
+			$schedule = array();
+			$schedule['Schedule']['status'] = $new_status;
+			$this->Schedule->id = $schedule_id;
+			if($this->Schedule->save($schedule)){
+				$_SESSION['finish_date'] = $date;
+				$this->Session->setFlash(__('Successfully reverted pickup order for schedule id #'.$schedule_id),'default',array(),'success');
+				$this->redirect(array('controller'=>'deliveries','action'=>'finish'));
+				// $this->request->data['Delivery']['date'] = $date;	
+				// return $this->finish($this->request->data);			
+			}
 		}
 	}
 }

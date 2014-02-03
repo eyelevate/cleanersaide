@@ -37,6 +37,7 @@ class AppController extends Controller {
         'Html',
         'Js'=>array("Jquery"), 
         'Session',
+        'Number',
     	'TB' => array(
         	"className" => "TwitterBootstrap.TwitterBootstrap"
     	)

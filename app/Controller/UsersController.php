@@ -300,11 +300,10 @@ class UsersController extends AppController {
 	{
 		//set the admin navigation
 		$page_url = '/users/new_customers';
-		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
-		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
-		$this->set('admin_nav',$admin_nav);
-		$this->set('admin_pages',$page_url);
-		$this->set('admin_check',$admin_check);
+
+		$primary_nav = $this->Menu_item->arrangeByTiers(4);	
+		$primary_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $primary_nav);
+		$this->set('primary_nav',$primary_nav);		
 		//select layout
 		$this->layout = 'pages';	
 		if(isset($_SESSION['users'])){	
@@ -337,9 +336,9 @@ class UsersController extends AppController {
 				}
 
 				if(!is_null($lookup_username)){
-					$this->set('error_message','The account with this phone number already contains a username. Please use another phone number.');
+					$this->Session->setFlash(__('The account with this phone number already contains a username. Please use another phone number.'),'default',array(),'error');
 				} else {
-					$this->request->data['User']['customer_id'] = $customer_id;
+					$this->request->data['User']['id'] = $customer_id;
 					$this->request->data['User']['company_id'] = '1';
 					$store_credit_data = $this->request->data['User']['store_credit_data'];
 					switch($store_credit_data){
@@ -361,7 +360,7 @@ class UsersController extends AppController {
 				
 					$this->User->id = $customer_id;
 					if($this->User->save($this->request->data)){
-						$_SESSION['message'] = 'Thank you '.$this->request->data['User']['username'].'! Please fill out form below to request a delivery pickup.';
+						$this->Session->setFlash(__('Thank you '.$this->request->data['User']['username'].'! Please fill out form below to request a delivery pickup.'),'default',array(),'success');
 						$this->redirect(array('controller'=>'deliveries','action' => 'form'));						
 					}						
 				}
@@ -379,7 +378,7 @@ class UsersController extends AppController {
 						foreach ($new_customers as $cust) {
 							$new_customer_id = $cust['User']['id'];
 						}
-						$this->request->data['User']['customer_id'] = $new_customer_id;
+						$this->request->data['User']['id'] = $new_customer_id;
 						$this->request->data['User']['company_id'] = '1';
 						$store_credit_data = $this->request->data['User']['store_credit_data'];
 						switch($store_credit_data){
@@ -406,8 +405,8 @@ class UsersController extends AppController {
 					}
 					
 					
-					$_SESSION['message'] = 'Thank you '.$this->request->data['User']['username'].'! Please fill out form below to request a delivery pickup.';
-					//$this->redirect(array('controller'=>'deliveries','action' => 'form'));						
+					$this->Session->setFlash('Thank you '.$this->request->data['User']['username'].'! Please fill out form below to request a delivery pickup.','default',array(),'success');
+					$this->redirect(array('controller'=>'deliveries','action' => 'form'));						
 				}
 			}
 

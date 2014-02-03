@@ -164,12 +164,15 @@ Class AuthorizeNetComponent extends Component {
 	public function createTransaction($data){
 				
 		$status = array();
-		foreach ($data as $key => $value) {
-			$amount = $value['amount'];
-			$name = 'Delivery Completed Transaction';
-			$description = '';
-		}
-		
+		$customer_id = $data['Schedule']['customer_id'];
+		$amount = $data['Schedule']['total'];
+		$name = 'Delivery Completed Transaction';
+		$description = '';
+		$schedule_id = $data['Schedule']['id'];
+		$profile_id = $data['Schedule']['profile_id'];
+		$payment_status = $data['Schedule']['payment_status'];
+		$payment_id = $data['Schedule']['payment_id'];
+		$invoices = $data['Schedule']['invoices'];
 		//build xml to post
 		$content =
 			"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
@@ -177,28 +180,35 @@ Class AuthorizeNetComponent extends Component {
 			$this->MerchantAuthenticationBlock().
 			"<transaction>".
 			"<profileTransAuthOnly>".
-			"<amount>" . $amount . "</amount>". // should include tax, shipping, and everything.
+			"<amount>".$amount."</amount>". // should include tax, shipping, and everything.
 			"<shipping>".
 				"<amount>0.00</amount>".
 				"<name></name>".
 				"<description></description>".
 			"</shipping>";
-		$content .=
-			"<lineItems>".
-				"<itemId>123456</itemId>".
-				"<name>name of item sold</name>".
-				"<description>Description of item sold</description>".
-				"<quantity>1</quantity>".
-				"<unitPrice>" . ($_POST["amount"] - 1.00) . "</unitPrice>".
-				"<taxable>false</taxable>".
-			"</lineItems>";
+			
+		if(count($invoices)>0){
+			foreach ($invoices as $ikey => $ivalue) {
+				$invoice_id = $ivalue['invoice_id'];
+				$invoice_total = $ivalue['total'];
+				$content .=
+					"<lineItems>".
+						"<itemId>".$invoice_id."</itemId>".
+						"<name>Delivery Dropoff Payment</name>".
+						"<description>Invoice #".$invoice_id."</description>".
+						"<quantity>1</quantity>".
+						"<unitPrice>".$invoice_total."</unitPrice>".
+						"<taxable>true</taxable>".
+					"</lineItems>";
+			}
+		}
+
 			
 		$content .=
-			"<customerProfileId>" . $_POST["customerProfileId"] . "</customerProfileId>".
-			"<customerPaymentProfileId>" . $_POST["customerPaymentProfileId"] . "</customerPaymentProfileId>".
-			"<customerShippingAddressId>" . $_POST["customerShippingAddressId"] . "</customerShippingAddressId>".
+			"<customerProfileId>" .$profile_id. "</customerProfileId>".
+			"<customerPaymentProfileId>" .$payment_id. "</customerPaymentProfileId>".
 			"<order>".
-				"<invoiceNumber>INV12345</invoiceNumber>".
+				"<invoiceNumber>".$schedule_id."</invoiceNumber>".
 			"</order>".
 			"</profileTransAuthOnly>".
 			"</transaction>".
@@ -208,11 +218,6 @@ Class AuthorizeNetComponent extends Component {
 		$response = $this->send_xml_request($content);
 		//echo "Raw response: " . htmlspecialchars($response) . "<br><br>";
 		$parsedresponse = $this->parse_api_response($response);
-		if ("Ok" == $parsedresponse->messages->resultCode) {
-			// echo "A transaction was successfully created for customerProfileId <b>"
-				// . htmlspecialchars($_POST["customerProfileId"])
-				// . "</b>.<br><br>";
-		}
 		if (isset($parsedresponse->directResponse)) {
 			// echo "direct response: <br>"
 				// . htmlspecialchars($parsedresponse->directResponse)
@@ -230,13 +235,67 @@ Class AuthorizeNetComponent extends Component {
 			$status['message'] = htmlspecialchars($responseReasonText);
 			$status['approvalCode'] = htmlspecialchars($approvalCode);
 			$status['transId'] = htmlspecialchars($transId);
+						
+		}		
+
+		if ("Ok" == $parsedresponse->messages->resultCode) { //if the payment was approved then run these next scripts
+			// echo "A transaction was successfully created for customerProfileId <b>"
+				// . htmlspecialchars($_POST["customerProfileId"])
+				// . "</b>.<br><br>";
+			switch($payment_status){ //check payment status, delete from database and authorizeNet if customer wishes to delete
+				case '1': //delete payment id
+					$this->deletePaymentProfile($payment_id);
+				
+					$user_delete = array();
+					$user_delete['profile_id'] = null;
+					$user_delete['payment_id'] = null;
+					ClassRegistry::init('User')->id = $customer_id;
+					ClassRegistry::init('User')->save($user_delete);
+				break;
+			} 
+			//make a transaction entry
+			$pre_tax = 0;
+			$tax = 0;
+			$after_tax = 0;
 			
-			
-			
+			if(count($invoices)>0){
+				foreach ($invoices as $ikey => $ivalue) {
+					$invoice_id = $ivalue['invoice_id'];
+					$invoice_total = $ivalue['total'];
+					$invs = ClassRegistry::init('Invoice')->find('all',array('conditions'=>array('invoice_id'=>$invoice_id,'company_id'=>$_SESSION['company_id'])));
+					if(count($invs)>0){
+						foreach ($invs as $inv) {
+							$inv_id = $inv['Invoice']['id'];
+							$pre_tax += $inv['Invoice']['pretax'];
+							$tax += $inv['Invoice']['tax'];
+							//make invoice status all paid and clear from dashboard
+							$inv_status = array();
+							$inv_status['status'] = 5;
+							ClassRegistry::init('Invoice')->id = $inv_id;
+							ClassRegistry::init('Invoice')->save($inv_status);							
+						}
+					}
+				}
+			}
+
+			//create the transaction table entry
+			$transaction = array();
+			$transaction['Transaction'] = array(
+				'company_id'=>$_SESSION['company_id'],
+				'customer_id'=>$customer_id,
+				'pretax'=>sprintf('%.2f',$pre_tax),
+				'tax'=>sprintf('%.2f',$tax),
+				'total'=>sprintf('%.2f',$amount),
+				'invoices'=>json_encode($invoices),
+				'type'=>4, //type 4 is for delivery payments
+				'tendered'=>0,
+				'schedule_id'=>$schedule_id,
+				'transaction_id'=>$transId,
+				'status'=>1
+			);
+			ClassRegistry::init('Transaction')->save($transaction);	
 		}
-	
-			
-			
+
 		return $status;	
 	}
 
