@@ -51,6 +51,7 @@ import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.JobName;
 import javax.print.event.PrintJobEvent;
 import javax.print.event.PrintJobListener;
+import qz.exception.InvalidFileTypeException;
 import qz.exception.NullCommandException;
 import qz.exception.NullPrintServiceException;
 
@@ -121,8 +122,15 @@ public class PrintRaw {
         return getRawCmds().getByteArray();
     }
 
-    public void setOutputPath(String outputPath) {
-        this.outputPath.set(outputPath);
+    public void setOutputPath(String outputPath) throws InvalidFileTypeException {
+        // Check for vulnerable file extensions, such as "exe" or "bat", etc.
+        if (FileUtilities.isBadExtension(outputPath)) {
+            throw new InvalidFileTypeException("Writing file \"" + 
+                    outputPath + "\" is prohibited for security reason: "
+                    + "Prohibited file extension.");
+        } else {
+            this.outputPath.set(outputPath);
+        }
     }
 
     public void setOutputSocket(String host, int port) {

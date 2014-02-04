@@ -8,6 +8,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 <div>
 	<!-- To be edited later Admin index body content goes here -->
 	<div class="well well-large">
+		<img src="/img/barcode/code_020100.png">
 		<h4 class="heading">Customer Information</h4>
 		<table class="table table-bordered table-hover table-striped">
 			<thead>
@@ -88,75 +89,76 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 				</thead>
 				<tbody>
 				<?php
-				
-				foreach ($invoices as $inv) {
-					$invoice_id = sprintf('%06d',$inv['Invoice']['invoice_id']);
-					$quantity = $inv['Invoice']['quantity'];
-					$total = sprintf('%.2f',$inv['Invoice']['total']);
-					$created = date('D n/d/y',strtotime($inv['Invoice']['created']));
-					$due_date = date('D n/d/y',strtotime($inv['Invoice']['due_date']));
-					$due_string = strtotime($inv['Invoice']['due_date']);
-					$today_string = strtotime(date('Y-m-d H:i:s'));
-					$rack = $inv['Invoice']['rack'];
-					$status = $inv['Invoice']['status'];
-					//create items string
-					if(count(json_decode($inv['Invoice']['items'],true))>0){
-						$items = json_decode($inv['Invoice']['items'],true);
-						$item_list = '';
-						foreach ($items as $item) {
-							$item_qty = $item['quantity'];
-							$item_name = $item['name'];
-							if(isset($item['colors'])){
-								$item_colors = $item['colors'];	
-							} else {
-								$item_colors = '';
-							}
-							//switch qty
-							if($item_qty > 1){
-								$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
-							} else {
-								$item_list .= '<span class="badge">'.$item_name.'</span>';
-							}
-						}						
-					}
-
-					
-					switch($status){
-						case '1': //newly created 
+					foreach ($invoices as $inv) {
+						$invoice_id = sprintf('%06d',$inv['Invoice']['invoice_id']);
+						$quantity = $inv['Invoice']['quantity'];
+						$total = sprintf('%.2f',$inv['Invoice']['total']);
+						$created = date('D n/d/y',strtotime($inv['Invoice']['created']));
+						$due_date = date('D n/d/y',strtotime($inv['Invoice']['due_date']));
+						$due_string = strtotime($inv['Invoice']['due_date']);
+						$today_string = strtotime(date('Y-m-d H:i:s'));
+						$rack = $inv['Invoice']['rack'];
+						$status = $inv['Invoice']['status'];
+						//create items string
+						if(count(json_decode($inv['Invoice']['items'],true))>0){
+							$items = json_decode($inv['Invoice']['items'],true);
+							$item_list = '';
+							foreach ($items as $item) {
+								$item_qty = $item['quantity'];
+								$item_name = $item['name'];
+								if(isset($item['colors'])){
+									$item_colors = $item['colors'];	
+								} else {
+									$item_colors = '';
+								}
+								//switch qty
+								if($item_qty > 1){
+									$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+								} else {
+									$item_list .= '<span class="badge">'.$item_name.'</span>';
+								}
+							}						
+						}
+	
 						
-							if($today_string > $due_string){ //if todays date is greater than the due date and not racked
-								$background_color = '#ffd0d0';
-							} else { //still not racked but not ready yet
-								$background_color = '';
-							}
-						break;
-						
-						case '3': //racked and ready to pick up
-							$background_color = '#d0ffef';
-						break;
+						switch($status){
+							case '1': //newly created 
 							
-					}
+								if($today_string > $due_string){ //if todays date is greater than the due date and not racked
+									$background_color = '#ffd0d0';
+								} else { //still not racked but not ready yet
+									$background_color = '';
+								}
+							break;
+							
+							case '3': //racked and ready to pick up
+								$background_color = '#d0ffef';
+							break;
+								
+						}
+	
+					?>
+						<tr>
+							<td style="background-color:<?php echo $background_color;?>"><?php echo $invoice_id;?></td>
+							<td style="background-color:<?php echo $background_color;?>"><?php echo $rack;?></td>
+							<td style="background-color:<?php echo $background_color;?>"><?php echo $created;?></td>
+							<td style="background-color:<?php echo $background_color;?>"><?php echo $due_date;?></td>
+							<td style="background-color:<?php echo $background_color;?>"><?php echo $quantity;?></td>
+							<td style="background-color:<?php echo $background_color;?>"><?php echo $item_list;?></td>		
+							<td style="background-color:<?php echo $background_color;?>">$<?php echo $total;?></td>
+							<td style="background-color:<?php echo $background_color;?>">
+								<ul class="unstyled">
+									<li class="hide"><?php echo $this->Form->postLink(); ?></li>
+									<li class="pull-left" style="margin-right: 5px"><?php echo $this->Form->postLink(__('Reprint'), array('action' => 'process_reprint', $invoice_id), null, __('Are you sure you want to reprint Invoice #%s?', $invoice_id)); ?></li>
+									<li class="pull-left" style="margin-right:5px;"><?php echo $this->Form->postLink(__('Edit'), array('action' => 'edit', $invoice_id), null, __('Are you sure you want to edit Invoice #%s?', $invoice_id)); ?></li>
+									<li class="pull-left"><?php echo $this->Form->postLink(__('Cancel'), array('action' => 'delete', $invoice_id), null, __('Are you sure you want to cancel Invoice #%s?', $invoice_id)); ?></li>
+								</ul>
+							</td>
+						</tr>
+					<?php
+					}					
 
-				?>
-					<tr>
-						<td style="background-color:<?php echo $background_color;?>"><?php echo $invoice_id;?></td>
-						<td style="background-color:<?php echo $background_color;?>"><?php echo $rack;?></td>
-						<td style="background-color:<?php echo $background_color;?>"><?php echo $created;?></td>
-						<td style="background-color:<?php echo $background_color;?>"><?php echo $due_date;?></td>
-						<td style="background-color:<?php echo $background_color;?>"><?php echo $quantity;?></td>
-						<td style="background-color:<?php echo $background_color;?>"><?php echo $item_list;?></td>		
-						<td style="background-color:<?php echo $background_color;?>">$<?php echo $total;?></td>
-						<td style="background-color:<?php echo $background_color;?>">
-							<ul class="unstyled">
-								<li class="hide"><?php echo $this->Form->postLink(); ?></li>
-								<li class="pull-left" style="margin-right: 5px"><?php echo $this->Form->postLink(__('Reprint'), array('action' => 'process_reprint', $invoice_id), null, __('Are you sure you want to reprint Invoice #%s?', $invoice_id)); ?></li>
-								<li class="pull-left" style="margin-right:5px;"><?php echo $this->Form->postLink(__('Edit'), array('action' => 'edit', $invoice_id), null, __('Are you sure you want to edit Invoice #%s?', $invoice_id)); ?></li>
-								<li class="pull-left"><?php echo $this->Form->postLink(__('Cancel'), array('action' => 'delete', $invoice_id), null, __('Are you sure you want to cancel Invoice #%s?', $invoice_id)); ?></li>
-							</ul>
-						</td>
-					</tr>
-				<?php
-				}
+
 				?>
 				</tbody>
 				<tfoot>

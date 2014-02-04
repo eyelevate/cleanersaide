@@ -1,6 +1,6 @@
 $(document).ready(function(){
 	printing.events();
-	printing.timedRedirect(30);
+	//printing.timedRedirect(5);
 });
 
 printing = {

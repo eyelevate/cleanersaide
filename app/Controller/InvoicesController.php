@@ -1,5 +1,6 @@
 <?php
 App::uses('AppController', 'Controller');
+App::import('Vendor', 'BarcodeHelper');
 /**
  * Admins Controller
  * @property Admin $Admin
@@ -23,7 +24,7 @@ class InvoicesController extends AppController {
 		$menu_id = $menu_ids[0]['Menu']['id'];		
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
-		$this->Auth->allow('login','logout');
+		$this->Auth->allow('login','logout','barcodes');
 	
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
@@ -62,7 +63,6 @@ class InvoicesController extends AppController {
 		//get data from db
 		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
 		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status <'=>'4','company_id'=>$company_id)));
-		
 		//set variable to show rewards system
 		$rewards_display = 'Yes';
 		$this->set('rewards_display',$rewards_display);
@@ -86,6 +86,9 @@ class InvoicesController extends AppController {
 		$this->set('users',$users);
 		$this->set('customer_id',$id);		
 		$this->set('invoices',$invoices);
+		
+
+		
 	}
 
 /**
@@ -487,6 +490,25 @@ class InvoicesController extends AppController {
 				$company = $this->Company->find('all',array('conditions'=>array('id'=>$_SESSION['company_id'])));
 				$customer = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
 				$username = $this->Auth->user('username');
+				//create barcode images
+				foreach ($invoice_split['Invoice'] as $key => $value) {
+					$data_to_encode = $value['invoice_id'];
+				    $barcode=new BarcodeHelper();
+				    // Generate Barcode data
+				    $barcode->barcode();
+				    $barcode->setType('C128');
+				    $barcode->setCode($data_to_encode);
+				    $barcode->setSize(80,200);
+				    
+				    // Generate filename            
+				    $file = 'img/barcode/code_'.$data_to_encode.'.png';
+				    $invoice_split['Invoice'][$key]['invoice_image'] = $file;
+				    // Generates image file on server            
+				    $barcode->writeBarcodeFile($file);
+				}
+
+				// debug($invoice_split);
+				
 				$create_store_copy = $this->Invoice->createStoreCopyInvoice($invoice_split,$username, $printer,$customer, $company);
 				$create_customer_copy = $this->Invoice->createCustomerCopyInvoice($invoice_complete, $username, $printer, $customer, $company);
 				$this->set('customer',$this->request->data);
@@ -564,7 +586,12 @@ class InvoicesController extends AppController {
 			$this->redirect(array('controller'=>'invoices','action'=>'rack'));
 		}
 	}
+	
+	public function barcodes($barcode = null)
+	{
 
+		$this->set('invoice_id',$barcode);
+	}
 
 
 }

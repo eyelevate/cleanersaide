@@ -29,9 +29,9 @@ import java.util.logging.Logger;
 import javax.print.event.PrintJobEvent;
 
 public class LogIt {
-    public static void log(String className, Level lvl, String msg, Throwable t) {
-        Logger.getLogger(className).log(lvl, msg, t);
-    }
+    public static boolean disableLogging = false;
+    
+    
 
     public static void log(Level lvl, String msg, Throwable t) {
         log(LogIt.class.getName(), lvl, msg, t);
@@ -52,7 +52,15 @@ public class LogIt {
     }
 
     public static void log(String className, Level lvl, String msg) {
-        Logger.getLogger(className).log(lvl, msg);
+        if (!disableLogging) {
+            Logger.getLogger(className).log(lvl, msg);
+        }
+    }
+    
+    public static void log(String className, Level lvl, String msg, Throwable t) {
+        if (!disableLogging) {
+            Logger.getLogger(className).log(lvl, msg, t);
+        }
     }
 
     public static void log(Level lvl, String msg) {

@@ -7,6 +7,7 @@
     
     <!-- Custom Code Signing -->
     <target depends="-pre-init" name="-init-private">
+        <echo message="Using custom private.properties file via build.xml..."/>
         <property file="nbproject/private/config.properties"/>
         <property file="nbproject/private/configs/${config}.properties"/>
         <!-- Your custom code signing properties here. Feel free to change. -->
@@ -17,12 +18,41 @@
         <property file="nbproject/private/private.properties"/>
     </target>
     
-    <!-- We don't need NetBeans to generate any HTML previews for us -->
-    <target name="generate-html-preview" depends="-check-html-preview" if="generate.html.preview">
+    <!-- Custom Code Timestamping using Ant's signjar instead of NetBeans -->
+    <!-- Note:  We can't timestamp the self-signed version, tsaurl omitted -->
+    <target name="sign-jars" depends="-jnlp-init-keystore,-check-signing-possible" if="jnlp.signed.true+signjars.task.available" unless="jnlp.signing.tsaurl">
+        <echo message="Self-signing code using Ant signjar via build.xml..."/>
+        <signjar jar="${dist.jar}"
+               signedjar="${dist.jar}"
+               alias="${jnlp.signjar.alias}"
+               storepass="${jnlp.signjar.storepass}"
+               keystore="${jnlp.signjar.keystore}"
+               keypass="${jnlp.signjar.keypass}"/>
+        <path>
+            <fileset dir="dist/lib" includes="*.jar" />
+        </path>
     </target>
     
-    <!-- Perform some cleanup and copying at the jnlp stage -->
-    <target name="generate-jnlp" depends="sign-jars,-test-generate-task-available,-unavailable-generate-task" if="generate.task.available">
+    <!-- We don't need NetBeans to generate jnlp file for us, but we'll
+         reuse the task for the premium version signature + timestamp    -->
+    <target name="generate-jnlp" depends="sign-jars,-test-generate-task-available,-unavailable-generate-task" if="jnlp.signing.tsaurl">
+        <echo message="Timestamping and signing code using Ant signjar via build.xml..."/>
+        <signjar jar="${dist.jar}"
+               signedjar="${dist.jar}"
+               alias="${jnlp.signjar.alias}"
+               storepass="${jnlp.signjar.storepass}"
+               keystore="${jnlp.signjar.keystore}"
+               keypass="${jnlp.signjar.keypass}"
+               tsaurl="${jnlp.signing.tsaurl}"/>
+        <path>
+            <fileset dir="dist/lib" includes="*.jar" />
+        </path>
+    </target>
+    
+    <!-- Perform some cleanup and copying at the generate-html-preview stage -->
+    <target name="generate-html-preview" depends="-jnlp-init-keystore,-check-signing-possible">
+        
+        <echo message="Using custom copy/delete tasks via build.xml..."/>
         <!-- We're aren't using JWS, no JNLP file needed -->
         <delete file="${basedir}/dist/jnlpcomponent1.jnlp" failonerror="false"/>
         
@@ -35,8 +65,11 @@
         
         <!-- Copy some project specific files -->
         <copy file="${basedir}/sample.html" tofile="${basedir}/dist/sample.html" overwrite="true" encoding="UTF-8" />
-        <copy file="${basedir}/qz-run.jnlp" tofile="${basedir}/dist/qz-run.jnlp" overwrite="true" encoding="UTF-8" />
-        <copy file="${basedir}/loading.html" tofile="${basedir}/dist/loading.html" overwrite="true" encoding="UTF-8" />
+        <!-- <copy file="${basedir}/qz-run.jnlp" tofile="${basedir}/dist/qz-run.jnlp" overwrite="true" encoding="UTF-8" /> -->
+        <!-- <copy file="${basedir}/loading.html" tofile="${basedir}/dist/loading.html" overwrite="true" encoding="UTF-8" /> -->
+        
+        <!-- A copy of the Java Web Start file must reside inside the jar as well as next to sample.html -->
+        <copy file="${basedir}/src/JNLP-INF/APPLICATION.JNLP" tofile="${basedir}/dist/qz-print_jnlp.jnlp" overwrite="true" encoding="UTF-8" />
 
         <copy file="${basedir}/misc/zpl_sample.txt" tofile="${basedir}/dist/misc/zpl_sample.txt" overwrite="true" encoding="UTF-8" />
         <copy file="${basedir}/misc/epl_sample.txt" tofile="${basedir}/dist/misc/epl_sample.txt" overwrite="true" encoding="UTF-8" />
@@ -45,14 +78,15 @@
         <copy file="${basedir}/misc/zpl_sample.xml" tofile="${basedir}/dist/misc/zpl_sample.xml" overwrite="true" encoding="UTF-8" />
         <copy file="${basedir}/misc/pdf_sample.pdf" tofile="${basedir}/dist/misc/pdf_sample.pdf" overwrite="true" encoding="UTF-8" />
 
-        <copy file="${basedir}/js/jquery-1.7.1.js" tofile="${basedir}/dist/js/jquery-1.7.1.js" overwrite="true" encoding="UTF-8" />
+        <copy file="${basedir}/js/jquery-1.10.2.js" tofile="${basedir}/dist/js/jquery-1.10.2.js" overwrite="true" encoding="UTF-8" />
         <copy file="${basedir}/js/jquery.plugin.html2canvas.js" tofile="${basedir}/dist/js/jquery.plugin.html2canvas.js" overwrite="true" encoding="UTF-8" />
         <copy file="${basedir}/js/html2canvas.js" tofile="${basedir}/dist/js/html2canvas.js" overwrite="true" encoding="UTF-8" />
         <copy file="${basedir}/js/PluginDetect.js" tofile="${basedir}/dist/js/PluginDetect.js" overwrite="true" encoding="UTF-8" />
+        <copy file="${basedir}/js/deployJava.js" tofile="${basedir}/dist/js/deployJava.js" overwrite="true" encoding="UTF-8" />
 
-        <copy file="${basedir}/img/loading_green.gif" tofile="${basedir}/dist/img/loading_green.gif" overwrite="true" encoding="UTF-8" />
-        <copy file="${basedir}/img/loading_red.gif" tofile="${basedir}/dist/img/loading_red.gif" overwrite="true" encoding="UTF-8" />
-        <copy file="${basedir}/img/loading_yellow.gif" tofile="${basedir}/dist/img/loading_yellow.gif" overwrite="true" encoding="UTF-8" />
+        <!-- <copy file="${basedir}/img/loading_green.gif" tofile="${basedir}/dist/img/loading_green.gif" overwrite="true" encoding="UTF-8" /> -->
+        <!-- <copy file="${basedir}/img/loading_red.gif" tofile="${basedir}/dist/img/loading_red.gif" overwrite="true" encoding="UTF-8" /> -->
+        <!-- <copy file="${basedir}/img/loading_yellow.gif" tofile="${basedir}/dist/img/loading_yellow.gif" overwrite="true" encoding="UTF-8" /> -->
         <copy file="${basedir}/img/image_sample_bw.png" tofile="${basedir}/dist/img/image_sample_bw.png" overwrite="true" encoding="UTF-8" />
         <copy file="${basedir}/img/image_sample.png" tofile="${basedir}/dist/img/image_sample.png" overwrite="true" encoding="UTF-8" />
     </target>

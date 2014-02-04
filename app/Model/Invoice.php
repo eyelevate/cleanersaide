@@ -283,8 +283,12 @@ class Invoice extends AppModel {
 			$idx = 46;
 
 			foreach ($items as $ikey => $ivalue) {
+				if(isset($items[$ikey]['colors'])){
+					$item_colors = $items[$ikey]['colors'];	
+				} else {
+					$item_colors = array();
+				}
 				
-				$item_colors = $items[$ikey]['colors'];
 				$item_color = '';
 				if(count($item_colors)>0){
 					foreach ($item_colors as $item) {
@@ -395,11 +399,14 @@ class Invoice extends AppModel {
 			$total = $value['total'];
 			$quantity = $value['quantity'];
 			$invoice_id = $value['invoice_id'];
+			$invoice_image = $value['invoice_image'];
 			$customer_id = $value['customer_id'];
 			$due_date = date('D n/d g:ia',strtotime($value['due_date']));
 
 			
 			$invoice[$key][0] = $printer; //set printer
+			//start barcode printing
+			$invoice[$key][26] = $invoice_id;			
 			$invoice[$key][1] = $this->_ResetStyles(); //reset
 			$invoice[$key][2] = $this->_CenterBody(); //center text
 			$invoice[$key][3] = '::STORE COPY::';
@@ -426,32 +433,30 @@ class Invoice extends AppModel {
 			$invoice[$key][23] = 'READY BY: '.$due_date;
 			$invoice[$key][24] = $this->_NewLine();
 			$invoice[$key][25] = $this->_ResetStyles(); //reset
-			//start barcode printing
-			$invoice[$key][26] = $this->_SetupBarcode(40, 11);
-			$invoice[$key][27] = $this->_CreateBarcode($invoice_id);
+
+			$invoice[$key][27] =$this->_ResetStyles(); //reset
 			$invoice[$key][28] = $this->_NewLine();
-			$invoice[$key][29] = $this->_ResetStyles(); //reset
-			$invoice[$key][30] = $this->_CenterBody(); //center
-			$invoice[$key][31] = $invoice_id;
-			$invoice[$key][32] = $this->_NewLine();
-			$invoice[$key][33] = $full_name.' \x1b\x44\35\17 \x09 \x1b\x61\x02 '.$starch_code;
-			$invoice[$key][34] = $this->_NewLine();
-			$invoice[$key][35] = '\x1b\x4d\1'; //font
-			$invoice[$key][36] = $customer_phone.'\x1b\x44\47\17 \x09 \x1b\x61\x02'.$username;
-			$invoice[$key][37] = $this->_NewLine();
-			$invoice[$key][38] = $this->_ResetStyles(); //reset
-			$invoice[$key][39] = '------------------------------------------';
-			$invoice[$key][40] = $this->_NewLine();
-			$invoice[$key][41] = $this->_ResetStyles(); //reset
-			$invoice[$key][42] = 'ITEM     COLOR            QTY    PRICE';
-			$invoice[$key][43] = $this->_NewLine();
-			$invoice[$key][44] = $this->_ResetStyles(); //reset		
-			$invoice[$key][45] = '------------------------------------------';
-			$invoice[$key][46] = $this->_NewLine();
-			$invoice[$key][47] = $this->_ResetStyles(); //reset	
-			$invoice[$key][48] = '\x1b\x4d\1';
+			$invoice[$key][29] = $this->_CenterBody(); //center
+			$invoice[$key][30] = $invoice_id;
+			$invoice[$key][31] = $this->_NewLine();
+			$invoice[$key][32] = $full_name.' \x1b\x44\35\17 \x09 \x1b\x61\x02 '.$starch_code;
+			$invoice[$key][33] = $this->_NewLine();
+			$invoice[$key][34] = '\x1b\x4d\1'; //font
+			$invoice[$key][35] = $customer_phone.'\x1b\x44\47\17 \x09 \x1b\x61\x02'.$username;
+			$invoice[$key][36] = $this->_NewLine();
+			$invoice[$key][37] = $this->_ResetStyles(); //reset
+			$invoice[$key][38] = '------------------------------------------';
+			$invoice[$key][39] = $this->_NewLine();
+			$invoice[$key][40] = $this->_ResetStyles(); //reset
+			$invoice[$key][41] = 'ITEM     COLOR            QTY    PRICE';
+			$invoice[$key][42] = $this->_NewLine();
+			$invoice[$key][43] = $this->_ResetStyles(); //reset		
+			$invoice[$key][44] = '------------------------------------------';
+			$invoice[$key][45] = $this->_NewLine();
+			$invoice[$key][46] = $this->_ResetStyles(); //reset	
+			$invoice[$key][47] = '\x1b\x4d\1';
 			
-			$idx = 48;
+			$idx = 47;
 			$item_colors = array();
 			foreach ($items as $ikey => $ivalue) {
 				if($items[$ikey]['colors']){
@@ -510,11 +515,11 @@ class Invoice extends AppModel {
 			$idx++;
 			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_MakeCut('partial');
 			$idx++;
+
 			$invoice[$key][$idx] = $this->_EndOfDocument();
 			
 		}
-		
-		
+
 		
 		return $invoice;
 	}
@@ -560,14 +565,14 @@ class Invoice extends AppModel {
 			}
 		}
 		$invoice[0] = $printer; //set printer
-		$invoice[1] = $this->_ResetStyles(); //reset
+		// $invoice[1] = $this->_ResetStyles(); //reset
 		$invoice[2] = $this->_CenterBody(); //center text
 		$invoice[3] = '\x1b\x4d\1'; //font
 		$invoice[4] = $this->_MakeStyle(false,false, false, false, true); //double height
 		$invoice[5] = $this->_CenterBody(); //center text
 		$invoice[6] = $company_name;
 		$invoice[7] = $this->_NewLine(); //newline
-		$invoice[8] = $this->_ResetStyles(); //reset
+		// $invoice[8] = $this->_ResetStyles(); //reset
 		$invoice[9] = $this->_CenterBody(); //center
 		$invoice[10] = '\x1b\x4d\1'; //font
 		$invoice[11] = $company_street;
@@ -576,11 +581,11 @@ class Invoice extends AppModel {
 		$invoice[14] = $this->_NewLine(); //newline
 		$invoice[15] = $company_phone;
 		$invoice[16] = $this->_NewLine(); //newline
-		$invoice[17] = $this->_ResetStyles(); //reset
+		// $invoice[17] = $this->_ResetStyles(); //reset
 		$invoice[18] = $this->_CenterBody(); //center
 		$invoice[19] = 'PICKED UP: '. date('D n/d/Y H:i:s');
 		$invoice[20] = $this->_NewLine();
-		$invoice[21] = $this->_ResetStyles(); //reset
+		// $invoice[21] = $this->_ResetStyles(); //reset
 		$invoice[22] = $this->_CenterBody(); //center
 		$invoice[23] = $full_name.' \x1b\x44\35\17 \x09 \x1b\x61\x02 '.$starch_code;
 		$invoice[24] = $this->_NewLine();
@@ -662,44 +667,7 @@ class Invoice extends AppModel {
 		
 		return $invoice;		
 	}
-	
-/*
- * Characters to use 
- */
-	//applet.append("\x1b\x40"); // reset
-	//applet.append("\x1b\x21\x10"); //double Height
-	//applet.append("\x1b\x21\x20"); //double width 
-	//applet.append("\x1b\x45\x01"); //bold 
-	//applet.append(" \r\n"); //break
-	//applet.append("\x1b\x34\x01"); //italic
-	//applet.append("\x1b\x2d\2"); //underline
-	//applet.append("\x1b\x2d\0"); //underline erase
-	//applet.appendImage("http://www.cleanersaide.com/barcode1.php/barcode1.png");
-	//applet.append("------------------------------------------\r\n"); // line
-	//applet.append("\x1b\x4d\1"); //font style b
-	//applet.append("\x1b\x4d\0");//font style a
-	//applet.append("\x1b\x0f"); condensed printing;
-	//applet.append("\x1b\x61\x01");//center
-	//applet.append("\x1b\x61\49");//center		
-	//applet.append("\x1b\x61\48"); //flush left
-	//applet.append("\x1b\x61\50"); //flush right
-	//applet.append("\x1b\x61\x02");//flush right	
-	//applet.append("\x1b\x61\51"); //justified
-	//applet.append("\x1b\x61\x03");//justified	
-	//applet.append("\x1b\x24\x127\255"); //absolute horizontal position
-	//applet.append("\x1b\x5c\x127\255"); //relative horizontal position
-	//applet.append("\x1b\x28\x56\x02\x00\255\127"); //absolute vertical position
-	//applet.append("\x1b\x28\x76\x02\x00\255\127"); //absolute vertical position
-	//applet.append("\x1b\x4a\255"); //advance vertically
-	//applet.append("\x1b\x44\255\32");//adjust horizontal tab
-	//applet.append("\x09"); //tab horizontal
-	//applet.append("\x0b"); //tab vertical
-	//applet.append("\x1b\x50"); //10.5 pt print
-	//applet.append("\x1D\x56\x01"); // partial cut paper
-	//applet.append("\x0c");//form feed
-	//applet.append("\x1b\x28\x42\x255\x127\x01\x02\x03\x127\x127\x127\x08"); //barcode test
-	//applet.append("\x1b\x69\x42"); //barcode test2
-	//applet.append("\x1b\x6b\x04"); //change font 0-4	
+
 	
 	static function _Init()
 	{
@@ -708,7 +676,7 @@ class Invoice extends AppModel {
 
 	static function _ResetStyles()
 	{
-		return '\x1B\x21\x00';
+		return '\x1b\x40';
 	}
 	
 	static function _MakeStyle($font = false,$bold = false,$underline = false, $double_width = false, $double_height = false)
@@ -776,5 +744,7 @@ class Invoice extends AppModel {
 	{
 		return '\x1D\x6B\x02'.$value;
 	}
+
+
 }
 ?>

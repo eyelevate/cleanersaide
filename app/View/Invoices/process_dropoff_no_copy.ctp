@@ -12,9 +12,30 @@ echo $this->Html->script(array(
 ?>
 
 <div class="row-fluid">
-	<applet id="qz" name="QZ Print Plugin" code="qz.PrintApplet.class" archive="/files/qz-print/dist/qz-print.jar" width="100" height="100">
-	      <param name="printer" value="epson">
-	</applet>
+	<script type="text/javascript" src="/files/qz-print/dist/js/deployJava.js"></script>
+	<script>
+	deployQZ();
+	
+	/**
+	* Deploys different versions of the applet depending on Java version.
+	* Useful for removing warning dialogs for Java 6.  This function is optional
+	* however, if used, should replace the <applet> method.  Needed to address 
+	* MANIFEST.MF TrustedLibrary=true discrepency between JRE6 and JRE7.
+	*/
+	function deployQZ() {
+		var attributes = {id: "qz", code:'qz.PrintApplet.class', 
+			archive:'/files/qz-print/dist/qz-print.jar', width:1, height:1};
+		var parameters = {jnlp_href: '/files/qz-print/dist/qz-print_jnlp.jnlp', 
+			cache_option:'plugin', disable_logging:'false', 
+			initial_focus:'false'};
+		if (deployJava.versionCheck("1.7+") == true) {}
+		else if (deployJava.versionCheck("1.6+") == true) {
+			attributes['archive'] = '/files/qz-print/dist/jre6/qz-print.jar';
+			parameters['jnlp_href'] = '/files/qz-print/dist/jre6/qz-print_jnlp.jnlp';
+		}
+		deployJava.runApplet(attributes, parameters, '1.5');
+	}
+	</script>
 	<p id="countdown"></p>
 	<!-- set tag printing -->
 	<div class="formRow">

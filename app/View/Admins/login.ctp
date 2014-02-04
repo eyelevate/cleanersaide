@@ -1,4 +1,5 @@
 <?php
+
 //displays a message bar if the user has not logged in, before accessing. Uses auth->authError variable set in controller
 
 if(isset($_COOKIE['company_id']) && !empty($_COOKIE['company_id'])){

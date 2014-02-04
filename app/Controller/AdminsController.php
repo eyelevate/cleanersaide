@@ -20,7 +20,7 @@ class AdminsController extends AppController {
 		$menu_id = $menu_ids[0]['Menu']['id'];		
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
-		$this->Auth->allow('login','logout');
+		$this->Auth->allow('login','logout','printing');
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
 		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
@@ -64,7 +64,7 @@ class AdminsController extends AppController {
 		    	$username = $this->request->data['User']['username'];
 				//login User with auth component
 		        if ($this->Auth->login()) {
-		            return $this->redirect($this->Auth->redirect());
+		            return $this->redirect(array('controller'=>'admins','action'=>'index'));
 		        } else {
 		        //the password is incorrect 
 		            $this->Session->setFlash(__('Password is incorrect'));  
@@ -177,6 +177,7 @@ class AdminsController extends AppController {
 			}
 		}
 	}
+
 
 
 

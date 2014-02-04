@@ -150,8 +150,16 @@
 			<?php echo $this->Session->flash(); ?>
 			<?php echo $this->fetch('content'); ?>
 		</div>
+		<!-- Footer -->
 		<div id="footer">
-
+		  <div class="footer_btm container">
+		  	<div class="footer_btm_inner">  
+			  	<div id="footer_nav">
+			  		<a href="/Terms-of-Service-and-Privacy " >Terms & Privacy</a>
+			  		<a href="/Contact-Us" >Contact Us</a>
+			  	</div>
+			</div>	  
+		  </div>
 		</div>
 	</div>
 </body>

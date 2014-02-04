@@ -12,9 +12,31 @@ echo $this->Html->script(array(
 ?>
 
 <div class="row-fluid">
-	<applet id="qz" name="QZ Print Plugin" code="qz.PrintApplet.class" archive="/files/qz-print/dist/qz-print.jar" width="100" height="100">
-	      <param name="printer" value="epson">
-	</applet>
+	<script type="text/javascript" src="/files/qz-print/dist/js/deployJava.js"></script>
+	<script>
+	deployQZ();
+	
+	/**
+	* Deploys different versions of the applet depending on Java version.
+	* Useful for removing warning dialogs for Java 6.  This function is optional
+	* however, if used, should replace the <applet> method.  Needed to address 
+	* MANIFEST.MF TrustedLibrary=true discrepency between JRE6 and JRE7.
+	*/
+	function deployQZ() {
+		var attributes = {id: "qz", code:'qz.PrintApplet.class', 
+			archive:'/files/qz-print/dist/qz-print.jar', width:1, height:1};
+		var parameters = {jnlp_href: '/files/qz-print/dist/qz-print_jnlp.jnlp', 
+			cache_option:'plugin', disable_logging:'false', 
+			initial_focus:'false'};
+		if (deployJava.versionCheck("1.7+") == true) {}
+		else if (deployJava.versionCheck("1.6+") == true) {
+			attributes['archive'] = '/files/qz-print/dist/jre6/qz-print.jar';
+			parameters['jnlp_href'] = '/files/qz-print/dist/jre6/qz-print_jnlp.jnlp';
+		}
+		deployJava.runApplet(attributes, parameters, '1.5');
+	}
+
+	</script>
 	<p id="countdown"></p>
 	<!-- set tag printing -->
 	<div class="formRow">
@@ -23,7 +45,27 @@ echo $this->Html->script(array(
 	<!-- set customer copy -->
 	<div class="formRow">
 		<script type="text/javascript">
-			var qz = document.getElementById('qz');
+	/**
+	* Returns whether or not the applet is not ready to print.
+	* Displays an alert if not ready.
+	*/
+
+
+		    function monitorAppending() {
+		    	
+		    	var qz = document.getElementById('qz');
+				if (qz != null) {
+					if (!qz.isDoneAppending()) {
+				    	window.setTimeout('monitorAppending()', 100);
+				    } else {
+				    	qz.print(); // Don't print until all of the data has been appended
+				    	//qz.printHTML();
+				   	}
+				} else {
+			       alert("Applet not loaded!");
+		        }
+		    }	
+	
 			<?php
 			foreach ($create_customer_copy as $ccc) {
 				foreach ($ccc as $ckey => $cvalue) {
@@ -34,34 +76,57 @@ echo $this->Html->script(array(
 							qz.findPrinter('<?php echo $cvalue;?>');
 						}
 						<?php
-					} else { //setup the reste of the printing
+					} else {
 						?>
 						if (qz != null) {
-							qz.append('<?php echo $cvalue;?>');
-							
-						}
-						<?php
+							qz.append('<?php echo $cvalue;?>');       
 						
-					}				
-				}			
-			}
-			foreach ($create_store_copy as $csc) {
-				foreach ($csc as $skey => $svalue) {
-
-					if($skey==0){ //set the printer initiate printing
-
-					} else { //setup the reste of the printing
-						?>
-						if (qz != null) {
-							qz.append('<?php echo $svalue;?>');
-							
 						}
-						<?php
+						<?php						
 					}				
 				}			
 			}
+
+			$total_rows = count($create_store_copy);
+			for ($i=0; $i < $total_rows; $i++) {
+				$total_column_rows = count($create_store_copy[$i]);
+				foreach ($create_store_copy[$i] as $skey => $svalue) {
+					if($skey >= 1 && $skey<=$total_column_rows){ //set the printer initiate printing
+
+						?>
+						qz.append('<?php echo $svalue;?>');       
+						
+						<?php							
+				
+					}	
+					?>
+					monitorAppending();
+					<?php
+					if($skey==26){ //set the printer initiate printing
+					?>
+					 	qz.appendHTML(
+					 		'<html>'+
+					 		'<table>'+
+					 			'<tr>'+
+					 				'<td width="30"></td>'+
+					 				'<td><img src="http://www.cleanersaide.com/barcode1.php?invoice_number=<?php echo $svalue;?>"/></td>'+
+					 			'</tr>'+
+					 		'</table>'+
+					 		'</html>'
+					 	);
+						qz.printHTML(); // Don't print until all of the data has been appended						
+					<?php
+					}						
+					
+				}			
+			}			
+			
 			?>
-			qz.print();				
+
+					setTimeout(function(){
+
+					   qz.printHTML(); // Don't print until all of the data has been appended						
+					},2000);
 		</script>
 	</div>	
 
@@ -69,18 +134,7 @@ echo $this->Html->script(array(
 	
 	<!-- printing script -->
 	<div class="formRow span6">
-		
-		<!-- <ol>
-			<li id="step1" class="font-bold">Initializing printer settings... <span id="step1-success" class="hide pull-right badge badge-success">Success</span><span id="step1-fail" class="pull-right badge badge-error hide">Failed</span></li>
-			<li id="step2" class="">Gathering invoice information... <span id="step2-success" class="pull-right badge badge-success hide">Success</span><span id="step2-fail" class="pull-right badge badge-error hide">Failed</span></li>
-			<li id="step3" class="">Sending data to printer... <span id="step3-success" class="pull-right badge badge-success hide">Success</span><span id="step3-fail" class="pull-right badge badge-error hide">Failed</span></li>
-			<li id="step4" class="">Printing invoice tags... <span id="step4-success" class="pull-right badge badge-success hide">Success</span><span id="step4-fail" class="pull-right badge badge-error hide">Failed</span></li>
-			<li id="step5" class="">Printing store copy... <span id="step5-success" class="pull-right badge badge-success hide">Success</span><span id="step5-fail" class="pull-right badge badge-error hide">Failed</span></li>
-			<li id="step6" class="">Printing customer copy... <span id="step6-success" class="pull-right badge badge-success hide">Success</span><span id="step6-fail" class="pull-right badge badge-error hide">Failed</span></li>			
-			<li id="step7" class="">Redirecting page...</li>
 
-		</ol> -->
-		
 	</div>
 	<div id="redirect-alert" class="alert alert-success"></div>
 	<div class="formRow">
