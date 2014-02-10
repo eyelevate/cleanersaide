@@ -8,7 +8,6 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 <div>
 	<!-- To be edited later Admin index body content goes here -->
 	<div class="well well-large">
-		<img src="/img/barcode/code_020100.png">
 		<h4 class="heading">Customer Information</h4>
 		<table class="table table-bordered table-hover table-striped">
 			<thead>

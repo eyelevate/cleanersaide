@@ -71,7 +71,7 @@ class Invoice extends AppModel {
 			foreach ($items as $key => $value) {
 				$idx++;
 				$last_id++;
-
+				$inventory_id = $key;
 				$new_id = sprintf('%06d', $last_id); //add leading zeroes	
 				
 				//get totals for each inventory_type
@@ -90,6 +90,7 @@ class Invoice extends AppModel {
 				$sum_tax = sprintf('%.2f',$sum_after_tax - $sum_before_tax);
 
 				$data['Invoice'][$idx]['items'] = json_encode($items);
+				$data['Invoice'][$idx]['inventory_id'] = $inventory_id;
 				$data['Invoice'][$idx]['pretax'] = sprintf('%.2f',$sum_before_tax);
 				$data['Invoice'][$idx]['tax'] = $sum_tax;
 				$data['Invoice'][$idx]['total'] = $sum_after_tax;
@@ -341,8 +342,7 @@ class Invoice extends AppModel {
 			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_ResetStyles();
 			$idx++;
 			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_MakeCut('partial');
-			$idx++;
-			$invoice[$key][$idx] = $this->_EndOfDocument();
+
 			
 		}
 		
@@ -399,67 +399,50 @@ class Invoice extends AppModel {
 			$total = $value['total'];
 			$quantity = $value['quantity'];
 			$invoice_id = $value['invoice_id'];
-			$invoice_image = $value['invoice_image'];
 			$customer_id = $value['customer_id'];
 			$due_date = date('D n/d g:ia',strtotime($value['due_date']));
 
 			
 			$invoice[$key][0] = $printer; //set printer
-			//start barcode printing
-			$invoice[$key][26] = $invoice_id;			
 			$invoice[$key][1] = $this->_ResetStyles(); //reset
 			$invoice[$key][2] = $this->_CenterBody(); //center text
 			$invoice[$key][3] = '::STORE COPY::';
 			$invoice[$key][4] = $this->_NewLine(); //newline
-			$invoice[$key][5] = $this->_ResetStyles(); //reset
 			$invoice[$key][6] = '\x1b\x4d\1'; //font
-			$invoice[$key][6] = $this->_MakeStyle(false,false, false, false, true); //double height
 			$invoice[$key][7] = $this->_CenterBody(); //center text
 			$invoice[$key][8] = $company_name;
 			$invoice[$key][9] = $this->_NewLine(); //newline
-			$invoice[$key][10] = $this->_ResetStyles(); //reset
 			$invoice[$key][11] = $this->_CenterBody(); //center
-			$invoice[$key][12] = '\x1b\x4d\1'; //font
 			$invoice[$key][13] = $company_street;
 			$invoice[$key][14] = $this->_NewLine(); //newline
 			$invoice[$key][15] = $company_city.', '.$company_state.' '.$company_zip;
 			$invoice[$key][16] = $this->_NewLine(); //newline
 			$invoice[$key][17] = $company_phone;
 			$invoice[$key][18] = $this->_NewLine(); //newline
-			$invoice[$key][19] = $this->_ResetStyles(); //reset
 			$invoice[$key][20] = $this->_CenterBody(); //center
 			$invoice[$key][21] = $drop_date;
 			$invoice[$key][22] = $this->_NewLine();
 			$invoice[$key][23] = 'READY BY: '.$due_date;
 			$invoice[$key][24] = $this->_NewLine();
-			$invoice[$key][25] = $this->_ResetStyles(); //reset
-
-			$invoice[$key][27] =$this->_ResetStyles(); //reset
-			$invoice[$key][28] = $this->_NewLine();
-			$invoice[$key][29] = $this->_CenterBody(); //center
+			$invoice[$key][25] = $this->_CenterBody(); //center
+			// $invoice[$key][26] = $this->_SetupBarcode(40, 10);
+			// $invoice[$key][27] = $this->_CreateBarcode($invoice_id);
 			$invoice[$key][30] = $invoice_id;
 			$invoice[$key][31] = $this->_NewLine();
 			$invoice[$key][32] = $full_name.' \x1b\x44\35\17 \x09 \x1b\x61\x02 '.$starch_code;
 			$invoice[$key][33] = $this->_NewLine();
-			$invoice[$key][34] = '\x1b\x4d\1'; //font
 			$invoice[$key][35] = $customer_phone.'\x1b\x44\47\17 \x09 \x1b\x61\x02'.$username;
 			$invoice[$key][36] = $this->_NewLine();
-			$invoice[$key][37] = $this->_ResetStyles(); //reset
 			$invoice[$key][38] = '------------------------------------------';
 			$invoice[$key][39] = $this->_NewLine();
-			$invoice[$key][40] = $this->_ResetStyles(); //reset
 			$invoice[$key][41] = 'ITEM     COLOR            QTY    PRICE';
 			$invoice[$key][42] = $this->_NewLine();
-			$invoice[$key][43] = $this->_ResetStyles(); //reset		
 			$invoice[$key][44] = '------------------------------------------';
 			$invoice[$key][45] = $this->_NewLine();
-			$invoice[$key][46] = $this->_ResetStyles(); //reset	
-			$invoice[$key][47] = '\x1b\x4d\1';
-			
 			$idx = 47;
 			$item_colors = array();
 			foreach ($items as $ikey => $ivalue) {
-				if($items[$ikey]['colors']){
+				if(isset($items[$ikey]['colors'])){
 					$item_colors = $items[$ikey]['colors'];
 				}
 				$item_color = '';
@@ -484,14 +467,14 @@ class Invoice extends AppModel {
 				$idx++;
 				$invoice[$key][$idx] = $item_name.':\x1b\x44\43\17 \x09 \x1b\x61\x02'.$item_qty.'\x09 \x09 \x09 \x09 \x09 \x09 \x09 \x09 $'.$item_before_tax;
 				$idx++;
-				$invoice[$key][$idx] = $this->_NewLine().' '.$this->_ResetStyles().' \x1b\x4d\1';
+				$invoice[$key][$idx] = $this->_NewLine().' \x1b\x4d\1';
 				$idx++;
 				$invoice[$key][$idx] = $this->_MakeTab().' '.$item_color.' '.$this->_NewLine();
 				//insert memo data here
 				
 			}
 			$idx++;			
-			$invoice[$key][$idx] = $this->_ResetStyles().'------------------------------------------'.$this->_ResetStyles();
+			$invoice[$key][$idx] = '------------------------------------------'.$this->_NewLine();
 			$idx++;
 			$invoice[$key][$idx] = '               Total Pretax: $'.$pretax.' '.$this->_NewLine();
 			$idx++;
@@ -505,18 +488,14 @@ class Invoice extends AppModel {
 			$idx++;
 			$invoice[$key][$idx] = 'Thank you for your business. All work done on premises.'.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = $this->_ResetStyles().' '.$this->_CenterBody();
+			$invoice[$key][$idx] = $this->_CenterBody();
 			$idx++;
 			$invoice[$key][$idx] = '['.$quantity.' PCS]['.strtoupper(date('D',strtotime($value['due_date']))).']'.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = $this->_ResetStyles().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
+			$invoice[$key][$idx] = $this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_ResetStyles();
-			$idx++;
-			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_MakeCut('partial');
-			$idx++;
-
-			$invoice[$key][$idx] = $this->_EndOfDocument();
+			$invoice[$key][$idx] = '\x1D\x56\x01 ';
+			$invoice[$key]['BARCODE'] = $invoice_id;
 			
 		}
 
@@ -734,15 +713,17 @@ class Invoice extends AppModel {
 	
 	static function _SetupBarcode($length, $height)
 	{
-		//setup variables
+
 		$special_character = '7B';
 		$type_of_barcode = '41'; //code-128
-		return '\x1D\x77\x02\x1D\x6B\x'.$length.'\x'.$height.'\x'.$special_character.'\x'.$type_of_barcode.'\x4C000288496\x508149';
+		return '\x1D\x77\x'.$length.'\x1D\x68\x'.$height;
+
 	}	
 	
 	static function _CreateBarcode($value)
 	{
-		return '\x1D\x6B\x02'.$value;
+		
+		return '\x1D\x6B\x73\x10\x123\x66\x78\x111\x46\x123\x67\x'.substr($value,0,2).'\x'.substr($value,2,2).'\x'.substr($value,-2);
 	}
 
 

@@ -1,6 +1,10 @@
 <?php
 App::uses('AppController', 'Controller');
-App::import('Vendor', 'BarcodeHelper');
+
+App::import('Vendor', 'WebclientPrint/WebclientPrint');
+
+
+
 /**
  * Admins Controller
  * @property Admin $Admin
@@ -25,6 +29,7 @@ class InvoicesController extends AppController {
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
 		$this->Auth->allow('login','logout','barcodes');
+		
 	
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
@@ -470,9 +475,8 @@ class InvoicesController extends AppController {
 	}
 	
 	public function process_dropoff_copy()
-	{
+	{	
 		if($this->request->is('post')){
-
 			$customer_id = $this->request->data['Invoice']['customer_id'];
 			$this->request->data['Invoice']['due_date'] = date('Y-m-d',strtotime($this->request->data['Invoice']['due_date'])).' 16:00:00';
 			$due_date = $this->request->data['Invoice']['due_date'];
@@ -484,38 +488,22 @@ class InvoicesController extends AppController {
 			$items = $this->request->data['Invoice']['items'];	
 			$store_copy = $this->Inventory_item->reorganizeByInventory($items);	
 			$invoice_split = $this->Invoice->invoice_split($store_copy, $customer_id, $due_date, $memo);
-
 			if($this->Invoice->saveAll($invoice_split['Invoice'])){
 				$printer = 'Epson';
 				$company = $this->Company->find('all',array('conditions'=>array('id'=>$_SESSION['company_id'])));
 				$customer = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
 				$username = $this->Auth->user('username');
 				//create barcode images
-				foreach ($invoice_split['Invoice'] as $key => $value) {
-					$data_to_encode = $value['invoice_id'];
-				    $barcode=new BarcodeHelper();
-				    // Generate Barcode data
-				    $barcode->barcode();
-				    $barcode->setType('C128');
-				    $barcode->setCode($data_to_encode);
-				    $barcode->setSize(80,200);
-				    
-				    // Generate filename            
-				    $file = 'img/barcode/code_'.$data_to_encode.'.png';
-				    $invoice_split['Invoice'][$key]['invoice_image'] = $file;
-				    // Generates image file on server            
-				    $barcode->writeBarcodeFile($file);
-				}
-
-				// debug($invoice_split);
 				
 				$create_store_copy = $this->Invoice->createStoreCopyInvoice($invoice_split,$username, $printer,$customer, $company);
 				$create_customer_copy = $this->Invoice->createCustomerCopyInvoice($invoice_complete, $username, $printer, $customer, $company);
+
 				$this->set('customer',$this->request->data);
 				$this->set('customer_id',$customer_id);
 				$this->set('store',$store_copy);	
 				$this->set('create_store_copy',$create_store_copy);	
 				$this->set('create_customer_copy',$create_customer_copy);	
+				$this->set('tags',$invoice_split);
 
 			}
 		}

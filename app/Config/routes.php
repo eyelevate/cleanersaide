@@ -132,6 +132,11 @@
 	Router::connect('/main',array('controller' => 'pages', 'action' => 'home', 'home'));
 	Router::connect('/main/*',array('controller' => 'pages', 'action' => 'home', 'home'));
 
+	//Printing Controller
+	Router::connect('/printers',array('controller'=>'printers','action'=>'index'));
+	Router::connect('/printers/:action',array('controller'=>'printers'));
+	Router::connect('/printers/:action/*',array('controller'=>'printers'));
+
 	//Rewards Controller
 	Router::connect('/rewards',array('controller'=>'rewards','action'=>'index'));
 	Router::connect('/rewards/:action',array('controller'=>'rewards'));
