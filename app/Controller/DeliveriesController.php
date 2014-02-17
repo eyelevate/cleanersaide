@@ -111,7 +111,7 @@ class DeliveriesController extends AppController {
 			if ($this->User->validates()){ //form has validated move on
 				$customer_id = $this->request->data['User']['customer_id'];
 				$_SESSION['customer_id'] = $customer_id;
-				$phone = preg_replace('/\D/', '', $this->request->data['User']['phone']);
+				$phone = preg_replace('/\D/', '', $this->request->data['User']['contact_phone']);
 				$this->request->data['User']['contact_phone'] = $phone;
 				$this->request->data['User']['company_id'] = 1;
 				$this->request->data['User']['group_id'] = 5;
@@ -119,8 +119,8 @@ class DeliveriesController extends AppController {
 					//just update the user
 					$this->User->id = $customer_id;
 					if($this->User->save($this->request->data['User'])){
-						$_SESSION['message'] = 'You have successfully updated your information. Please fill out the form below to select your delivery time and date.';
-						
+			
+						$this->Session->setFlash(__('You have successfully updated your information. Please fill out the form below to select your delivery time and date.'),'default',array(),'success');
 					}
 					
 				} else { //this is a guest
@@ -128,12 +128,11 @@ class DeliveriesController extends AppController {
 					$lookup = $this->User->find('all',array('conditions'=>array('contact_phone'=>$phone,'company_id'=>$company_id)));
 					
 					if(count($lookup)>0){ //this is already a customer move on to next page
-						$_SESSION['message'] = 'Thank you returning Guest. Please fill out the form below to set a date and time for delivery.';	
-						
+						$this->Session->setFlash(__('Thank you returning Guest. Please fill out the form below to set a date and time for delivery.'),'default',array(),'success');
 					} else { //create a new customer
 						$this->User->create();
-						if($this->User->save($this->request->data)){
-							$_SESSION['message'] = 'Thank you new Guest. Please fill out the form below to set a date and time for delivery.';							
+						if($this->User->save($this->request->data)){							
+							$this->Session->setFlash(__('Thank you new Guest. Please fill out the form below to set a date and time for delivery.'),'default',array(),'success');
 						}
 					}
 
@@ -352,14 +351,17 @@ class DeliveriesController extends AppController {
 	public function form()
 	{
 		$this->layout = 'pages';
-		$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+		if(isset($_SESSION['Delivery']['User']['customer_id'])){
+			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+		}
 		$page_url = '/deliveries/form';
 		$primary_nav = $this->Menu_item->arrangeByTiers(4);	
 		$primary_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $primary_nav);
 		$this->set('primary_nav',$primary_nav);	
 		$company_id = 1;
-
-		$zipcode = $_SESSION['Delivery']['User']['contact_zip'];
+		if(isset($_SESSION["Delivery"]['User']['contact_zip'])){
+			$zipcode = $_SESSION['Delivery']['User']['contact_zip'];
+		}
 		$this->set('zipcode',$zipcode);
 		$base_routes = $this->Delivery->routes($zipcode,$company_id);
 		$find_routes = $this->Delivery->view_schedule($this->Delivery->routes($zipcode,$company_id));
@@ -391,7 +393,7 @@ class DeliveriesController extends AppController {
 			$_SESSION['Delivery']['Schedule']['company_id'] = 1;
 			$_SESSION['Delivery']['Schedule']['status'] = 1;
 			$_SESSION['Delivery']['Schedule']['type'] = 'frontend';
-			$_SESSION['message'] = 'You have successfully selected your delivery date and time. Please confirm all the information below and submit your payment information';
+			$this->Session->setFlash(__('You have successfully selected your delivery date and time. Please confirm all the information below and submit your payment information'),'default',array(),'success');
 			$this->redirect(array('controller'=>'deliveries','action'=>'confirmation'));
 		}
 	}

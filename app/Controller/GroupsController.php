@@ -20,7 +20,7 @@ class GroupsController extends AppController {
 	    parent::beforeFilter();
 		$this->set('username',AuthComponent::user('username'));
 		//
-		$this->Auth->allow();		
+		$this->Auth->deny();		
 		$this->Auth->authError = 'You do not have access to this page.';
 		
 	}
@@ -533,6 +533,39 @@ class GroupsController extends AppController {
 	        }
 	    }
 	    return $arr;
+	}
+	function rebuildARO() {
+		// Build the groups.
+		$groups = $this->Group->find('all');
+		$aro = new Aro();
+		foreach($groups as $group) {
+			$aro->create();
+			$aro->save(array(
+			//	'alias'=>$group['Group']['name'],
+				'foreign_key' => $group['Group']['id'],
+				'model'=>'Group',
+				'parent_id' => null
+			));
+		}
+	 
+		// Build the users.
+		$users = $this->User->find('all');
+		$i=0;
+		foreach($users as $user) {
+			$aroList[$i++]= array(
+			//	'alias' => $user['User']['email'],
+				'foreign_key' => $user['User']['id'],
+				'model' => 'User',
+				'parent_id' => $user['User']['group_id']
+			);	
+		}
+		foreach($aroList as $data) {
+			$aro->create();
+			$aro->save($data);
+		}
+	 
+		echo "AROs rebuilt!";
+		exit;
 	}
 
 }

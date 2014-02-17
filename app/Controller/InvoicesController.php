@@ -67,7 +67,7 @@ class InvoicesController extends AppController {
 		
 		//get data from db
 		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
-		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status <'=>'4','company_id'=>$company_id)));
+		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status <'=>'3','company_id'=>$company_id)));
 		//set variable to show rewards system
 		$rewards_display = 'Yes';
 		$this->set('rewards_display',$rewards_display);

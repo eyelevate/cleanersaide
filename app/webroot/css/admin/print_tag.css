@@ -105,11 +105,10 @@ body {
 
 /* line 28, ../sass/printtag.scss */
 h1 {
-  height: 30px;
-  line-height: 25px;
-  font-size: 27px;
+  font-size: 17px;
+  line-height:0px;
   padding-top: 0px;
-  padding-bottom: 3px;
+ padding-bottom: 1px;
 }
 
 /* line 36, ../sass/printtag.scss */
@@ -126,38 +125,35 @@ h1 {
 
 /* line 46, ../sass/printtag.scss */
 #row1date1 {
-  margin-right: 20px;
+  margin-right: 40px;
 }
 
 /* line 50, ../sass/printtag.scss */
-#row1date2 {
-  margin-right: 15px;
+#div1{
+	float:left;
+}
+#div2{
+	float:right;
 }
 
 /* line 54, ../sass/printtag.scss */
 h3 {
-  font-size: 15px;
+  font-size: 14px;
 }
 
 /* line 57, ../sass/printtag.scss */
 #row2name1 {
-  font-size: 17px;
   margin-right: 7px;
+  line-height:0px;
 }
 
 /* line 62, ../sass/printtag.scss */
 #row2phone {
-  position: absolute;
-  right: 40px;
+	float:right;
 }
 
 /* line 67, ../sass/printtag.scss */
 h2 {
-  font-size: 18px;
-  margin-top: 2px;
-}
-
-/* line 72, ../sass/printtag.scss */
-.pagebreakhere {
-  page-break-before: always;
+  font-size: 14px;
+	line-height:0px;
 }

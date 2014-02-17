@@ -85,8 +85,8 @@ if(!empty($error_message)){
 				$shirt = $users['User']['shirt'];
 				$starch = $users['User']['starch'];
 				$email = '';
-				if(isset($users['User']['email'])){
-					$email = $users['User']['email'];	
+				if(isset($users['User']['contact_email'])){
+					$email = $users['User']['contact_email'];	
 				}
 				$special_instructions = $users['User']['special_instructions'];
 				
@@ -227,6 +227,11 @@ if(!empty($error_message)){
 				?>
 				</div>
 				<div class="row">
+					<div class="control-group eight columns alpha">
+						<label class="checkbox"><input id="deliveryBag" type="checkbox" value="Requires Jays Cleaners garment bag"/> I require a Jays Cleaners garment bag.</label>
+					</div>
+				</div>	
+				<div class="row">
 				<?php
 				echo $this->Form->input('special_instructions',array(
 					'type'=>'textarea',
@@ -366,7 +371,11 @@ if(!empty($error_message)){
 				
 				?>
 				</div>
-					
+				<div class="row">
+					<div class="control-group eight columns alpha">
+						<label class="checkbox"><input id="deliveryBag" type="checkbox" value="Requires Jays Cleaners garment bag"/> I require a Jays Cleaners garment bag.</label>
+					</div>
+				</div>					
 				<div class="row">
 				<?php
 				echo $this->Form->input('special_instructions',array(

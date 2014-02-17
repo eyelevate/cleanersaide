@@ -18,7 +18,7 @@ class UsersController extends AppController {
 		$this->set('username',AuthComponent::user('username'));
 		//deny all public users to this controller
 		//$this->Auth->deny('*');
-		$this->Auth->allow('forgot','reset','convert_users','new_customers','process_frontend_new_user','redirect_new_frontend_customer','frontend_logout','process_delete_profile');
+		$this->Auth->allow('add','forgot','reset','convert_users','new_customers','process_frontend_new_user','redirect_new_frontend_customer','frontend_logout','process_delete_profile');
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
 		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
@@ -325,6 +325,7 @@ class UsersController extends AppController {
 			$this->request->data['User']['company_id'] = $company_id;
 			$this->request->data['User']['reward'] = '1';
 			$this->request->data['User']['account'] = '1';
+			$_SESSION['Delivery']['User']['contact_zip'] = $this->request->data['User']['contact_zip'];
 			
 			//lookup by phone number
 			$lookup = $this->User->find('all',array('conditions'=>array('contact_phone'=>$phone,'company_id'=>$company_id)));
@@ -371,12 +372,17 @@ class UsersController extends AppController {
 
 				if($this->User->save($this->request->data)){
 					$last_id = $this->User->getLastInsertId();
-					
 					$new_customers = $this->User->find('all',array('conditions'=>array('User.id'=>$last_id)));
 
 					if(count($new_customers)>0){
 						foreach ($new_customers as $cust) {
+							$_SESSION['Delivery']['User'] = $cust['User'];
 							$new_customer_id = $cust['User']['id'];
+							$new_customer_zip = $cust['User']['contact_zip'];
+							//login user
+							$_SESSION['customer_id'] = $cust;
+							$_SESSION['customers'] = $customers;
+							$_SESSION['login'] = 'Yes';
 						}
 						$this->request->data['User']['id'] = $new_customer_id;
 						$this->request->data['User']['company_id'] = '1';

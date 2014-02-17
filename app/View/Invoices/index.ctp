@@ -118,8 +118,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 								}
 							}						
 						}
-	
-						
+						debug($status);
 						switch($status){
 							case '1': //newly created 
 							
@@ -130,8 +129,12 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 								}
 							break;
 							
-							case '3': //racked and ready to pick up
+							case '2': //racked and ready to pick up
 								$background_color = '#d0ffef';
+							break;
+							
+							case '3':
+								
 							break;
 								
 						}

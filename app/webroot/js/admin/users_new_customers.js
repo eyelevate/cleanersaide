@@ -30,5 +30,19 @@ users = {
 				
 			}
 		});
+		
+		$("#deliveryBag").change(function(){
+			var bag_message = '**['+$(this).val()+']** ';
+			if($(this).is(':checked')){
+				var special_instructions = $("#UserSpecialInstructions").val();
+				var new_special_instructions = bag_message+''+special_instructions;
+				$("#UserSpecialInstructions").val(new_special_instructions);
+			} else {
+				var special_instructions = $("#UserSpecialInstructions").val();
+				var new_special_instructions = special_instructions.replace(bag_message,'');
+				$("#UserSpecialInstructions").val(new_special_instructions);
+				
+			}
+		});
 	},
 };

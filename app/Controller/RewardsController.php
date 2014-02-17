@@ -84,7 +84,66 @@ class RewardsController extends AppController {
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);
 		//select layout
-		$this->layout = 'admin';		
+		$this->layout = 'admin';
+		//set variable to show rewards system
+		//set variable to show rewards system
+		$rewards_display = 'Yes';
+		$this->set('rewards_display',$rewards_display);
+		
+		//set reward status
+		$reward_status = 1;
+		$current_points = 0;
+		
+		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
+		if(count($users)>0){
+			foreach ($users as $u) {
+				$reward_status = $u['User']['reward_status'];
+				$current_points = $u['User']['reward_points'];
+			}
+		} else {
+			$current_points = 0;
+		}
+		
+		$this->set('current_points',$current_points);
+		$this->set('reward_status',$reward_status);
+		$this->set('reward_points',$current_points);		
+		$this->set('customer_id',$id);
+		
+		
+		//paginate the users and send to view
+		$this->paginate = array(
+			'conditions' =>array('customer_id'=>$id,'company_id'=>$_SESSION['company_id']),
+		    'limit' => 100, // this was the option which you forgot to mention
+		    'order' => array(
+		        'id' => 'DESC')
+		);		
+		$this->User->recursive = 0;
+		$this->set('rewards', $this->paginate('RewardTransaction'));
+		
+		if($this->request->is('post')){
+			$this->request->data['RewardTransaction']['company_id'] = $_SESSION['company_id'];
+			$this->request->data['RewardTransaction']['type'] = 2;
+			$this->request->data['RewardTransaction']['employee_id'] =AuthComponent::user('id');
+			$this->request->data['RewardTransaction']['customer_id'] = $id;
+			$this->request->data['RewardTransaction']['points'] = 0;
+			$adjusted = $this->request->data['RewardTransaction']['running_total'] - $this->request->data['RewardTransaction']['current_points'];
+			if($adjusted < 0){
+				$this->request->data['RewardTransaction']['credited'] = 0;
+				$this->request->data['RewardTransaction']['reduced'] = $adjusted;
+			} else {
+				$this->request->data['RewardTransaction']['credited'] = $adjusted;
+				$this->request->data['RewardTransaction']['reduced'] = 0;				
+			}
+			
+			$this->request->data['User']['reward_points'] = $this->request->data['RewardTransaction']['running_total'];
+
+			if($this->RewardTransaction->save($this->request->data['RewardTransaction'])){
+				$this->User->id = $id;
+				$this->User->save($this->request->data['User']);
+				$this->Session->setFlash(__('You have successfully adjusted the reward points for customer #'.$id),'default',array(),'success');
+				$this->redirect(array('controller'=>'rewards','action'=>'view',$id));
+			}
+		}
 
 	}
 

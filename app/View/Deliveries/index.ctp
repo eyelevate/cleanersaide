@@ -175,7 +175,7 @@ echo $this->Html->script(array(
 			if(!empty($customers)){
 				$first_name = $customers['User']['first_name'];
 				$last_name = $customers['User']['last_name'];
-				$phone = $customers['User']['phone'];
+				$phone = $customers['User']['contact_phone'];
 				$email = $customers['User']['contact_email'];
 				$street = $customers['User']['contact_address'];
 				$suite = $customers['User']['contact_suite'];
@@ -190,7 +190,7 @@ echo $this->Html->script(array(
 				if(isset($_SESSION['Delivery'])){
 					$first_name = $_SESSION['Delivery']['User']['first_name'];
 					$last_name = $_SESSION['Delivery']['User']['last_name'];
-					$phone = $_SESSION['Delivery']['User']['phone'];
+					$phone = $_SESSION['Delivery']['User']['contact_phone'];
 					$zipcode = $_SESSION['Delivery']['User']['contact_zip'];
 					$email = $_SESSION['Delivery']['User']['contact_email'];
 					$street = $_SESSION['Delivery']['User']['contact_address'];
@@ -263,7 +263,7 @@ echo $this->Html->script(array(
 		<div class="row">
 			<div class="control-group <?php echo $contact_phone_errors;?> four columns alpha">
 				<label>Phone Number <span class="required">*</span></label>
-				<input class="phone" type="text" name="data[User][phone]" value="<?php echo $phone;?>"/>
+				<input class="phone" type="text" name="data[User][contact_phone]" value="<?php echo $phone;?>"/>
 				<span class="help-block"><?php echo $contact_phone_error_message;?></span>
 			</div>		
 			<div class="control-group <?php echo $contact_intercom_errors;?> three columns alpha">
@@ -392,8 +392,13 @@ echo $this->Html->script(array(
 		</div>
 		<div class="row">
 			<div class="control-group eight columns alpha">
+				<label class="checkbox"><input id="deliveryBag" type="checkbox" value="Requires Jays Cleaners garment bag"/> I require a Jays Cleaners garment bag.</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="control-group eight columns alpha">
 				<label>Special Pickup/Dropoff Instructions</label>
-				<textarea name="data[User][special_instructions]"><?php echo $special_instructions;?></textarea>
+				<textarea id="special_instructions" name="data[User][special_instructions]"><?php echo $special_instructions;?></textarea>
 			</div>
 		</div>
 		<div class="row">

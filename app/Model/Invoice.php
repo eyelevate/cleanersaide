@@ -234,13 +234,11 @@ class Invoice extends AppModel {
 
 			$invoice[$key][0] = $printer; //set printer
 			$invoice[$key][1] = $this->_ResetStyles(); //reset
-			$invoice[$key][2] = $this->_CenterBody(); //center text
 			$invoice[$key][3] = '\x1b\x4d\1'; //font
-			$invoice[$key][4] = $this->_MakeStyle(false,false, false, false, true); //double height
 			$invoice[$key][5] = $this->_CenterBody(); //center text
 			$invoice[$key][6] = $company_name;
 			$invoice[$key][7] = $this->_NewLine(); //newline
-			$invoice[$key][8] = $this->_ResetStyles(); //reset
+
 			$invoice[$key][9] = $this->_CenterBody(); //center
 			$invoice[$key][10] = '\x1b\x4d\1'; //font
 			$invoice[$key][11] = $company_street;
@@ -249,18 +247,12 @@ class Invoice extends AppModel {
 			$invoice[$key][14] = $this->_NewLine(); //newline
 			$invoice[$key][15] = $company_phone;
 			$invoice[$key][16] = $this->_NewLine(); //newline
-			$invoice[$key][17] = $this->_ResetStyles(); //reset
+
 			$invoice[$key][18] = $this->_CenterBody(); //center
 			$invoice[$key][19] = $drop_date;
 			$invoice[$key][20] = $this->_NewLine();
 			$invoice[$key][21] = 'READY BY: '.$due_date;
 			$invoice[$key][22] = $this->_NewLine();
-			$invoice[$key][23] = $this->_ResetStyles(); //reset
-			//start barcode printing
-			$invoice[$key][24] = $this->_SetupBarcode(40, 11);
-			$invoice[$key][25] = $this->_CreateBarcode($invoice_id);
-			$invoice[$key][26] = $this->_NewLine();
-			$invoice[$key][27] = $this->_ResetStyles(); //reset
 			$invoice[$key][28] = $this->_CenterBody(); //center
 			$invoice[$key][29] = $invoice_id;
 			$invoice[$key][30] = $this->_NewLine();
@@ -269,16 +261,16 @@ class Invoice extends AppModel {
 			$invoice[$key][33] = '\x1b\x4d\1'; //font
 			$invoice[$key][34] = $customer_phone.'\x1b\x44\47\17 \x09 \x1b\x61\x02'.$username;
 			$invoice[$key][35] = $this->_NewLine();
-			$invoice[$key][36] = $this->_ResetStyles(); //reset
+
 			$invoice[$key][37] = '------------------------------------------';
 			$invoice[$key][38] = $this->_NewLine();
-			$invoice[$key][39] = $this->_ResetStyles(); //reset
+
 			$invoice[$key][40] = 'ITEM          COLOR               QTY ';
 			$invoice[$key][41] = $this->_NewLine();
-			$invoice[$key][42] = $this->_ResetStyles(); //reset		
+
 			$invoice[$key][43] = '------------------------------------------';
 			$invoice[$key][44] = $this->_NewLine();
-			$invoice[$key][45] = $this->_ResetStyles(); //reset	
+
 			$invoice[$key][46] = '\x1b\x4d\1';
 			
 			$idx = 46;
@@ -310,16 +302,16 @@ class Invoice extends AppModel {
 				$item_before_tax = $items[$ikey]['before_tax'];
 				$item_id = $items[$ikey]['item_id'];
 				$idx++;
-				$invoice[$key][$idx] = $item_name.':\x1b\x44\43\17 \x09 \x1b\x61\x02'.$item_qty.'\x09 \x09 \x09 \x09 \x09 \x09 \x09 \x09 $'.$item_before_tax;
+				$invoice[$key][$idx] = $item_name.':\x1b\x44\43\17 \x09 \x1b\x61\x02'.$item_qty;
 				$idx++;
-				$invoice[$key][$idx] = $this->_NewLine().' '.$this->_ResetStyles().' \x1b\x4d\1';
+				$invoice[$key][$idx] = $this->_NewLine().' \x1b\x4d\1';
 				$idx++;
 				$invoice[$key][$idx] = $this->_MakeTab().' '.$item_color.' '.$this->_NewLine();
 				//insert memo data here
 				
 			}
 			$idx++;			
-			$invoice[$key][$idx] = $this->_ResetStyles().'------------------------------------------'.$this->_ResetStyles();
+			$invoice[$key][$idx] = '------------------------------------------';
 			$idx++;
 			$invoice[$key][$idx] = '               Total Pretax: $'.$pretax.' '.$this->_NewLine();
 			$idx++;
@@ -333,13 +325,13 @@ class Invoice extends AppModel {
 			$idx++;
 			$invoice[$key][$idx] = 'Thank you for your business. All work done on premises.'.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = $this->_ResetStyles().' '.$this->_CenterBody();
+			$invoice[$key][$idx] = $this->_CenterBody();
 			$idx++;
 			$invoice[$key][$idx] = '['.$quantity.' PCS]['.strtoupper(date('D',strtotime($value['due_date']))).']'.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = $this->_ResetStyles().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
+			$invoice[$key][$idx] = $this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_ResetStyles();
+			$invoice[$key][$idx] = '\x1D\x56\x01 ';
 			$idx++;
 			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_MakeCut('partial');
 
@@ -425,8 +417,7 @@ class Invoice extends AppModel {
 			$invoice[$key][23] = 'READY BY: '.$due_date;
 			$invoice[$key][24] = $this->_NewLine();
 			$invoice[$key][25] = $this->_CenterBody(); //center
-			// $invoice[$key][26] = $this->_SetupBarcode(40, 10);
-			// $invoice[$key][27] = $this->_CreateBarcode($invoice_id);
+			$invoice[$key]['BARCODE'] = $invoice_id;
 			$invoice[$key][30] = $invoice_id;
 			$invoice[$key][31] = $this->_NewLine();
 			$invoice[$key][32] = $full_name.' \x1b\x44\35\17 \x09 \x1b\x61\x02 '.$starch_code;
@@ -493,9 +484,6 @@ class Invoice extends AppModel {
 			$invoice[$key][$idx] = '['.$quantity.' PCS]['.strtoupper(date('D',strtotime($value['due_date']))).']'.$this->_NewLine();
 			$idx++;
 			$invoice[$key][$idx] = $this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
-			$idx++;
-			$invoice[$key][$idx] = '\x1D\x56\x01 ';
-			$invoice[$key]['BARCODE'] = $invoice_id;
 			
 		}
 
@@ -544,14 +532,11 @@ class Invoice extends AppModel {
 			}
 		}
 		$invoice[0] = $printer; //set printer
-		// $invoice[1] = $this->_ResetStyles(); //reset
 		$invoice[2] = $this->_CenterBody(); //center text
 		$invoice[3] = '\x1b\x4d\1'; //font
-		$invoice[4] = $this->_MakeStyle(false,false, false, false, true); //double height
 		$invoice[5] = $this->_CenterBody(); //center text
 		$invoice[6] = $company_name;
 		$invoice[7] = $this->_NewLine(); //newline
-		// $invoice[8] = $this->_ResetStyles(); //reset
 		$invoice[9] = $this->_CenterBody(); //center
 		$invoice[10] = '\x1b\x4d\1'; //font
 		$invoice[11] = $company_street;
@@ -560,27 +545,21 @@ class Invoice extends AppModel {
 		$invoice[14] = $this->_NewLine(); //newline
 		$invoice[15] = $company_phone;
 		$invoice[16] = $this->_NewLine(); //newline
-		// $invoice[17] = $this->_ResetStyles(); //reset
 		$invoice[18] = $this->_CenterBody(); //center
 		$invoice[19] = 'PICKED UP: '. date('D n/d/Y H:i:s');
 		$invoice[20] = $this->_NewLine();
-		// $invoice[21] = $this->_ResetStyles(); //reset
 		$invoice[22] = $this->_CenterBody(); //center
 		$invoice[23] = $full_name.' \x1b\x44\35\17 \x09 \x1b\x61\x02 '.$starch_code;
 		$invoice[24] = $this->_NewLine();
 		$invoice[25] = '\x1b\x4d\1'; //font
 		$invoice[26] = $customer_phone.'\x1b\x44\47\17 \x09 \x1b\x61\x02'.$username;
 		$invoice[27] = $this->_NewLine();
-		$invoice[28] = $this->_ResetStyles(); //reset
 		$invoice[29] = '------------------------------------------';
 		$invoice[30] = $this->_NewLine();
-		$invoice[31] = $this->_ResetStyles(); //reset
 		$invoice[32] = 'ITEM          COLOR               QTY ';
-		$invoice[33] = $this->_NewLine();
-		$invoice[34] = $this->_ResetStyles(); //reset		
+		$invoice[33] = $this->_NewLine();	
 		$invoice[35] = '------------------------------------------';
 		$invoice[36] = $this->_NewLine();
-		$invoice[37] = $this->_ResetStyles(); //reset	
 		$invoice[38] = '\x1b\x4d\1';
 		$idx = 38;
 		foreach ($data as $key => $value) {
@@ -610,14 +589,14 @@ class Invoice extends AppModel {
 				$idx++;
 				$invoice[$idx] = $item_name.':\x1b\x44\43\17 \x09 \x1b\x61\x02'.$item_qty.'\x09 \x09 \x09 \x09 \x09 \x09 \x09 \x09 $'.$item_before_tax;
 				$idx++;
-				$invoice[$idx] = $this->_NewLine().' '.$this->_ResetStyles().' \x1b\x4d\1';
+				$invoice[$idx] = $this->_NewLine().' \x1b\x4d\1';
 				$idx++;
 				$invoice[$idx] = $this->_MakeTab().' '.$item_color.' '.$this->_NewLine();
 			}
 			
 		}
 		$idx++;			
-		$invoice[$idx] = $this->_ResetStyles().'------------------------------------------'.$this->_ResetStyles();
+		$invoice[$idx] ='------------------------------------------';
 		$idx++;
 		$invoice[$idx] = '               Total Pretax: $'.$total_bt.' '.$this->_NewLine();
 		$idx++;
@@ -633,15 +612,13 @@ class Invoice extends AppModel {
 		$idx++;
 		$invoice[$idx] = 'Thank you for your business. All work done on premises.'.$this->_NewLine();
 		$idx++;
-		$invoice[$idx] = $this->_ResetStyles().' '.$this->_CenterBody();
+		$invoice[$idx] = $this->_CenterBody();
 		$idx++;
 		$invoice[$idx] = '['.$quantity.' PCS]'.$this->_NewLine();
 		$idx++;
-		$invoice[$idx] = $this->_ResetStyles().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
+		$invoice[$idx] = $this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
 		$idx++;
-		$invoice[$idx] = '\x1D\x56\x01 '.$this->_ResetStyles();
-		$idx++;
-		$invoice[$idx] = $this->_EndOfDocument();		
+		$invoice[$idx] = '\x1D\x56\x01 '.$this->_MakeCut('partial');	
 		
 		
 		return $invoice;		

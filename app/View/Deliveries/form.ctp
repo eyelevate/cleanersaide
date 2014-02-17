@@ -17,15 +17,7 @@ echo $this->Html->script(array(
 	'frontend/deliveries_form.js'
 	),FALSE);
 	
-if(isset($_SESSION['message'])){
-	?>
-	<p class="alert alert-success"><?php echo $_SESSION['message'];?></p>
-	<?php
-} else {
-	?>
-	<p class="alert alert-info">Welcome Guest. Please select a delivery time and date in the form below.</p>
-	<?php	
-}
+
 ?>
 <div class="container">
 <?php
