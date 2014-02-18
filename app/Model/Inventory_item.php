@@ -318,18 +318,15 @@ class Inventory_item extends AppModel {
 	}
 
 	public function reorganizeByInventory($data){
-
 		$reorder = array();
 		$idx = -1;
 		if(count($data)>0){
 			foreach ($data as $ikey => $ivalue) {
 				$idx++;
 				$item_id = $ikey;
-
+				$item_name = $data[$ikey]['name'];
 				//get inventory_id
-				$inventories = $this->find('all',array('conditions'=>array('id'=>$item_id,'company_id'=>$_SESSION['company_id'])));
-				
-
+				$inventories = $this->find('all',array('conditions'=>array('name'=>$item_name,'company_id'=>$_SESSION['company_id'])));
 				if(count($inventories) >0){
 					foreach ($inventories as $inv) {
 						$inventory_id = $inv['Inventory_item']['inventory_id'];
@@ -341,7 +338,6 @@ class Inventory_item extends AppModel {
 				
 			}
 		}
-
 		return $reorder;
 	
 

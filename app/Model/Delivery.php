@@ -248,7 +248,7 @@ class Delivery extends AppModel {
 			$pickup_date = date('D n/d/Y',strtotime($data['Schedule']['pickup_date']));	
 			$string .= '<tr><td><legend>'.$first_name.' '.$last_name.'</td></tr>';	
 			$string .= '<tr><td><p>Thank you for making a delivery request with us. You have requested a pickup on '.$pickup_date.' and a dropoff on '.$dropoff_date.'. '.
-				'If these dates are not accurate or you would like to request a change in the pickup/dropoff dates you may <a href="'.$reschedule_link.'" style="color:blue;">Click Here</a>, or contact us at (206) 453-5930. '.
+				'If these dates are not accurate or you would like to request a change in the pickup/dropoff dates you may <a href="'.$reschedule_link.'" style="color:blue;">Click Here</a>, or contact us at (206) 453-5930. <br/><strong>(**Note** Date changes must be made before 7am of the date requested.)</strong>'.
 				'Thank you!';	
 		}
 

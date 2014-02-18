@@ -12,7 +12,16 @@ if(count($groups)>0){
 	foreach ($groups as $g) {
 		$group_name = $g['Group']['name'];
 		$group_id = $g['Group']['id'];
-		$group_admin = $g['Group']['admin'];
+		switch($group_id){
+			case '1':
+				$group_admin = 'Yes';		
+			break;
+			
+			default:
+				$group_admin = 'No';
+			break;
+		}
+		
 
 	}
 }

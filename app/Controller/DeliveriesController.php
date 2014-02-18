@@ -1044,7 +1044,7 @@ class DeliveriesController extends AppController {
 							//$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
 							$Backup->template('delivery-notification','delivery-notification')
 							    ->emailFormat('html')
-								->viewVars(compact(''))
+								->viewVars(compact('delivery_string'))
 								//->to('onedough83@gmail.com')
 							    ->to($sendTo)
 								->bcc($bcc)
@@ -1093,8 +1093,6 @@ class DeliveriesController extends AppController {
 			$subject = 'Jays Cleaners Delivery Change Requested';
 			
 			//create token to save
-			$original_string = 'abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
-			$new_token = $this->Delivery->get_random_string($original_string, 8);
 			$old_token = $_SESSION['old_token'];
 			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
 			$company_id = 1;
@@ -1103,14 +1101,11 @@ class DeliveriesController extends AppController {
 			
 			$user_update = array(); //start user array
 			
-			$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $new_token);
+			$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $old_token);
 			//create delivery schedule
-			$schedules = $this->Schedule->editSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $old_token, $new_token);
+			$schedules = $this->Schedule->editSchedule($company_id, $customer_id, $_SESSION['Delivery']['Schedule'],$_SESSION['Delivery']['User']['special_instructions'], $old_token);
 			//update the user table with the new data
 
-			$user_update['User']['token'] = $new_token;
-			$this->User->id = $customer_id;
-			$this->User->save($user_update);
 
 			//primary email settings
 			$Email = new CakeEmail('gmail');
@@ -1127,7 +1122,7 @@ class DeliveriesController extends AppController {
 			//$singlehotelstring = $this->Reservation->createHotelEmailString($hotel_session);
 			$Backup->template('delivery-notification','delivery-notification')
 			    ->emailFormat('html')
-				->viewVars(compact(''))
+				->viewVars(compact('delivery_string'))
 				//->to('onedough83@gmail.com')
 			    ->to($sendTo)
 				->bcc($bcc)

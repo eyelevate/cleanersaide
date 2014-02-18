@@ -23,36 +23,41 @@ delivery = {
 		$(".pickupDate").datepicker({
 			minDate:0,
 			beforeShowDay: function(date){ 
+				date.setHours(7);
+				var current_datetotime = convertDateToPacific(new Date()).getTime();
+				var selected_datetotime = convertDateToPacific(date).getTime();
+
+
 				var date_string = jQuery.datepicker.formatDate('mm/dd/yy', date);
 				switch(selectable_days.length){
 					case 0:
 						
-        				returned_array = [ blackout_dates.indexOf(date_string) == -1 ];
+        				returned_array = [blackout_dates.indexOf(date_string) == -1 ];
 					break;
 					
 					case 1:
-						returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0],""];
+						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0],""];
 						
 					break;
 					
 					case 2:
-						returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1],""];
+						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1],""];
 					break;
 					
 					case 3:
-						returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2],""];
+						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2],""];
 					break;
 					
 					case 4:
-						returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3],""];
+						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3],""];
 					break;
 					
 					case 5:
-						returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3] || date.getDay() == selectable_days[4],""];
+						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3] || date.getDay() == selectable_days[4],""];
 					break;
 					
 					case 6:
-						returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3] || date.getDay() == selectable_days[4] || selectable_days[5],""];
+						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3] || date.getDay() == selectable_days[4] || selectable_days[5],""];
 					break;
 				}
 				return returned_array;
@@ -281,7 +286,7 @@ delivery = {
 					pickup_date: pickup_date,
 					pickup_time: pickup_time,
 				},	function(results){
-					$("#successfulPickupMessage").removeClass('hide').addClass('alert alert-success').html('Thank you for selecting your delivery dropoff date and time! Please press next to select a dropoff date and time.');
+					$("#successfulPickupMessage").removeClass('hide').addClass('alert alert-success').html('Thank you for selecting your delivery pickup date and time! Please press next to select a dropoff date and time.');
 					//$("#pickupFinishFake").hide();
 					
 					$("#step1Button").removeClass('disabled');

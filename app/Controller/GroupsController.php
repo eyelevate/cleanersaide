@@ -20,7 +20,7 @@ class GroupsController extends AppController {
 	    parent::beforeFilter();
 		$this->set('username',AuthComponent::user('username'));
 		//
-		$this->Auth->deny();		
+		$this->Auth->allow();		
 		$this->Auth->authError = 'You do not have access to this page.';
 		
 	}
@@ -241,7 +241,6 @@ class GroupsController extends AppController {
 		//get group information
 		$group_find = $this->Group->find('all',array('conditions'=>array('id'=>$id)));
 		$this->set('groups',$group_find);
-		
 		//get acl permissions
 		$acl_permissions = $this->Acl_permission->find('all',array('conditions'=>array('group_id'=>$id)));
 		$this->set('acl_permissions',$acl_permissions);

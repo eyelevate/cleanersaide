@@ -386,7 +386,7 @@ class Schedule extends AppModel {
 		);
 		$this->save($schedules);		
 	}
-	public function editSchedule($company_id, $customer_id, $data, $special_instructions, $old_token,$new_token)
+	public function editSchedule($company_id, $customer_id, $data, $special_instructions, $old_token)
 	{
 		//get schedule_id
 		$getSI = $this->find('all',array('conditions'=>array('token'=>$old_token)));
@@ -406,7 +406,6 @@ class Schedule extends AppModel {
 			'dropoff_delivery_id'=>$data['dropoff_delivery_id'],
 			'special_instructions'=>$special_instructions,
 			'type'=>$data['type'],
-			'token'=>$new_token,
 			'status'=>1,
 		);
 		$this->id = $si_id;

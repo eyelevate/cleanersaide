@@ -70,6 +70,7 @@ class PrintersController extends AppController {
 						$inv_items = $this->Inventory_item->find('all',array('conditions'=>array('name'=>$item_name,'company_id'=>$company_id)));
 						if(count($inv_items)>0){
 							foreach ($inv_items as $ii) {
+								$new_item_id = $ii['Inventory_item']['id'];
 								$item_base = $ii['Inventory_item']['price'];
 							}
 						}	
@@ -80,16 +81,16 @@ class PrintersController extends AppController {
 								$color_qty = $colors_array[$ikey][1];
 								$colors[$cdx] = array(
 									'quantity'=>$color_qty,
-									'color_name'=>$color_name
+									'color'=>$color_name
 								);
 							}	
 						}	
-						$new_items[$item_id] = array(
+						$new_items[$new_item_id] = array(
 							'colors'=>$colors,
 							'quantity'=>$item_qty,
 							'name'=>$item_name,
 							'before_tax'=>$item_base,
-							'item_id'=>$item_id
+							'item_id'=>$new_item_id
 							
 						);				
 					}
@@ -187,7 +188,8 @@ class PrintersController extends AppController {
 	
 	public function print_tag1($id = null, $number = null)
 	{
-		$invoices = $this->Invoice->find('all',array('conditions'=>array('invoice_id'=>$id,'company_id'=>$_SESSION['company_id'])));
+
+		$invoices = $this->Invoice->find('all',array('conditions'=>array('Invoice.invoice_id like'=>$id,'company_id'=>$_SESSION['company_id'])));
 		$invoice_data = array();
 		if(count($invoices)>0){
 			foreach ($invoices as $inv) {
@@ -207,9 +209,10 @@ class PrintersController extends AppController {
 				if(count($items)>0){
 					foreach ($items as $ikey => $ivalue) {
 						$item_id = $items[$ikey]['item_id'];
+						$item_name = $items[$ikey]['name'];
 					}
 				}
-				$inventories = $this->Inventory_item->find('all',array('conditions'=>array('id'=>$item_id)));
+				$inventories = $this->Inventory_item->find('all',array('conditions'=>array('name'=>$item_name)));
 				if(count($inventories)>0){
 					foreach ($inventories as $ii) {
 						$inventory_id = $ii['Inventory_item']['inventory_id'];

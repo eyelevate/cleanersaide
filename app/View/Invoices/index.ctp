@@ -21,6 +21,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 					<th>State</th>
 					<th>Zip</th>
 					<th>Starch</th>
+					<th>Delivery</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
@@ -37,6 +38,13 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 						$state = $u['User']['contact_state'];
 						$zip = $u["User"]['contact_zip'];
 						$starch = $u['User']['starch'];
+						$profile_id = $u['User']['profile_id'];
+						$payment_id = $u['User']['payment_id'];
+						if(isset($profile_id) && !empty($profile_id)){
+							$delivery = 'Yes <br/><span>Profile id: <strong>'.$profile_id.'</strong></span> <br/><span>Payment id: <strong>'.$payment_id.'</strong></span>';
+						} else {
+							$delivery = 'No';
+						}
 						?>
 						<tr>
 							<td><?php echo $id;?></td>
@@ -48,6 +56,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 							<td><?php echo $state;?></td>
 							<td><?php echo $zip;?></td>
 							<td><?php echo $starch;?></td>
+							<td><?php echo $delivery;?></td>
 							<td><a href="/users/edit/<?php echo $customer_id;?>">Edit</a></td>
 						</tr>						
 						<?php
@@ -118,7 +127,6 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 								}
 							}						
 						}
-						debug($status);
 						switch($status){
 							case '1': //newly created 
 							
@@ -151,7 +159,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 							<td style="background-color:<?php echo $background_color;?>">
 								<ul class="unstyled">
 									<li class="hide"><?php echo $this->Form->postLink(); ?></li>
-									<li class="pull-left" style="margin-right: 5px"><?php echo $this->Form->postLink(__('Reprint'), array('action' => 'process_reprint', $invoice_id), null, __('Are you sure you want to reprint Invoice #%s?', $invoice_id)); ?></li>
+									<li class="pull-left" style="margin-right: 5px"><?php echo $this->Form->postLink(__('Reprint'), array('action' => 'reprint', $invoice_id), null, __('Are you sure you want to reprint Invoice #%s?', $invoice_id)); ?></li>
 									<li class="pull-left" style="margin-right:5px;"><?php echo $this->Form->postLink(__('Edit'), array('action' => 'edit', $invoice_id), null, __('Are you sure you want to edit Invoice #%s?', $invoice_id)); ?></li>
 									<li class="pull-left"><?php echo $this->Form->postLink(__('Cancel'), array('action' => 'delete', $invoice_id), null, __('Are you sure you want to cancel Invoice #%s?', $invoice_id)); ?></li>
 								</ul>

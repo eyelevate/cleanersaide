@@ -131,7 +131,7 @@ if($route_status == '1'){ //there are routes
 			
 			<div id="step1Div" class="row stepDiv alert alert-info">
 				<h3>(Step 1) Select delivery pickup date and time</h3>	
-				<em>Place Step 1 description here</em>
+				<em>Please note that we do not allow same day delivery requests made after 7am. </em>
 				<br/>
 				<?php
 	
@@ -166,7 +166,7 @@ if($route_status == '1'){ //there are routes
 
 			<div id="step2Div" class="row stepDiv alert alert-info hide">
 				<h3>(Step 2) Select delivery dropoff date and time</h3>
-				<em>Place Step 2 description here</em>
+				<em>Please select a valid dropooff date and time. </em>
 				<br/>
 				<?php
 	

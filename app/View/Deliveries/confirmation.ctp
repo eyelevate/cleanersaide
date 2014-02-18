@@ -11,7 +11,7 @@ $this->Html->css(array(
 $customer_id = $deliveries['User']['customer_id'];
 $first_name = $deliveries['User']['first_name'];
 $last_name = $deliveries['User']['last_name'];
-$phone = $deliveries['User']['phone'];
+$phone = $deliveries['User']['contact_phone'];
 $email = $deliveries['User']['contact_email'];
 $address = $deliveries['User']['contact_address'];
 $suite = $deliveries['User']['contact_suite'];

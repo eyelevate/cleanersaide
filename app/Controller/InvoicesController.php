@@ -66,7 +66,7 @@ class InvoicesController extends AppController {
 		$company_id = $_SESSION['company_id'];
 		
 		//get data from db
-		$users = $this->User->find('all',array('conditions'=>array('User.id'=>$id)));
+		$users = $this->User->regexValues($this->User->find('all',array('conditions'=>array('User.id'=>$id))));
 		$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$id,'status <'=>'3','company_id'=>$company_id)));
 		//set variable to show rewards system
 		$rewards_display = 'Yes';
@@ -579,6 +579,61 @@ class InvoicesController extends AppController {
 	{
 
 		$this->set('invoice_id',$barcode);
+	}
+	
+	public function reprint($invoice_id = null)
+	{
+		//set the admin navigation
+		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
+		$page_url = '/invoices/reprint';
+		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
+		$this->set('admin_nav',$admin_nav);
+		$this->set('admin_pages',$page_url);
+		$this->set('admin_check',$admin_check);		
+		
+		$invs = $this->Invoice->find('all',array('conditions'=>array('invoice_id'=>$invoice_id,'company_id'=>$_SESSION['company_id'])));
+		if(count($invs)>0){
+			foreach ($invs as $ikey => $ivalue) {
+				$customer_id = $invs[$ikey]['Invoice']['customer_id'];
+				$this->set('customer_id',$customer_id);
+				$due_date = $invs[$ikey]['Invoice']['due_date'];
+				$memo = $invs[$ikey]['Invoice']['memo'];
+				$status = $invs[$ikey]['Invoice']['status'];
+				$items = json_decode($invs[$ikey]['Invoice']['items'],true);
+				foreach ($items as $key => $value) {
+					$item_name = $value['name'];
+					$inv_items = $this->Inventory_item->find('all',array('conditions'=>array('id'=>$key,'company_id'=>$_SESSION['company_id'])));
+					if(count($inv_items)>0){
+						foreach ($inv_items as $ii) {
+							$inventory_id = $ii['Inventory_item']['inventory_id'];					
+						}
+						$invs[$ikey]['Invoice']['inventory_id'] = $inventory_id;
+					}
+				}
+				
+			}
+		}
+
+		//reorganize inventory by type and save into invoices table
+		$store_copy = $this->Inventory_item->reorganizeByInventory($items);	
+
+		$invoice_split = $this->Invoice->invoice_split($store_copy, $customer_id, $due_date, $memo);
+		$printer = 'Epson';
+		$company = $this->Company->find('all',array('conditions'=>array('id'=>$_SESSION['company_id'])));
+		$customer = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
+		$username = $this->Auth->user('username');
+		//create barcode images
+		
+		$create_store_copy = $this->Invoice->createStoreCopyInvoice($invoice_split,$username, $printer,$customer, $company);
+		$create_customer_copy = $this->Invoice->createCustomerCopyInvoice($invs[0], $username, $printer, $customer, $company);
+
+		$this->set('customer',$this->request->data);
+		$this->set('customer_id',$customer_id);
+		$this->set('store',$store_copy);	
+		$this->set('create_store_copy',$create_store_copy);	
+		$this->set('create_customer_copy',$create_customer_copy);	
+		$this->set('tags',$invs);
+
 	}
 
 

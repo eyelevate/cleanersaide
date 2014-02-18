@@ -254,6 +254,20 @@ class User extends AppModel {
 		
 	}
 	
+	public function regexValues($data)
+	{
+		if(count($data)>0){
+			foreach ($data as $key => $value) {
+				if(isset($data[$key]['User']['contact_phone'])){
+					$data[$key]['User']['contact_phone'] = ClassRegistry::init('Delivery')->formatPhoneNumber($data[$key]['User']['contact_phone']);
+				}
+						
+			}
+		}
+
+		return $data;
+	}
+	
 /**
  * Creates the random string
  * 

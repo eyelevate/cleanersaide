@@ -274,7 +274,6 @@ class Invoice extends AppModel {
 			$invoice[$key][46] = '\x1b\x4d\1';
 			
 			$idx = 46;
-
 			foreach ($items as $ikey => $ivalue) {
 				if(isset($items[$ikey]['colors'])){
 					$item_colors = $items[$ikey]['colors'];	
@@ -434,13 +433,24 @@ class Invoice extends AppModel {
 			$item_colors = array();
 			foreach ($items as $ikey => $ivalue) {
 				if(isset($items[$ikey]['colors'])){
+					
 					$item_colors = $items[$ikey]['colors'];
 				}
 				$item_color = '';
+
 				if(count($item_colors)>0){
 					foreach ($item_colors as $item) {
-						$color = $item['color'];
-						$qty = $item['quantity'];
+						if(isset($item['color_name'])){
+							$color = $item['color_name'];
+						} else {
+							$color = '';
+						}
+						if(isset($item['quantity'])){
+							$qty = $item['quantity'];	
+						} else {
+							$qty = 0;
+						}
+						
 						if($qty > 1){
 							$item_color .= '('.$qty.'x) '.$color.',';
 						} else {
