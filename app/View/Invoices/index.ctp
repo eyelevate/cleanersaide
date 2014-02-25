@@ -161,7 +161,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 									<li class="hide"><?php echo $this->Form->postLink(); ?></li>
 									<li class="pull-left" style="margin-right: 5px"><?php echo $this->Form->postLink(__('Reprint'), array('action' => 'reprint', $invoice_id), null, __('Are you sure you want to reprint Invoice #%s?', $invoice_id)); ?></li>
 									<li class="pull-left" style="margin-right:5px;"><?php echo $this->Form->postLink(__('Edit'), array('action' => 'edit', $invoice_id), null, __('Are you sure you want to edit Invoice #%s?', $invoice_id)); ?></li>
-									<li class="pull-left"><?php echo $this->Form->postLink(__('Cancel'), array('action' => 'delete', $invoice_id), null, __('Are you sure you want to cancel Invoice #%s?', $invoice_id)); ?></li>
+									<li class="pull-left"><?php echo $this->Form->postLink(__('Cancel'), array('action' => 'cancel', $invoice_id), null, __('Are you sure you want to cancel Invoice #%s?', $invoice_id)); ?></li>
 								</ul>
 							</td>
 						</tr>

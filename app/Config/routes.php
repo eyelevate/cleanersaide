@@ -136,7 +136,10 @@
 	Router::connect('/printers',array('controller'=>'printers','action'=>'index'));
 	Router::connect('/printers/:action',array('controller'=>'printers'));
 	Router::connect('/printers/:action/*',array('controller'=>'printers'));
-
+	//Reports Controller
+	Router::connect('/reports',array('controller'=>'reports','action'=>'index'));
+	Router::connect('/reports/:action',array('controller'=>'reports'));
+	Router::connect('/reports/:action/*',array('controller'=>'reports'));
 	//Rewards Controller
 	Router::connect('/rewards',array('controller'=>'rewards','action'=>'index'));
 	Router::connect('/rewards/:action',array('controller'=>'rewards'));

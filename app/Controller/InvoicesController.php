@@ -174,6 +174,27 @@ class InvoicesController extends AppController {
 		$this->set('invoices',$invoices);
 				
 	}
+	/**
+	 * Status review
+	 * 1 = new invoice
+	 * 2 = racked invoice
+	 * 3 = pickup and paid
+	 * 4 = account
+	 * 5 = cancelled invoice
+	 */
+	public function cancel($invoice_id=null)
+	{
+		$company_id = $_SESSION['company_id'];
+		
+		if(!is_null($invoice_id)){
+			$this->Invoice->query('update invoices set status = 5 where invoice_id ='.$invoice_id.' and company_id ='.$company_id.'');
+			$this->Session->setFlash(__('You have successfully cancelled order #'.$invoice_id),'default',array(),'success');
+			$this->redirect($this->referer());
+		} else {
+			$this->Session->setFlash(__('There was an error cancelling #'.$invoice_id.'. Please try again.'),'default',array(),'error');
+			$this->redirect($this->referer());	
+		}
+	}
 	
 	public function rack()
 	{
@@ -319,8 +340,15 @@ class InvoicesController extends AppController {
 			//update the pickup status in invoices
 			foreach ($this->request->data['Invoice']['picked_up'] as $key => $value) {
 				$invoice_id = $value['invoice_id'];
-	
-				$this->Invoice->query('update invoices set status = 5 where invoice_id ='.$invoice_id.' and company_id ='.$company_id.'');
+				/**
+				 * Status review
+				 * 1 = new invoice
+				 * 2 = racked invoice
+				 * 3 = pickup and paid
+				 * 4 = account
+				 * 5 = cancelled invoice
+				 */
+				$this->Invoice->query('update invoices set status = 3 where invoice_id ='.$invoice_id.' and company_id ='.$company_id.'');
 			}
 			
 			//add a new row to the transaction table

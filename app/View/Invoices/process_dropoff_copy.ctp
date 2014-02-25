@@ -100,7 +100,7 @@ echo $this->Html->script(array(
 				while (!qz.isDoneAppending()) {} // wait
 				qz.print();
 								
-			},3000);
+			},4000);
 	</script>
 	<?php
 	$frames = -1;

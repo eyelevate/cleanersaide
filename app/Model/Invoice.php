@@ -494,7 +494,10 @@ class Invoice extends AppModel {
 			$invoice[$key][$idx] = '['.$quantity.' PCS]['.strtoupper(date('D',strtotime($value['due_date']))).']'.$this->_NewLine();
 			$idx++;
 			$invoice[$key][$idx] = $this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
-			
+			$idx++;
+			$invoice[$key][$idx] = '\x1D\x56\x01 ';
+			$idx++;
+			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_MakeCut('partial');			
 		}
 
 		
