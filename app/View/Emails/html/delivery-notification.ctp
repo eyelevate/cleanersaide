@@ -31,7 +31,7 @@
 			<?php echo $delivery_string;?>
           </td>
         </tr>
-
+		<tr>
           <td class="footerBar" style="background-color: #231F20; color: #000000; font-family: arial; font-size: 12px; line-height: 150%; padding: 30px;" valign="top" align="left">
             <p class="footer" style="color: #A5D9C9; font-family: verdana; font-size: 10px; line-height: 150%; margin: 10px 0; text-align: center;">
               &copy; Copyright <?php echo date('Y');?> Jays Cleaners Roosevelt. All rights reserved.<br />

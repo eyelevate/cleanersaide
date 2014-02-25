@@ -63,7 +63,7 @@ class Delivery extends AppModel {
 					$day = 'Sunday';
 				break;
 			}
-			debug($key.' '.$day);
+
 			$data['Delivery'][$key]['route_name'] = $route_name;
 			$data['Delivery'][$key]['company_id'] = $company_id;	
 			$data['Delivery'][$key]['status'] = 1;	
@@ -171,6 +171,7 @@ class Delivery extends AppModel {
 		$status = 1;
 		//first pull all routes with this company_id and a stataus of 1;
 		$find = $this->find('all',array('conditions'=>array('company_id'=>$company_id,'status'=>$status)));
+
 		if(count($find)>0){
 			$idx = -1;
 			foreach ($find as $d) {
@@ -202,7 +203,6 @@ class Delivery extends AppModel {
 				}
 			}
 		}
-		
 		return $routes;
 	}
 
@@ -228,7 +228,7 @@ class Delivery extends AppModel {
 	{
 		$string = '';
 		
-		$reschedule_link = 'www.webupons.com/deliveries/reschedule/'.$token;
+		$reschedule_link = 'https://www.jayscleaners.com/deliveries/reschedule/'.$token;
 		if(isset($data)){
 			if(empty($customer_id)){
 				$customer_id = $data['User']['customer_id'];	
@@ -236,7 +236,7 @@ class Delivery extends AppModel {
 			
 			$first_name = ucfirst($data['User']['first_name']);
 			$last_name = ucfirst($data['User']['last_name']);
-			$phone = $data['User']['phone'];
+			$phone = $data['User']['contact_phone'];
 			$email = $data['User']['contact_email'];
 			$address = $data['User']['contact_address'];
 			$suite = $data['User']['contact_suite'];

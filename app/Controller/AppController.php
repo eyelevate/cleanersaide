@@ -74,10 +74,10 @@ class AppController extends Controller {
 		return true;
 	}
 	
-	// public function beforeFilter()
-	// {
-		// parent::beforeFilter();
-// 		
+	public function beforeFilter()
+	{
+		parent::beforeFilter();
+		
 		// //REDIRECT TO HTTPS IF REQUEST IS NOT HTTPS
 		// if($_SERVER['HTTPS']!="on")
 		// {
@@ -86,6 +86,6 @@ class AppController extends Controller {
 		// header("Location:$redirect");
 		// exit;
 		// }
-	// }
+	}
 
 }

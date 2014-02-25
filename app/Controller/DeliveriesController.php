@@ -26,6 +26,11 @@ class DeliveriesController extends AppController {
 		//set username
 		$username = $this->Auth->user('username');
 		$this->set('username',$username);
+
+		//set session max lifetime to 24 hours
+		ini_set('session.gc_maxlifetime',24*60*60); //max life 24 hours
+		ini_set('session.gc_probability',1);
+		ini_set('session.gc_divisor',1);		
 	
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
@@ -105,14 +110,16 @@ class DeliveriesController extends AppController {
 		
 		if($this->request->is('post')){
 			$_SESSION['Delivery'] = $this->request->data;  
-		
+			$this->request->data['User']['contact_phone'] = preg_replace('/\D/', '', $this->request->data['User']['contact_phone']);
 			$this->User->set($this->request->data);
 
 			if ($this->User->validates()){ //form has validated move on
 				$customer_id = $this->request->data['User']['customer_id'];
+				$_SESSION['Delivery']['User']['id'] = $customer_id;
+
 				$_SESSION['customer_id'] = $customer_id;
-				$phone = preg_replace('/\D/', '', $this->request->data['User']['contact_phone']);
-				$this->request->data['User']['contact_phone'] = $phone;
+				// $phone = preg_replace('/\D/', '', $this->request->data['User']['contact_phone']);
+				// $this->request->data['User']['contact_phone'] = $phone;
 				$this->request->data['User']['company_id'] = 1;
 				$this->request->data['User']['group_id'] = 5;
 				if(!empty($customer_id)){ //this is a returning customer
@@ -125,7 +132,7 @@ class DeliveriesController extends AppController {
 					
 				} else { //this is a guest
 					//lookup by phone number
-					$lookup = $this->User->find('all',array('conditions'=>array('contact_phone'=>$phone,'company_id'=>$company_id)));
+					$lookup = $this->User->find('all',array('conditions'=>array('contact_phone'=>$this->request->data['User']['contact_phone'],'company_id'=>$company_id)));
 					
 					if(count($lookup)>0){ //this is already a customer move on to next page
 						$this->Session->setFlash(__('Thank you returning Guest. Please fill out the form below to set a date and time for delivery.'),'default',array(),'success');
@@ -320,6 +327,11 @@ class DeliveriesController extends AppController {
 	{
 		if($this->request->is('post')){
 			$_SESSION['guest_form'] = $this->request->data;
+			unset($_SESSION['Delivery']);
+			unset($_SESSION['reschedule']);
+			unset($_SESSION['customer_id']);
+			unset($_SESSION['login']);
+			unset($_SESSION['customers']);
 			
 			$this->redirect(array('action'=>'index'));
 		}
@@ -351,9 +363,10 @@ class DeliveriesController extends AppController {
 	public function form()
 	{
 		$this->layout = 'pages';
-		if(isset($_SESSION['Delivery']['User']['customer_id'])){
-			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+		if(isset($_SESSION['Delivery']['User']['id'])){
+			$customer_id = $_SESSION['Delivery']['User']['id'];
 		}
+	
 		$page_url = '/deliveries/form';
 		$primary_nav = $this->Menu_item->arrangeByTiers(4);	
 		$primary_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $primary_nav);
@@ -378,7 +391,7 @@ class DeliveriesController extends AppController {
 		}
 		$this->set('route_schedule',$route_schedule);
 		if($this->request->is('post')){
-			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+			$customer_id = $_SESSION['Delivery']['User']['id'];
 			$dropoff_date = $this->request->data['Schedule']['dropoff_date'];
 			$dropoff_time = $this->request->data['Schedule']['dropoff_time'];
 			$pickup_date = $this->request->data['Schedule']['pickup_date'];
@@ -402,8 +415,8 @@ class DeliveriesController extends AppController {
 	public function request_pickup_date_time()
 	{
 		if($this->request->is('ajax')){
-			$pickup_date = $this->data['pickup_date'];
-			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+			$pickup_date = strtotime(date('Y-m-d ',$this->data['pickup_date']).'00:00:00');
+			$customer_id = $_SESSION['Delivery']['User']['id'];
 			$company_id = 1;
 	
 			$zipcode = $_SESSION['Delivery']['User']['contact_zip'];
@@ -444,7 +457,7 @@ class DeliveriesController extends AppController {
 		} else {
 			$this->set('deliveries',array());
 		}
-	
+
 		//get pickup time 
 		$delivery_pickup_data = $this->Delivery->find('all',array('conditions'=>array('id'=>$_SESSION['Delivery']['Schedule']['pickup_delivery_id'])));
 		if(count($delivery_pickup_data)>0){
@@ -467,9 +480,9 @@ class DeliveriesController extends AppController {
 		} else {
 			$this->set('dropoff_time','Not Set');
 		}
-		if(!empty($_SESSION['Delivery']['User']['customer_id'])){
+		if(!empty($_SESSION['Delivery']['User']['id'])){
 			//get payment info
-			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+			$customer_id = $_SESSION['Delivery']['User']['id'];
 			$users = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
 			$profile_id = '';
 			$payment_id = '';
@@ -501,13 +514,11 @@ class DeliveriesController extends AppController {
 	
 			    //$_SESSION['Delivery_data'] = $this->request->data;
 			    if(isset($_SESSION['reschedule']) && $_SESSION['reschedule'] == 'Yes'){
-			    	
 			    	return $this->process_resend_delivery_form($this->request->data);
 			    } else {
 			    	return $this->process_final_delivery_form($this->request->data);	
 			    }
-				
-			   
+
 			} else {
 			    // didn't validate logic
 			    $errors = $this->Payment->validationErrors;
@@ -522,6 +533,7 @@ class DeliveriesController extends AppController {
 	public function process_final_delivery_form()
 	{
 		if($this->request->is('post')){ //form handling from /delivery/confirmation
+		
 			//create the base for emails 
 			$sendTo = $_SESSION['Delivery']['User']['contact_email'];
 			$bcc = array('jayscleaners@gmail.com');
@@ -534,6 +546,7 @@ class DeliveriesController extends AppController {
 			unset($_SESSION['payment_error']); //automatically unset the payment error array
 			//set variables
 			$user_update = array(); //create the new user data to update user table
+			$user_update['User']['token'] = $token; //add the token
 			$company_id = 1; //set to 1 for now change if we have multiple stores
 			$saved_payment_profile = $this->request->data['Payment']['saved_profile'];
 			if(isset($this->request->data['Payment']['payment_status'])){
@@ -541,10 +554,11 @@ class DeliveriesController extends AppController {
 			} else {
 				$payment_status = 'No';
 			}
-
+			
 			switch($payment_status){
 				case 'Yes': //we will keep the payment id and payment profile
 				$user_update['User']['payment_status'] = 2;
+				
 				break;
 					
 				case 'No': //we will delete the payment id and payment profile after delivery completion
@@ -553,10 +567,9 @@ class DeliveriesController extends AppController {
 					
 			}		
 
-			$phone = preg_replace("/[^0-9]/","",$_SESSION['Delivery']['User']['phone']); //strip phone to just numbers
-
-			if(!empty($_SESSION['Delivery']['User']['customer_id'])){
-				$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+			$phone = preg_replace("/[^0-9]/","",$_SESSION['Delivery']['User']['contact_phone']); //strip phone to just numbers
+			if(!empty($_SESSION['Delivery']['User']['id'])){
+				$customer_id = $_SESSION['Delivery']['User']['id'];
 				$users = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
 				$profile_id = '';
 				$payment_id = '';
@@ -815,6 +828,7 @@ class DeliveriesController extends AppController {
 				}
 							
 			} else {
+
 				//lookup customer by phone number
 				$ccnum = preg_replace("/[^0-9]/","",$this->request->data['Payment']['ccnum']);
 				$exp_month = preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_month']);
@@ -839,7 +853,6 @@ class DeliveriesController extends AppController {
 								case 'approved':
 									$profile_id = $profiles['customerProfileId'];
 									$user_update['User']['profile_id'] = $profile_id;
-									$user_update['User']['token'] = $token;
 											
 								break;
 									
@@ -992,7 +1005,6 @@ class DeliveriesController extends AppController {
 						case 'approved':
 							$profile_id = $profiles['customerProfileId'];
 							$user_update['User']['profile_id'] = $profile_id;
-							$user_update['User']['token'] = $token;		
 						break;
 							
 						case 'rejected':
@@ -1075,7 +1087,7 @@ class DeliveriesController extends AppController {
 					}
 				
 				}
-			}		
+			} //end if no customer_id	
 
 		}		
 	}
@@ -1094,7 +1106,7 @@ class DeliveriesController extends AppController {
 			
 			//create token to save
 			$old_token = $_SESSION['old_token'];
-			$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+			$customer_id = $_SESSION['Delivery']['User']['id'];
 			$company_id = 1;
 		
 			unset($_SESSION['payment_error']); //automatically unset the payment error array
@@ -1173,11 +1185,11 @@ class DeliveriesController extends AppController {
 			foreach ($users as $user) {
 				$zipcode = $user['User']['contact_zip'];
 				$customer_id = $user['User']['id'];
-				$_SESSION['Delivery']['User']['customer_id'] = $customer_id;
+				$_SESSION['Delivery']['User']['id'] = $customer_id;
 				$_SESSION['Delivery']['User']['contact_zip'] = $zipcode;
 				$_SESSION['Delivery']['User']['first_name'] = $user['User']['first_name'];
 				$_SESSION['Delivery']['User']['last_name'] = $user['User']['last_name'];
-				$_SESSION['Delivery']['User']['phone'] = $user['User']['contact_phone'];
+				$_SESSION['Delivery']['User']['contact_phone'] = $user['User']['contact_phone'];
 				$_SESSION['Delivery']['User']['contact_email'] = $user['User']['contact_email'];
 				$_SESSION['Delivery']['User']['contact_address'] = $user['User']['contact_address'];
 				$_SESSION['Delivery']['User']['contact_suite'] = $user['User']['contact_suite'];
@@ -1204,7 +1216,7 @@ class DeliveriesController extends AppController {
 			}
 			$this->set('route_schedule',$route_schedule);
 			if($this->request->is('post')){
-				$customer_id = $_SESSION['Delivery']['User']['customer_id'];
+				$customer_id = $_SESSION['Delivery']['User']['id'];
 				$dropoff_date = $this->request->data['Schedule']['dropoff_date'];
 				$dropoff_time = $this->request->data['Schedule']['dropoff_time'];
 				$pickup_date = $this->request->data['Schedule']['pickup_date'];

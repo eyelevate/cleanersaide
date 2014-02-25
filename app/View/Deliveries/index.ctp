@@ -172,7 +172,7 @@ echo $this->Html->script(array(
 			<p class="alert alert-info">Please make sure all current data is up to date. Press next to select delivery/pickup time.</p>
 			<?php
 		} else {
-			if(!empty($customers)){
+			if(!empty($customers) && count($customers)>0){
 				$first_name = $customers['User']['first_name'];
 				$last_name = $customers['User']['last_name'];
 				$phone = $customers['User']['contact_phone'];
@@ -247,23 +247,23 @@ echo $this->Html->script(array(
 		
 		<br/>
 		<form id="custInfoForm" method="post" action="/deliveries">
-			<input type="hidden" value="<?php echo $customer_id;?>" name="data[User][customer_id]"/>
+			<input type="hidden" value="<?php echo $customer_id;?>" name="data[User][customer_id]" />
 		<div class="row">
 			<div class="control-group <?php echo $first_name_errors;?> four columns alpha">
 				<label>First Name <span class="required">*</span></label>
-				<input type="text" name="data[User][first_name]" value="<?php echo $first_name;?>"/>
+				<input type="text" name="data[User][first_name]" value="<?php echo $first_name;?>" required="required"/>
 				<span class="help-block"><?php echo $first_name_error_message;?></span>
 			</div>	
 			<div class="control-group <?php echo $last_name_errors;?> four columns alpha clearfix">
 				<label>Last Name <span class="required">*</span></label>
-				<input type="text" name="data[User][last_name]" value="<?php echo $last_name;?>"/>
+				<input type="text" name="data[User][last_name]" value="<?php echo $last_name;?>" required="required"/>
 				<span class="help-block"><?php echo $last_name_error_message;?></span>
 			</div>
 		</div>
 		<div class="row">
 			<div class="control-group <?php echo $contact_phone_errors;?> four columns alpha">
 				<label>Phone Number <span class="required">*</span></label>
-				<input class="phone" type="text" name="data[User][contact_phone]" value="<?php echo $phone;?>"/>
+				<input class="phone" type="text" name="data[User][contact_phone]" value="<?php echo $phone;?>" required="required"/>
 				<span class="help-block"><?php echo $contact_phone_error_message;?></span>
 			</div>		
 			<div class="control-group <?php echo $contact_intercom_errors;?> three columns alpha">
@@ -275,14 +275,14 @@ echo $this->Html->script(array(
 		<div class="row">
 			<div class="control-group <?php echo $contact_email_errors;?> six columns alpha">
 				<label>Email Address <span class="required">*</span></label>
-				<input type="text" name="data[User][contact_email]" value="<?php echo $email;?>"/>
+				<input type="text" name="data[User][contact_email]" value="<?php echo $email;?>" required="required"/>
 				<span class="help-block"><?php echo $contact_email_error_message;?></span>
 			</div>
 		</div>
 		<div class="row">
 			<div class="control-group <?php echo $contact_address_errors;?> six columns alpha">
 				<label>Street Address <span class="required">*</span></label>
-				<input type="text" name="data[User][contact_address]" value="<?php echo $street;?>"/>
+				<input type="text" name="data[User][contact_address]" value="<?php echo $street;?>" required="required"/>
 				<span class="help-block"><?php echo $contact_address_error_message;?></span>
 			</div>
 			<div class="control-group two columns alpha">
@@ -293,24 +293,24 @@ echo $this->Html->script(array(
 		<div class="row">
 			<div class="control-group <?php echo $contact_city_errors;?> four columns alpha">
 				<label>City <span class="required">*</span></label>
-				<input type="text" name="data[User][contact_city]" value="<?php echo $city;?>"/>
+				<input type="text" name="data[User][contact_city]" value="<?php echo $city;?>" required="required"/>
 				<span class="help-block"><?php echo $contact_city_error_message;?></span>
 			</div>
 			<div class="control-group <?php echo $contact_state_errors;?> two columns alpha">
 				<label>State <span class="required">*</span></label>
-				<input type="text" name="data[User][contact_state]" value="<?php echo $state;?>"/>
+				<input type="text" name="data[User][contact_state]" value="<?php echo $state;?>" required="required"/>
 				<span class="help-block"><?php echo $contact_state_error_message;?></span>
 			</div>
 			<div class="control-group <?php echo $contact_zip_errors;?> two columns alpha">
 				<label>Zipcode <span class="required">*</span></label>
-				<input type="text" name="data[User][contact_zip]" value="<?php echo $zipcode;?>"/>
+				<input type="text" name="data[User][contact_zip]" value="<?php echo $zipcode;?>" required="required"/>
 				<span class="help-block"><?php echo $contact_zip_error_message;?></span>
 			</div>
 		</div>
 		<div class="row">
 			<div class="control-group <?php echo $contact_shirt_errors;?> four columns alpha">
 				<label>Shirt Preference <span class="required">*</span></label>
-				<select name="data[User][shirt]">
+				<select name="data[User][shirt]" >
 				<?php
 				switch($shirt_preference){
 					case 'hanger':
@@ -334,6 +334,14 @@ echo $this->Html->script(array(
 					<option value="box">Boxed</option>
 					<option value="fold" default="default">Folded</option>					
 					<?php								
+					break;
+					
+					default:
+					?>
+					<option value="hanger" default="default">On Hanger</option>
+					<option value="box">Boxed</option>
+					<option value="fold">Folded</option>					
+					<?php							
 					break;
 				}
 				?>

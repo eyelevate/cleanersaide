@@ -14,7 +14,7 @@
             <table cellpadding="15" width="600" cellspacing="0">
               <tr>
                 <td style="color: #000000; font-family: arial; font-size: 12px; line-height: 150%;"><h1 style="color: #333333; font-family: arial,sans-serif; font-size: 36px; font-weight: bold; line-height: 1; margin: 0; text-align: left;">Forgotten Password</h1></td>
-                <td style="color: #000000; font-family: arial; font-size: 12px; line-height: 150%;"><h2 style="color: #EE3A4A; font-family: arial; font-size: 14px; font-weight: bold; line-height: 120%; margin: 0; padding: 12px 0 0 0; text-align: right;">Black Ball Ferry Line</h2></td>
+                <td style="color: #000000; font-family: arial; font-size: 12px; line-height: 150%;"><h2 style="color: #EE3A4A; font-family: arial; font-size: 14px; font-weight: bold; line-height: 120%; margin: 0; padding: 12px 0 0 0; text-align: right;">Jays Cleaners Roosevelt</h2></td>
               </tr>
             </table>
           </td>
@@ -30,7 +30,7 @@
 		<tr>
           <td class="footerBar" style="background-color: #231F20; color: #000000; font-family: arial; font-size: 12px; line-height: 150%; padding: 30px;" valign="top" align="left">
             <p class="footer" style="color: #A5D9C9; font-family: verdana; font-size: 10px; line-height: 150%; margin: 10px 0; text-align: center;">
-              &copy; Copyright <?php echo date('Y');?> Black Ball Ferry Line. All rights reserved.<br />
+              &copy; Copyright <?php echo date('Y');?> Jays Cleaners Roosevelt. All rights reserved.<br />
             </p>
           </td>
         </tr>

@@ -84,7 +84,7 @@ var newRow = function(invoice_id,idx){
 			'<input id="rackInvoiceInput" type="text" value="'+invoice_id+'" name="data[Invoice]['+count_row+'][invoice_id]"/>'+
 		'</td>'+
 		'<td class="rackNumberTd">'+
-			'<input id="rackNumberInput" type="text" value="" name="data[Invoice]['+count_row+'][rack]"/>'+
+			'<input id="rackNumberInput" type="text" name="data[Invoice]['+count_row+'][rack]"/>'+
 		'</td>'+
 		'<td>'+
 			'<a class="removeRow" style="cursor:pointer;">remove</a>'+

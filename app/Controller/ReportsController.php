@@ -34,6 +34,12 @@ class ReportsController extends AppController {
 		$this->set('username',AuthComponent::user('username'));
 		//deny all public users to this page
 		$this->Auth->deny('*');
+		
+		//set session max lifetime to 24 hours
+		ini_set('session.gc_maxlifetime',24*60*60); //max life 24 hours
+		ini_set('session.gc_probability',1);
+		ini_set('session.gc_divisor',1);				
+		
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
 		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .

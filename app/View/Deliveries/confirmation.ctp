@@ -8,7 +8,7 @@ $this->Html->css(array(
 	'stylesheet',
 	array('inline'=>false)
 );
-$customer_id = $deliveries['User']['customer_id'];
+$customer_id = $deliveries['User']['id'];
 $first_name = $deliveries['User']['first_name'];
 $last_name = $deliveries['User']['last_name'];
 $phone = $deliveries['User']['contact_phone'];
@@ -85,7 +85,7 @@ $pickup_date = date('D n/d/Y',strtotime($deliveries['Schedule']['pickup_date']))
 		} else {
 		?>
 		<div class="alert alert-info">
-			All delivery require payment information...(finish statement)
+			Payment Information is required prior to delivery.  Payment Information can be saved securely for future use or deleted at any time.
 		</div>		
 		<?php
 		}
@@ -170,6 +170,13 @@ $pickup_date = date('D n/d/Y',strtotime($deliveries['Schedule']['pickup_date']))
 		<?php	
 		}	
 		?>	
+			<div class="AuthorizeNetSeal"> 
+				<script type="text/javascript" language="javascript">
+					var ANS_customer_id="8db8623d-f12e-4284-978d-7eb301be912e";
+				</script> 
+				<script type="text/javascript" language="javascript" src="//verify.authorize.net/anetseal/seal.js" ></script> 
+				<a href="http://www.authorize.net/" id="AuthorizeNetText" target="_blank">Payment Gateway</a> 
+			</div>
 			<div class="row">
 				<input type="submit" class="btn btn-primary btn-large pull-right" value="Make Delivery"/>
 			</div>

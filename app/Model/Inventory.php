@@ -262,6 +262,7 @@ class Inventory extends AppModel {
 		
 		return $new_options;
 	}
+	
 }
 
 

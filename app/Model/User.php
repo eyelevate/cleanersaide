@@ -132,20 +132,16 @@ class User extends AppModel {
 				'message'=>'This is not a valid email'
 			)
 		),
-		'phone'=>array(
-			'notEmpty'=>array(
-				'rule'=>'notEmpty',
-				'message'=>'This field cannot be left blank'
-			)
-		),
+		// 'phone'=>array(
+			// 'notEmpty'=>array(
+				// 'rule'=>'notEmpty',
+				// 'message'=>'This field cannot be left blank'
+			// )
+		// ),
 		'contact_phone'=>array(
 			'notEmpty'=>array(
 				'rule'=>'notEmpty',
 				'message'=>'This field cannot be left blank'
-			),
-			'unique'=>array(
-				'rule'=>'isUnique',
-				'message'=>'This phone number has already been taken. Enter in a new phone number.'
 			)
 		),
 

@@ -51,6 +51,7 @@ echo $this->Html->script(array(
 					case 'BARCODE':
 					?>
 					qz.appendImage("http://www.cleanersaide.com/barcode1.php?invoice_number=<?php echo $svalue;?>", "ESCP", "single");
+					while (!qz.isDoneAppending()) {} // wait
 					<?php
 					break;
 						
@@ -58,7 +59,7 @@ echo $this->Html->script(array(
 					?>
 					if (qz != null) {
 						qz.append('<?php echo $svalue;?>');
-						
+						while (!qz.isDoneAppending()) {} // wait
 					}
 					<?php						
 					break;
@@ -66,15 +67,18 @@ echo $this->Html->script(array(
 			
 			}			
 		}
-		?>
-		setTimeout(function(){
-			qz.print();
-			qz.append("\x1B\x40");
-			qz.append("\x1D\x56\x41");
-			qz.append("\x1B\x40");
-			qz.print();
-							
-		},3000);	
+			?>
+			setTimeout(function(){
+				while (!qz.isDoneAppending()) {} // wait
+				qz.print();
+				qz.append("\x1B\x40");
+				qz.append("\x1D\x56\x41");
+				qz.append("\x1B\x40");
+				while (!qz.isDoneAppending()) {} // wait
+				qz.print();
+								
+			},3000);
+
 	</script>
 	<?php
 	$frames = -1;
@@ -137,4 +141,7 @@ echo $this->Html->script(array(
 	}
 	?>
 	</div>
+	<div class="row-fluid">
+		<a class="btn btn-large btn-danger" href="/invoices/index/<?php echo $customer_id;?>">Back to Customer Invoice Page</a>
+	</div>	
 </div>

@@ -628,7 +628,7 @@ class Invoice extends AppModel {
 		$idx++;
 		$invoice[$idx] = $this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
 		$idx++;
-		$invoice[$idx] = '\x1D\x56\x01 '.$this->_MakeCut('partial');	
+		$invoice[$idx] = $this->_MakeCut('partial');	
 		
 		
 		return $invoice;		

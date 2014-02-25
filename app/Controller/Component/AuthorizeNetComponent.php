@@ -11,10 +11,18 @@ Class AuthorizeNetComponent extends Component {
 	
 	public function __construct()
 	{
-		$this->merchant_login = '5x2GcpC8RJ';
-		$this->merchant_transaction_id = '5Jb5QWnk65WX7u8u';
-		$this->merchant_apihost = 'apitest.authorize.net';
-		$this->merchant_apipath = "/xml/v1/request.api";
+		
+		//test mode
+		// $this->merchant_login = '5x2GcpC8RJ';
+		// $this->merchant_transaction_id = '5Jb5QWnk65WX7u8u';
+		// $this->merchant_apihost = 'apitest.authorize.net';
+		// $this->merchant_apipath = "/xml/v1/request.api";
+		
+		//live mode
+		$this->merchant_login = '4a6h9PfeBk';
+		$this->merchant_transaction_id = '2kRP3cQ5N298ya7J';
+		$this->merchant_apihost = 'api.authorize.net';
+		$this->merchant_apipath = "/xml/v1/request.api";		
 	}
 	
 	public function createProfile($data)
@@ -22,8 +30,8 @@ Class AuthorizeNetComponent extends Component {
 		//first create response array
 		$profile = array();
 
-		//$validation_mode = 'liveMode'; //production mode
-		$validation_mode = 'testMode'; //developmental mode
+		$validation_mode = 'liveMode'; //production mode
+		// $validation_mode = 'testMode'; //developmental mode
 		$company_id = $data['User']['company_id'];
 		$customer_id = $data['User']['id'];
 		$first_name = $data['User']['first_name'];
@@ -68,8 +76,8 @@ Class AuthorizeNetComponent extends Component {
 		//first create response array
 		$profile = array();
 
-		//$validation_mode = 'liveMode'; //production mode
-		$validation_mode = 'testMode'; //developmental mode
+		$validation_mode = 'liveMode'; //production mode
+		// $validation_mode = 'testMode'; //developmental mode
 		$company_id = $data['User']['company_id'];
 		$customer_id = $data['User']['id'];
 		$first_name = $data['User']['first_name'];
@@ -248,6 +256,7 @@ Class AuthorizeNetComponent extends Component {
 				
 					$user_delete = array();
 					$user_delete['profile_id'] = null;
+					$user_delete['payment_status'] = null;
 					$user_delete['payment_id'] = null;
 					ClassRegistry::init('User')->id = $customer_id;
 					ClassRegistry::init('User')->save($user_delete);

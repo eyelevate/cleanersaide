@@ -38,12 +38,12 @@ home = {
 		    $("#sequence .slider_nav_holder").fadeIn(100);
 			$("#sequence .slider_nav_holder span:nth-child("+(sequence.settings.startingFrameID)+")").addClass("active");
 
-		}
+		};
 
 		   sequence.beforeNextFrameAnimatesIn = function() {
 		        $("#sequence .slider_nav_holder span:not(:nth-child("+(sequence.nextFrameID)+"))").removeClass("active");
 		        $("#sequence .slider_nav_holder span:nth-child("+(sequence.nextFrameID)+")").addClass("active");
-		    }
+		   };
 
 		$("#sequence").on("click", ".slider_nav", function() {
 	        $(this).removeClass("active").addClass("active");
@@ -62,11 +62,11 @@ home = {
 
 	}
 
-}
+};
 
 requests = {
 
-}
+};
 addScripts = {
 
-}
+};

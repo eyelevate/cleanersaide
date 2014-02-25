@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
 class AdminsController extends AppController {
 
 	public $name = 'Admins';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice','Invoice_item','Company','Tax');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Invoice','Inventory','Inventory_item','Company','Tax','Schedule','Delivery');
 
 
 	public function beforeFilter()
@@ -21,6 +21,12 @@ class AdminsController extends AppController {
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
 		$this->Auth->allow('login','logout','printing');
+		//set session max lifetime to 24 hours
+		ini_set('session.gc_maxlifetime',24*60*60); //max life 24 hours
+		ini_set('session.gc_probability',1);
+		ini_set('session.gc_divisor',1);
+		
+		
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
 		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
@@ -121,8 +127,21 @@ class AdminsController extends AppController {
 		//set the action levels
 		$group_id = $this->Auth->user('group_id');
 		
+		//get invoice dropoff data
+		$today_beginning = date('Y-m-d ').'00:00:00';
+		$today_end = date('Y-m-d ').'23:59:59';
+		$today_conditions = array('created BETWEEN ? AND ?' =>array($today_beginning, $today_end));
+		$today = $this->Invoice->find('all',array('conditions'=>$today_conditions));
+		$split_invoices = $this->Inventory_item->today_invoices($today);
+		$this->set('split_invoices',$split_invoices);
+		$pickup_conditions = array('modified BETWEEN ? AND ?' =>array($today_beginning, $today_end),'status >'=>'3');
+		$pickup = $this->Invoice->find('all',array('conditions'=>$pickup_conditions));
+		$pickup_invoices = $this->Inventory_item->today_invoices($pickup);
+		$this->set('pickup_invoices',$pickup_invoices);
+		//get delivery data
+		$schedules = $this->Schedule->regexDisplay($this->Schedule->find('all',array('conditions'=>$today_conditions)));
+		$this->set('schedules',$schedules);
 		
-
 
 	}
 	public function search_customers()
@@ -145,7 +164,18 @@ class AdminsController extends AppController {
 					case '4': //this is a customer id
 						$users = $this->User->find('all',array('conditions'=>array('User.id'=>$query)));
 					break;
+					case '6':
+						$invoices = $this->Invoice->find('all',array('conditions'=>array('invoice_id'=>$query)));
+						if(count($invoices)>0){
+							foreach ($invoices as $inv) {
+								$customer_id = $inv['Invoice']['customer_id'];
+							}
+						} else {
+							$customer_id = '';
+						}
+						$users = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
 						
+					break;	
 					case '7': //this is a phone
 						$users = $this->User->find('all',array('conditions'=>array('User.contact_phone LIKE'=>'%'.$query.'%')));
 					break;

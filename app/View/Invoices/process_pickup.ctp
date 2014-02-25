@@ -88,7 +88,7 @@ if($print == 'Yes'):
 	</div>
 	<div id="redirect-alert" class="alert alert-success"></div>
 	<div class="formRow">
-		<a href="/invoices/index/<?php echo $customer_id;?>" class="btn btn-large btn-danger">Cancel + Redirect</a>
+		<a href="/invoices/index/<?php echo $customer_id;?>" class="btn btn-large btn-danger">Back to customer</a>
 	</div>
 	<div class="hide">
 		<input id="customer_id" type="hidden" value="<?php echo $customer_id;?>"/>

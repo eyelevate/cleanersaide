@@ -18,24 +18,30 @@ class InventoryItemsController extends AppController {
 		$this->set('username',AuthComponent::user('username'));
 		//deny all public users to this page
 		$this->Auth->deny('*');
-		// if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
-		    // // Optionally log an ACL deny message in auth.log
-		    // CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
-		        // ' tried to access ' . $this->name . '/' .
-		        // $this->request->params['action'] . '.'
-		    // );
-// 		
-		    // // Render the forbidden page instead of the current requested page
-		    // $this->Session->setFlash(__('You do not have access to this page.'),'default',array(),'error');
-		    // echo $this->redirect(array('controller'=>'admins','action'=>'index'));
-// 		
-		    // /**
-		     // * Make sure we halt here, otherwise the forbidden message
-		     // * is just shown above the content.
-		     // */
-// 
-// 		
-		// }	
+		
+		//set session max lifetime to 24 hours
+		ini_set('session.gc_maxlifetime',24*60*60); //max life 24 hours
+		ini_set('session.gc_probability',1);
+		ini_set('session.gc_divisor',1);				
+		
+		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
+		    // Optionally log an ACL deny message in auth.log
+		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
+		        ' tried to access ' . $this->name . '/' .
+		        $this->request->params['action'] . '.'
+		    );
+		
+		    // Render the forbidden page instead of the current requested page
+		    $this->Session->setFlash(__('You do not have access to this page.'),'default',array(),'error');
+		    echo $this->redirect(array('controller'=>'admins','action'=>'index'));
+		
+		    /**
+		     * Make sure we halt here, otherwise the forbidden message
+		     * is just shown above the content.
+		     */
+
+		
+		}	
 		//setup the layout on the page
 		$this->layout = 'admin';
 		

@@ -392,7 +392,7 @@ if(!empty($error_message)){
 			}
 			?>
 		</fieldset>
-		<fieldset class="sixteen columns alpha well well-small">
+		<!-- <fieldset class="sixteen columns alpha well well-small">
 			<h3>Payment Information</h3>
 			<div class="row"> 
 				<label>Would you like us to store your personal credit card information?</label>
@@ -456,7 +456,7 @@ if(!empty($error_message)){
 				?>
 				</div>
 			</div>	
-		</fieldset>
+		</fieldset> -->
 		<fieldset>
 			<div class="row">
 				<button id="goBackButton" class="btn btn-danger btn-large pull-left" type="button">Go Back</button>

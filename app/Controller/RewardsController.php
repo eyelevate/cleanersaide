@@ -19,6 +19,11 @@ class RewardsController extends AppController {
 		$this->set('username',$username);	
 		//deny all public users to this controller
 		$this->Auth->deny('*');
+		
+		//set session max lifetime to 24 hours
+		ini_set('session.gc_maxlifetime',24*60*60); //max life 24 hours
+		ini_set('session.gc_probability',1);
+		ini_set('session.gc_divisor',1);				
 		//$this->Auth->allow('forgot','reset','convert_users','new_customers','process_frontend_new_user','redirect_new_frontend_customer','frontend_logout');
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log

@@ -237,9 +237,9 @@ class UsersController extends AppController {
 					//send the data to be processed for a valid email
 					$random_token = $this->User->emailForgottenPassword($email, $user_id);
 					//start the email process	
-					$link = 'http://www.cohoferry.com/users/reset/'.$random_token;	//this must be changed when pushed to the server		
+					$link = 'https://www.jayscleaners.com/users/reset/'.$random_token;	//this must be changed when pushed to the server		
 					$sendTo = $email;
-					$from = array('info@mpaengine.com'=>'admin'); //must change this 
+					$from = array('info@jayscleaners.com'=>'admin'); //must change this 
 					$subject = 'Forgotten Password';
 					$Email = new CakeEmail('gmail');
 					$Email->emailFormat('html')
@@ -321,6 +321,7 @@ class UsersController extends AppController {
 			$phone = preg_replace('/\D/', '', $this->request->data['User']['contact_phone']);
 			$company_id = 1;
 			$username = $this->request->data['User']['username'];
+			$this->request->data['User']['store_credit_data'] = 'No'; //temporary until i fix the payment saving scripts
 			$this->request->data['User']['contact_phone'] = $phone;
 			$this->request->data['User']['company_id'] = $company_id;
 			$this->request->data['User']['reward'] = '1';
@@ -372,6 +373,9 @@ class UsersController extends AppController {
 
 				if($this->User->save($this->request->data)){
 					$last_id = $this->User->getLastInsertId();
+
+					$_SESSION['Delivery']['User']['id'] = $last_id;
+
 					$new_customers = $this->User->find('all',array('conditions'=>array('User.id'=>$last_id)));
 
 					if(count($new_customers)>0){
@@ -380,9 +384,6 @@ class UsersController extends AppController {
 							$new_customer_id = $cust['User']['id'];
 							$new_customer_zip = $cust['User']['contact_zip'];
 							//login user
-							$_SESSION['customer_id'] = $cust;
-							$_SESSION['customers'] = $customers;
-							$_SESSION['login'] = 'Yes';
 						}
 						$this->request->data['User']['id'] = $new_customer_id;
 						$this->request->data['User']['company_id'] = '1';
@@ -416,6 +417,31 @@ class UsersController extends AppController {
 				}
 			}
 
+		}
+		$groups = $this->User->Group->find('list');
+		$this->set(compact('groups'));		
+	}
+
+	public function new_backend_customer()
+	{
+		//set the admin navigation
+		$page_url = '/users/new_backend_customer';
+		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
+		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
+		$this->set('admin_nav',$admin_nav);
+		$this->set('admin_pages',$page_url);
+		$this->set('admin_check',$admin_check);
+		//select layout
+		$this->layout = 'admin';		
+		//if saving
+		if ($this->request->is('post')) {
+			$this->User->create();
+			if ($this->User->save($this->request->data)) {
+				$this->Session->setFlash(__('The user has been saved'));
+				$this->redirect(array('action' => 'index'));
+			} else {
+				$this->Session->setFlash(__('The user could not be saved. Please, try again.'));
+			}
 		}
 		$groups = $this->User->Group->find('list');
 		$this->set(compact('groups'));		

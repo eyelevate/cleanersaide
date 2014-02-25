@@ -1,7 +1,12 @@
 <?php
 $this->Html->css(array('admin/invoices_dropoff'),'stylesheet', array('inline' => false)); 
 //add scripts to header
-echo $this->Html->script(array('admin/invoices_edit.js'),FALSE);
+echo $this->Html->script(array(
+	'admin/plugins/jquerypriceformat/jquery.price_format.1.7.min.js',
+	'admin/invoices_edit.js',
+	),
+	FALSE
+);
 
 $tax_rate  = 0;
 if(!empty($taxes)){
@@ -127,11 +132,17 @@ foreach ($invoices as $i) {
 						if(count($items)>0){
 							
 							foreach ($items as $ikey => $ivalue) {
+
 								$item_qty = $ivalue['quantity'];
 								$item_name = $ivalue['name'];
 								$item_bt = $ivalue['before_tax'];
 								$item_id = $ivalue['item_id'];
-								$item_colors = $ivalue['colors'];
+								
+								if(isset($ivalue['colors'])){
+									$item_colors = $ivalue['colors'];
+								} else {
+									$item_colors = array();	
+								}
 
 								?>
 								<tr id="invoice_item_td-<?php echo $item_id;?>" class="invoice_item_td" status="notactive">
@@ -160,7 +171,12 @@ foreach ($invoices as $i) {
 										?>											
 										</ul>
 									</td>
-									<td class="priceTd"><?php echo $item_bt;?></td>
+									<td class="priceTd">
+										<div class="input-prepend">
+											<span class="add-on">$</span>
+											<input type="text" class="span4" value="<?php echo $item_bt;?>" name="data[delete]"/>
+										</div>
+									</td>
 									<td>
 										<a class="removeRow">remove</a>
 										<div class="invoiceData hide">

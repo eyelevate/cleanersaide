@@ -53,7 +53,7 @@ config.vm.define :db do |db_config|
   db_config.vm.box = "lucid32"
   db_config.vm.box_url = "http://files.vagrantup.com/lucid32.box"
 
-  db_config.vm.network :bridged, "192.168.33.11"
+  # db_config.vm.network :bridged, "192.168.33.11"
 
   # Assign this VM to a bridged network, allowing you to connect directly to a
   # network using the host's network device. This makes the VM appear as another

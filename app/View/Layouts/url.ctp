@@ -25,6 +25,9 @@
 		echo $this->fetch('css');
 		echo $this->fetch('script');
 	?>
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="/img/frontend/favicon.ico">
 </head>
 <body>
 	<div id="container">
@@ -155,8 +158,9 @@
 		  <div class="footer_btm container">
 		  	<div class="footer_btm_inner">  
 			  	<div id="footer_nav">
-			  		<a href="/Terms-of-Service-and-Privacy " >Terms & Privacy</a>
-			  		<a href="/Contact-Us" >Contact Us</a>
+			  		<a class="pull-left" href="/Terms-of-Service-and-Privacy" >Terms & Privacy</a>
+			  		<a class="pull-left" href="/Contact-Us" >Contact Us</a>
+					<a class="pull-right" target="blank"href="http://ssl.comodo.com/"/><img src="/img/frontend/comodo.png"/></a>
 			  	</div>
 			</div>	  
 		  </div>

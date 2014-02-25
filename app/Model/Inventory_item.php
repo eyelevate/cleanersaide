@@ -354,6 +354,57 @@ class Inventory_item extends AppModel {
 		return $inv_items;
 	}
 
+
+	public function today_invoices($data)
+	{
+		$split_invoices = array();
+		$idx = -1;
+		foreach ($data as $key => $value) {
+			$idx++;
+			$items = json_decode($data[$key]['Invoice']['items'],true);
+			$after_tax = $data[$key]['Invoice']['total'];
+			$tax = $data[$key]['Invoice']['tax'];
+			$before_tax = 0;
+			$quantity = 0;
+			$after_tax = 0;
+			$tax = 0;
+			if(isset($items)){
+				foreach ($items as $ikey => $ivalue) {
+					$quantity += $ivalue['quantity'];
+					$name = $ivalue['name'];
+					$before_tax += $ivalue['before_tax'];
+					$after_tax += $data[$key]['Invoice']['total'];
+					$tax += $data[$key]['Invoice']['tax'];
+					$item_id = $ivalue['item_id'];
+					$inventory_items = $this->find('all',array('conditions'=>array('id'=>$ikey)));
+					if(count($inventory_items)>0){
+						foreach($inventory_items as $iinv){
+							$inventory_id = $iinv['Inventory_item']['inventory_id'];
+						}
+					} else {
+						$inventory_id = 0;
+					}
+					
+					$inventories = ClassRegistry::init('Inventory')->find('all',array('conditions'=>array('id'=>$inventory_id)));
+					if(count($inventories)>0){
+						foreach($inventories as $inv){
+							$inventory_name = $inv['Inventory']['name'];
+						}
+					} else {
+						$inventory_name = '';
+					}
+					
+					$split_invoices[$inventory_name][$idx] = $value['Invoice'];
+					
+					
+				
+				}
+			}	
+		}
+		
+		return $split_invoices;		
+	}
+
 }
 
 

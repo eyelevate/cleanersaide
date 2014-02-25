@@ -60,7 +60,9 @@ if (!isset($username)) {
 		));
 		echo $this->fetch('css');
 		?>
-		
+		<!-- Favicons
+		================================================== -->
+		<link rel="shortcut icon" href="/img/frontend/favicon.ico">	
 		<!-- John's CSS for test Admin functions -->
 		
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans" />

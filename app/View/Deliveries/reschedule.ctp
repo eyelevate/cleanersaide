@@ -139,7 +139,7 @@ if($route_status == '1'){ //there are routes
 			
 			<div id="step1Div" class="row stepDiv alert alert-info">
 				<h3>(Step 1) Select delivery pickup date and time</h3>	
-				<em>Place Step 1 description here</em>
+				<strong><em>Please note that all delivery requests must be made by 7am of the date requested.</em></strong>
 				<br/>
 				<?php
 	
@@ -174,7 +174,7 @@ if($route_status == '1'){ //there are routes
 
 			<div id="step2Div" class="row stepDiv alert alert-info hide">
 				<h3>(Step 2) Select delivery dropoff date and time</h3>
-				<em>Place Step 2 description here</em>
+				<strong><em>Please select a valid dropooff date and time.</em></strong>
 				<br/>
 				<?php
 	
@@ -218,8 +218,8 @@ if($route_status == '1'){ //there are routes
 	<div class="row">
 		
 		<div class="alert alert-danger">
-			<h3>Warning! There are currently no scheduled routes to your zipcode at this time! </h3>
-			<p>We apologize that we have not setup any current route to your zipcode. Although we have no direct routes to your zipcode, we may be able to provide a delivery by special request. Please contact us at...(finish statement)</p>
+			<h3>Warning! There are currently no scheduled routes to your zipcode at time! </h3>
+			<p>Please keep checking back with us as we are planning on expanding our service areas in the near future. <a href="/Contact-Us" >Contact Us</a></p>
 
 		</div>
 		

@@ -368,7 +368,36 @@ class Schedule extends AppModel {
 		return $delivery;
 
 	}
-
+	public function regexDisplay($data)
+	{
+		if(count($data)>0){
+			foreach ($data as $key => $value) {
+				if(isset($data[$key]['Schedule']['customer_id'])){
+					$users = ClassRegistry::init('User')->find('all',array('conditions'=>array('User.id'=>$data[$key]['Schedule']['customer_id'],'User.company_id'=>$_SESSION['company_id'])));	
+					if(count($users)>0){
+						foreach ($users as $u) {
+							$data[$key]['Schedule']['first_name'] = ucfirst($u['User']['first_name']);
+							$data[$key]['Schedule']['last_name'] = ucfirst($u['User']['last_name']);
+							$data[$key]['Schedule']['email'] = $u['User']['contact_email'];
+							$data[$key]['Schedule']['zipcode'] = $u['User']['contact_zip'];
+							$data[$key]['Schedule']['phone'] = ClassRegistry::init('Delivery')->formatPhoneNumber($u['User']['contact_phone']);
+							$data[$key]['Schedule']['special_instructions'] = $u['User']['special_instructions'];
+							$data[$key]['Schedule']['profile_id'] = $u['User']['profile_id'];
+							$data[$key]['Schedule']['payment_status'] = $u['User']['payment_status'];
+							$data[$key]['Schedule']['payment_id'] = $u['User']['payment_id'];
+						}
+					}						
+				}
+				if(isset($data[$key]['Schedule']['pickup_date'])){
+					$data[$key]['Schedule']['pickup_date'] = date('n/d/Y',strtotime($data[$key]['Schedule']['pickup_date']));
+				}
+				if(isset($data[$key]['Schedule']['dropoff_date'])){
+					$data[$key]['Schedule']['dropoff_date'] = date('n/d/Y',strtotime($data[$key]['Schedule']['dropoff_date']));
+				}
+			}
+		}
+		return $data;
+	}
 	public function addSchedule($company_id, $customer_id, $data, $special_instructions, $token)
 	{
 		$schedules = array();

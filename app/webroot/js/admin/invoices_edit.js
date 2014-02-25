@@ -4,7 +4,7 @@ $(document).ready(function(){
 	edit.orders();
 	edit.colors();
 	edit.save();
-	
+	edit.numberformat();
 	edit.initialize();
 });
 
@@ -27,7 +27,34 @@ edit = {
 
 
 	},	
-	
+	numberformat: function(){
+		//number formatting
+		$('#invoiceTbody tr .priceTd input').priceFormat({
+			'prefix':'',
+			limit:5
+		});
+		
+		$("#invoiceTbody tr .priceTd input").keyup(function(){
+			var before_tax = $(this).val();
+			$(this).parents('tr:first').find('#invoiceItemInput-before_tax').val(before_tax);
+			summary.sum_all();
+		});
+
+	},	
+	numberformat_new: function(element){
+
+		//number formatting
+		element.priceFormat({
+			'prefix':'',
+			limit:5
+		});
+		
+		element.keyup(function(){
+			var before_tax = $(this).val();
+			$(this).parents('tr:first').find('#invoiceItemInput-before_tax').val(before_tax);
+			summary.sum_all();
+		});		
+	},
 	
 	quantity: function(){
 		$(".number_list li:not(last)").click(function(){
@@ -141,7 +168,6 @@ edit = {
 
 			var count_invoice_rows = $("#invoiceTbody tr").length;
 			if(count_invoice_rows>0){
-
 				$('#invoiceForm').submit();				
 			} else {
 				alert('There is no invoice to create. Please select at least one inventory item.');
@@ -187,6 +213,7 @@ summary = {
 		check_exists = 'No';
 		
 		$("#invoiceTbody tr").each(function(){
+			
 			var finished_item_id = $(this).attr('id').replace('invoice_item_td-','');
 
 			if(finished_item_id == item_id){
@@ -199,7 +226,7 @@ summary = {
 				var updated_invoice = new_invoice_item(item_id, new_quantity, name, new_price, updated_form);				
 				
 				$("#invoice_item_td-"+item_id+" .quantityTd").html(new_quantity);
-				$("#invoice_item_td-"+item_id+" .priceTd").html(new_price);
+				$("#invoice_item_td-"+item_id+" .priceTd input").val(new_price);
 				$("#invoice_item_td-"+item_id+" .invoiceData").html(updated_form);
 				$("#finalTotal").html('0').attr('val','0');	
 				$(this).parent().find('tr').attr('status','notactive');
@@ -228,6 +255,11 @@ summary = {
 
 			});
 		}
+		
+		$("#invoiceTbody .priceTd input").each(function(){
+			element = $(this);
+			edit.numberformat_new(element);			
+		});
 		summary.sum_all();		
 	},
 	
@@ -239,8 +271,7 @@ summary = {
 		total_tax = 0;
 		$("#invoiceTbody tr").each(function(){
 			total_qty += parseInt($(this).find('.quantityTd').html());
-			total_pretax += parseFloat($(this).find('.priceTd').html());
-			
+			total_pretax += parseFloat($(this).find('.priceTd input').val());
 		});
 		
 		total_pretax = roundCents(total_pretax,1);
@@ -263,7 +294,7 @@ var new_invoice_item = function(item_id,qty, item, price,form){
 			'<td class="quantityTd">'+qty+'</td>'+
 			'<td class="itemTd">'+item+'</td>'+
 			'<td class="colorsTd"><ul class="unstyled" count="0"></ul></td>'+
-			'<td class="priceTd">'+price+'</td>'+
+			'<td class="priceTd"><div class="input-prepend"><span class="add-on">$</span><input type="text" class="span4" value="'+price+'" name="data[delete]"/></div></td>'+
 			'<td><a class="removeRow">remove</a><div class="invoiceData hide">'+form+'</div></td>'+
 		'</tr>';
 	return tr;

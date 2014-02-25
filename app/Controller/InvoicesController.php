@@ -1,10 +1,6 @@
 <?php
 App::uses('AppController', 'Controller');
 
-App::import('Vendor', 'WebclientPrint/WebclientPrint');
-
-
-
 /**
  * Admins Controller
  * @property Admin $Admin
@@ -29,7 +25,10 @@ class InvoicesController extends AppController {
 		$this->Session->write('Admin.menu_id',$menu_id);
 		//set the authorized pages
 		$this->Auth->allow('login','logout','barcodes');
-		
+		//set session max lifetime to 24 hours
+		ini_set('session.gc_maxlifetime',24*60*60); //max life 24 hours
+		ini_set('session.gc_probability',1);
+		ini_set('session.gc_divisor',1);				
 	
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
@@ -230,7 +229,7 @@ class InvoicesController extends AppController {
 			$this->set('rewards_display',$rewards_display);		
 			//get data from db
 			$users = $this->User->find('all',array('conditions'=>array('User.id'=>$customer_id)));
-			$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$customer_id,'status <'=>'4','company_id'=>$company_id)));	
+			$invoices = $this->Invoice->find('all',array('conditions'=>array('customer_id'=>$customer_id,'status <'=>'3','company_id'=>$company_id)));	
 			
 			//set reward status
 			$reward_status = 1;
@@ -512,13 +511,13 @@ class InvoicesController extends AppController {
 	public function process_edit()
 	{
 		if($this->request->is('post')){
-
 			//get unique id of invoice
 			$company_id = $_SESSION['company_id'];
 			$invoice_id = $this->request->data['Invoice']['invoice_id'];
 			$invoices = $this->Invoice->find('all',array('conditions'=>array('invoice_id'=>$invoice_id,'company_id'=>$company_id)));
 			$this->request->data['Invoice']['due_date'] = date('Y-m-d',strtotime($this->request->data['Invoice']['due_date'])).' 16:00:00';
 			$this->request->data['Invoice']['items'] = json_encode($this->request->data['Invoice']['items']);
+			unset($this->request->data['delete']);
 			
 			if(count($invoices)>0){
 				foreach ($invoices as $invoice) {
@@ -565,10 +564,11 @@ class InvoicesController extends AppController {
 					
 
 			}
+
 			//next save the racked data
 			foreach ($this->request->data['Invoice'] as $rack) {
 
-				$this->Invoice->query('update invoices set rack="'.$rack['rack'].'", status="3" where invoice_id="'.$rack['invoice_id'].'" and company_id ="'.$company_id.'"');
+				$this->Invoice->query('update invoices set rack="'.$rack['rack'].'", rack_date="'.date('Y-m-d H:i:s').'", status="2" where invoice_id="'.$rack['invoice_id'].'" and company_id ="'.$company_id.'"');
 			}
 			$this->Session->setFlash(__('You have successfully racked '.count($this->request->data['Invoice']).' invoices!'),'default',array(),'success');
 			$this->redirect(array('controller'=>'invoices','action'=>'rack'));
