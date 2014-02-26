@@ -262,13 +262,13 @@ class Invoice extends AppModel {
 			$invoice[$key][34] = $customer_phone.'\x1b\x44\47\17 \x09 \x1b\x61\x02'.$username;
 			$invoice[$key][35] = $this->_NewLine();
 
-			$invoice[$key][37] = '------------------------------------------';
+			$invoice[$key][37] = '-----------------------------------------------';
 			$invoice[$key][38] = $this->_NewLine();
 
-			$invoice[$key][40] = 'ITEM          COLOR               QTY ';
+			$invoice[$key][40] = 'ITEM          COLOR                     QTY ';
 			$invoice[$key][41] = $this->_NewLine();
 
-			$invoice[$key][43] = '------------------------------------------';
+			$invoice[$key][43] = '-----------------------------------------------';
 			$invoice[$key][44] = $this->_NewLine();
 
 			$invoice[$key][46] = '\x1b\x4d\1';
@@ -305,12 +305,12 @@ class Invoice extends AppModel {
 				$idx++;
 				$invoice[$key][$idx] = $this->_NewLine().' \x1b\x4d\1';
 				$idx++;
-				$invoice[$key][$idx] = $this->_MakeTab().' '.$item_color.' '.$this->_NewLine();
+				$invoice[$key][$idx] = '      '.$item_color.' '.$this->_NewLine();
 				//insert memo data here
 				
 			}
 			$idx++;			
-			$invoice[$key][$idx] = '------------------------------------------';
+			$invoice[$key][$idx] = '-----------------------------------------------';
 			$idx++;
 			$invoice[$key][$idx] = '               Total Pretax: $'.$pretax.' '.$this->_NewLine();
 			$idx++;
@@ -423,11 +423,11 @@ class Invoice extends AppModel {
 			$invoice[$key][33] = $this->_NewLine();
 			$invoice[$key][35] = $customer_phone.'\x1b\x44\47\17 \x09 \x1b\x61\x02'.$username;
 			$invoice[$key][36] = $this->_NewLine();
-			$invoice[$key][38] = '------------------------------------------';
+			$invoice[$key][38] = '-----------------------------------------------';
 			$invoice[$key][39] = $this->_NewLine();
-			$invoice[$key][41] = 'ITEM     COLOR            QTY    PRICE';
+			$invoice[$key][41] = 'ITEM     COLOR                 QTY     PRICE';
 			$invoice[$key][42] = $this->_NewLine();
-			$invoice[$key][44] = '------------------------------------------';
+			$invoice[$key][44] = '-----------------------------------------------';
 			$invoice[$key][45] = $this->_NewLine();
 			$idx = 47;
 			$item_colors = array();
@@ -470,34 +470,32 @@ class Invoice extends AppModel {
 				$idx++;
 				$invoice[$key][$idx] = $this->_NewLine().' \x1b\x4d\1';
 				$idx++;
-				$invoice[$key][$idx] = $this->_MakeTab().' '.$item_color.' '.$this->_NewLine();
+				$invoice[$key][$idx] = '      '.$item_color.' '.$this->_NewLine();
 				//insert memo data here
 				
 			}
 			$idx++;			
-			$invoice[$key][$idx] = '------------------------------------------'.$this->_NewLine();
+			$invoice[$key][$idx] = '-----------------------------------------------'.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = '               Total Pretax: $'.$pretax.' '.$this->_NewLine();
+			$invoice[$key][$idx] = '                    Total Pretax: $'.$pretax.' '.$this->_NewLine().' '.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = '                  Total Tax: $'.$tax.' '.$this->_NewLine();
+			$invoice[$key][$idx] = '                       Total Tax: $'.$tax.' '.$this->_NewLine().' '.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = '                Total Price: $'.$total.' '.$this->_NewLine();
+			$invoice[$key][$idx] = '                     Total Price: $'.$total.' '.$this->_NewLine().' '.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = '               Total Pieces: '.$quantity.' '.$this->_NewLine();
+			$invoice[$key][$idx] = '                    Total Pieces: '.$quantity.' '.$this->_NewLine().' '.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = '\x1b\x4d\1 '.$this->_CenterBody().' '.$this->_NewLine();
+			$invoice[$key][$idx] = '\x1b\x4d\1 '.$this->_CenterBody().' '.$this->_NewLine().' '.$this->_NewLine();
 			$idx++;
 			$invoice[$key][$idx] = 'Thank you for your business. All work done on premises.'.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = $this->_CenterBody();
+			$invoice[$key][$idx] = $this->_CenterBody().' '.$this->_NewLine().' '.$this->_NewLine();
 			$idx++;
 			$invoice[$key][$idx] = '['.$quantity.' PCS]['.strtoupper(date('D',strtotime($value['due_date']))).']'.$this->_NewLine();
 			$idx++;
 			$invoice[$key][$idx] = $this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine().' '.$this->_NewLine();
 			$idx++;
-			$invoice[$key][$idx] = '\x1D\x56\x01 ';
-			$idx++;
-			$invoice[$key][$idx] = '\x1D\x56\x01 '.$this->_MakeCut('partial');			
+			$invoice[$key][$idx] = $this->_MakeCut('partial');			
 		}
 
 		
@@ -567,11 +565,11 @@ class Invoice extends AppModel {
 		$invoice[25] = '\x1b\x4d\1'; //font
 		$invoice[26] = $customer_phone.'\x1b\x44\47\17 \x09 \x1b\x61\x02'.$username;
 		$invoice[27] = $this->_NewLine();
-		$invoice[29] = '------------------------------------------';
+		$invoice[29] = '-----------------------------------------------';
 		$invoice[30] = $this->_NewLine();
-		$invoice[32] = 'ITEM          COLOR               QTY ';
+		$invoice[32] = 'ITEM          COLOR                    QTY ';
 		$invoice[33] = $this->_NewLine();	
-		$invoice[35] = '------------------------------------------';
+		$invoice[35] = '-----------------------------------------------';
 		$invoice[36] = $this->_NewLine();
 		$invoice[38] = '\x1b\x4d\1';
 		$idx = 38;

@@ -87,5 +87,18 @@ class AppController extends Controller {
 		// exit;
 		// }
 	}
+	function forceSSL() {
+
+	}
+	function requireNonSecure() {
+	    $requireNonSecure = array_map('strtolower', func_get_args());
+	
+	    if (in_array(strtolower($this->action), $requireNonSecure) || $requireNonSecure == array('*')) {
+	        if ($this->RequestHandler->isSSL()) {
+	            $this->redirect('http://' . rtrim(env('SERVER_NAME'), '/') . $this->here);
+	            return;
+	        }
+	    }
+	}
 
 }

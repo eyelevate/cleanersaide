@@ -46,7 +46,7 @@ $(document).ready(function() {
 		<div id="slider_holder" class="sixteen columns">
 
 				<div id="trip_planner">
-					<div class="trip_planner_title">Schedule a delivery</div>
+					<div class="trip_planner_title">Schedule a free delivery</div>
 						<ul class="nav nav-pills" id="myTab">
 						  <li class="active" style="margin-left:25px;"><a href="#guest">Guest Delivery</a></li>
 						  <li><a href="#login" >Member Login</a></li>

@@ -22,7 +22,6 @@ class GroupsController extends AppController {
 		//
 		$this->Auth->allow();		
 		$this->Auth->authError = 'You do not have access to this page.';
-		
 	}
 /**
  * index method

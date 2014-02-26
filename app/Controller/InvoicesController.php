@@ -29,7 +29,7 @@ class InvoicesController extends AppController {
 		ini_set('session.gc_maxlifetime',24*60*60); //max life 24 hours
 		ini_set('session.gc_probability',1);
 		ini_set('session.gc_divisor',1);				
-	
+
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
 		    CakeLog::write('auth', 'ACL DENY: ' . AuthComponent::user('username') .
@@ -340,6 +340,7 @@ class InvoicesController extends AppController {
 			//update the pickup status in invoices
 			foreach ($this->request->data['Invoice']['picked_up'] as $key => $value) {
 				$invoice_id = $value['invoice_id'];
+				$now = date('Y-m-d H:i:s');
 				/**
 				 * Status review
 				 * 1 = new invoice
@@ -348,7 +349,7 @@ class InvoicesController extends AppController {
 				 * 4 = account
 				 * 5 = cancelled invoice
 				 */
-				$this->Invoice->query('update invoices set status = 3 where invoice_id ='.$invoice_id.' and company_id ='.$company_id.'');
+				$this->Invoice->query('update invoices set status = 3, modified = "'.$now.'" where invoice_id ='.$invoice_id.' and company_id ='.$company_id.'');
 			}
 			
 			//add a new row to the transaction table
@@ -468,6 +469,7 @@ class InvoicesController extends AppController {
 	
 	public function process_dropoff_no_copy()
 	{
+
 		if($this->request->is('post')){
 
 			$customer_id = $this->request->data['Invoice']['customer_id'];
@@ -494,7 +496,7 @@ class InvoicesController extends AppController {
 				$this->set('customer_id',$customer_id);
 				$this->set('store',$store_copy);	
 				$this->set('create_store_copy',$create_store_copy);	
-
+				$this->set('tags',$invoice_split);
 
 			}
 
@@ -502,7 +504,8 @@ class InvoicesController extends AppController {
 	}
 	
 	public function process_dropoff_copy()
-	{	
+	{
+
 		if($this->request->is('post')){
 			$customer_id = $this->request->data['Invoice']['customer_id'];
 			$this->request->data['Invoice']['due_date'] = date('Y-m-d',strtotime($this->request->data['Invoice']['due_date'])).' 16:00:00';
@@ -539,6 +542,7 @@ class InvoicesController extends AppController {
 	public function process_edit()
 	{
 		if($this->request->is('post')){
+
 			//get unique id of invoice
 			$company_id = $_SESSION['company_id'];
 			$invoice_id = $this->request->data['Invoice']['invoice_id'];

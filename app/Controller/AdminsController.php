@@ -25,7 +25,7 @@ class AdminsController extends AppController {
 		ini_set('session.gc_maxlifetime',24*60*60); //max life 24 hours
 		ini_set('session.gc_probability',1);
 		ini_set('session.gc_divisor',1);
-		
+		$this->requireNonSecure('login','index');
 		
 		if (!is_null($this->Auth->User()) && $this->name != 'CakeError'&& !$this->Acl->check(array('model' => 'User','foreign_key' => AuthComponent::user('id')),$this->name . '/' . $this->request->params['action'])) {
 		    // Optionally log an ACL deny message in auth.log
@@ -130,11 +130,11 @@ class AdminsController extends AppController {
 		//get invoice dropoff data
 		$today_beginning = date('Y-m-d ').'00:00:00';
 		$today_end = date('Y-m-d ').'23:59:59';
-		$today_conditions = array('created BETWEEN ? AND ?' =>array($today_beginning, $today_end));
+		$today_conditions = array('created BETWEEN ? AND ?' =>array($today_beginning, $today_end),'status'=>'1');
 		$today = $this->Invoice->find('all',array('conditions'=>$today_conditions));
 		$split_invoices = $this->Inventory_item->today_invoices($today);
 		$this->set('split_invoices',$split_invoices);
-		$pickup_conditions = array('modified BETWEEN ? AND ?' =>array($today_beginning, $today_end),'status >'=>'3');
+		$pickup_conditions = array('modified BETWEEN ? AND ?' =>array($today_beginning, $today_end),'status'=>'3');
 		$pickup = $this->Invoice->find('all',array('conditions'=>$pickup_conditions));
 		$pickup_invoices = $this->Inventory_item->today_invoices($pickup);
 		$this->set('pickup_invoices',$pickup_invoices);

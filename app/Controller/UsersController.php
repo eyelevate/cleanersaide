@@ -435,6 +435,7 @@ class UsersController extends AppController {
 		$this->layout = 'admin';		
 		//if saving
 		if ($this->request->is('post')) {
+			$this->request->data['User']['company_id'] = $_SESSION['company_id'];
 			$this->User->create();
 			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('The user has been saved'));

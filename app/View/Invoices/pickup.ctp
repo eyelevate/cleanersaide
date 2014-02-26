@@ -64,7 +64,7 @@ foreach ($invoices as $i) {
 							}
 						break;
 						
-						case '3': //racked and ready to pick up
+						case '2': //racked and ready to pick up
 							$background_class = 'status_three';
 						break;
 							

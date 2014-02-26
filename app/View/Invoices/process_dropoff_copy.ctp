@@ -13,7 +13,7 @@ echo $this->Html->script(array(
 
 <div class="row-fluid">
 	<script type="text/javascript" src="/files/qz-print/dist/js/deployJava.js"></script>
-	<script>
+	<script type="text/javascript">
 	deployQZ();
 	
 	/**
@@ -36,6 +36,7 @@ echo $this->Html->script(array(
 		deployJava.runApplet(attributes, parameters, '1.5');
 	}
 	<?php
+		
 		foreach ($create_customer_copy as $ccc) {
 			foreach ($ccc as $ckey => $cvalue) {
 				switch($ckey){
@@ -65,9 +66,7 @@ echo $this->Html->script(array(
 				switch($skey){
 					case '0':
 					?>
-					if (qz != null) {
-						qz.findPrinter('<?php echo $svalue;?>');
-					}
+
 					<?php						
 					break;
 						
@@ -90,17 +89,15 @@ echo $this->Html->script(array(
 			
 			}		
 		}
-			?>
-			setTimeout(function(){
-				while (!qz.isDoneAppending()) {} // wait
-				qz.print();
-				qz.append("\x1B\x40");
-				qz.append("\x1D\x56\x41");
-				qz.append("\x1B\x40");
-				while (!qz.isDoneAppending()) {} // wait
-				qz.print();
-								
-			},4000);
+		?>
+		setTimeout(function(){
+			while (!qz.isDoneAppending()) {} // wait
+			qz.append("\x1B\x40");
+			qz.append("\x1B\x40");
+			while (!qz.isDoneAppending()) {} // wait
+			qz.print();
+							
+		},3000);
 	</script>
 	<?php
 	$frames = -1;
@@ -129,13 +126,14 @@ echo $this->Html->script(array(
 							jsPrintSetup.setOption('footerStrCenter','');
 							jsPrintSetup.setOption('footerStrRight','');
 							jsPrintSetup.setShowPrintProgress(false);
-							jsPrintSetup.printWindow(window.frames[<?php echo $frames;?>]);					
+							jsPrintSetup.printWindow(window.frames[<?php echo $frames;?>]);		
+							console.log('printing frame '+<?php echo $frames.' - '.$timer;?>);					
 						}, <?php echo $timer;?>);	
 					</script>	
 					<?php								
 					} else {
 					?>
-					<iframe style="height:75px; width:350px;" src="/printers/print_tag1/<?php echo $invoice_id;?>/<?php echo $i;?>"></iframe>		
+					<iframe style="height:75px; width:350px;" src="http://www.jayscleaners.com/printers/print_tag1/<?php echo $invoice_id;?>/<?php echo $i;?>"></iframe>		
 					<script type="text/javascript">
 						setTimeout(function(){
 							jsPrintSetup.setPrinter('BIXOLON SRP-270');
@@ -149,7 +147,8 @@ echo $this->Html->script(array(
 							jsPrintSetup.setOption('footerStrRight','');
 							jsPrintSetup.setShowPrintProgress(false);
 							
-							jsPrintSetup.printWindow(window.frames[<?php echo $frames;?>]);					
+							jsPrintSetup.printWindow(window.frames[<?php echo $frames;?>]);		
+							console.log('printing frame <?php echo $frames.' - '.$timer;?>');				
 						}, <?php echo $timer;?>);			
 					</script>	
 					<?php						

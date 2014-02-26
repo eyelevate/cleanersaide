@@ -82,7 +82,7 @@ echo $this->Html->script(array(
 	</script>
 	<?php
 	$frames = -1;
-	$timer = 3000;
+	$timer = 1000;
 	if(isset($tags)){
 		foreach ($tags['Invoice'] as $key => $value) {
 			$inventory_id = $value['inventory_id'];

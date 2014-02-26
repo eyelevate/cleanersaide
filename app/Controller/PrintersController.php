@@ -24,7 +24,6 @@ class PrintersController extends AppController {
 		//set the authorized pages
 		$this->Auth->allow('*');
 
-
 	}
 
 	public function index()
@@ -188,7 +187,14 @@ class PrintersController extends AppController {
 	
 	public function print_tag1($id = null, $number = null)
 	{
-
+		// //REDIRECT TO HTTPS IF REQUEST IS NOT HTTPS
+		// if($_SERVER['HTTPS']!="on")
+		// {
+		// $redirect= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		// header( "HTTP/1.1 301 Moved Permanently" );
+		// header("Location:$redirect");
+		// exit;
+		// }
 		$invoices = $this->Invoice->find('all',array('conditions'=>array('Invoice.invoice_id'=>$id,'company_id'=>$_SESSION['company_id'])));
 		$invoice_data = array();
 		if(count($invoices)>0){
