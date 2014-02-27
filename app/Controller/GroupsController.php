@@ -535,6 +535,10 @@ class GroupsController extends AppController {
 	function rebuildARO() {
 		// Build the groups.
 		$groups = $this->Group->find('all');
+		//get the count of how much is in the aco table
+		$this->Aro->query('TRUNCATE TABLE aros');
+		//set the auto_increment to 1
+		$this->Aro->query('ALTER TABLE aros auto_increment = 1');		
 		$aro = new Aro();
 		foreach($groups as $group) {
 			$aro->create();

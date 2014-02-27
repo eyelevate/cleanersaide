@@ -5,9 +5,9 @@
  */
 class InventoryItemsController extends AppController {
     //Name (should be same as the class name)
-    public $name = 'Inventory_items';
+    public $name = 'InventoryItems';
 
-	public $uses = array('Inventory_item','Inventory','Menu','Menu_item','Ferry_inventory', 'Reservation');
+	public $uses = array('Inventory_item','Inventory','Menu','Menu_item', 'Reservation');
 /**
  * Parses this code first on all actions in this controller
  */
@@ -17,7 +17,7 @@ class InventoryItemsController extends AppController {
 		//set the authorized username
 		$this->set('username',AuthComponent::user('username'));
 		//deny all public users to this page
-		$this->Auth->deny('*');
+		$this->Auth->allow('add','view','index');
 		
 		//set session max lifetime to 24 hours
 		ini_set('session.gc_maxlifetime',24*60*60); //max life 24 hours
@@ -142,7 +142,8 @@ class InventoryItemsController extends AppController {
 		$this->set('inventories',$inventories);
 		$inv_items = $this->Inventory_item->find('all',array('conditions'=>array('id'=>$id)));
 		$this->set('inv_items',$inv_items);
-		
+		$images = $this->Inventory_item->createAllImageArray();
+		$this->set('images',$images);		
 		if($this->request->is('post')){
 			
 			$this->Inventory_item->id =$id;

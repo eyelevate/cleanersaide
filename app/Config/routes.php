@@ -119,9 +119,9 @@
 	Router::connect('/inventories/:action/*',array('controller'=>'inventories'));	
 	
 	//inventories_item controller
-	Router::connect('/inventory_items',array('controller'=>'inventory_items','action'=>'index'));
-	Router::connect('/inventory_items/:action',array('controller'=>'inventory_items'));
-	Router::connect('/inventory_items/:action/*',array('controller'=>'inventory_items'));				
+	Router::connect('/inventory_items',array('controller'=>'inventoryitems','action'=>'index'));
+	Router::connect('/inventory_items/:action',array('controller'=>'inventoryitems'));
+	Router::connect('/inventory_items/:action/*',array('controller'=>'inventoryitems'));				
 
 	
 	//inventories_item controller
