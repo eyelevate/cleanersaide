@@ -77,6 +77,7 @@ if (!isset($username)) {
 		<script>
 			// hide all elements & show preloader
 			document.documentElement.className += 'js';
+					
 		</script>
 	</head>
 	<body>
@@ -182,7 +183,7 @@ if (!isset($username)) {
 							<div class="sidebar_inner">
 								<? if(isset($admin_nav)){ ?>
 								<form id="searchForm" action="/admins/search_customers" class="input-append" method="post" >
-									<input autocomplete="on" name="query" placeholder="Phone / Last Name / ID" class="search_query input-medium" size="16" type="text" placeholder="Search..." />
+									<input id="searchCustomerInput" autocomplete="on" name="query" placeholder="Phone / Last Name / ID" class="search_query input-medium" size="16" type="text" placeholder="Search..." />
 									<button id="searchButton" type="submit" class="btn">
 										<i class="icon-search"></i>
 									</button>
@@ -304,10 +305,13 @@ if (!isset($username)) {
 	echo $this->fetch('script');
  ?>
 
-		<script>
+		<script type="text/javascript">
 			$(document).ready(function() {
 				//* show all elements & remove preloader
 				setTimeout('$("html").removeClass("js")', 250);
+				setTimeout(function(){
+					$("#searchCustomerInput").focus();	
+				}, 1000)
 			});
 		</script>
 

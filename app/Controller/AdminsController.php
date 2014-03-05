@@ -58,7 +58,7 @@ class AdminsController extends AppController {
 	public function login()
 	{
 		//No admin navigation here
-		
+		$this->layout = 'admin_login';
 		//set autherror to page
 		$this->set('authError',$this->Auth->authError);
 		//check to see if the company has been logged in 
@@ -141,8 +141,31 @@ class AdminsController extends AppController {
 		//get delivery data
 		$schedules = $this->Schedule->regexDisplay($this->Schedule->find('all',array('conditions'=>$today_conditions)));
 		$this->set('schedules',$schedules);
+		$this->set('date_label', date('D n/d/Y'));
+		$this->set('start_date',date('n/d/Y'));
+		$this->set('end_date',date('n/d/Y'));
 		
 
+		if($this->request->is('post')){
+			
+			//get invoice dropoff data
+			$today_beginning = date('Y-m-d ', strtotime($this->request->data['date']['start_date'])).'00:00:00';
+			$today_end = date('Y-m-d ', strtotime($this->request->data['date']['end_date'])).'23:59:59';
+			$today_conditions = array('created BETWEEN ? AND ?' =>array($today_beginning, $today_end),'status <='=>'2');
+			$today = $this->Invoice->find('all',array('conditions'=>$today_conditions));
+			$split_invoices = $this->Inventory_item->today_invoices($today);
+			$this->set('split_invoices',$split_invoices);
+			$pickup_conditions = array('modified BETWEEN ? AND ?' =>array($today_beginning, $today_end),'status'=>'3');
+			$pickup = $this->Invoice->find('all',array('conditions'=>$pickup_conditions));
+			$pickup_invoices = $this->Inventory_item->today_invoices($pickup);
+			$this->set('pickup_invoices',$pickup_invoices);
+			//get delivery data
+			$schedules = $this->Schedule->regexDisplay($this->Schedule->find('all',array('conditions'=>$today_conditions)));
+			$this->set('schedules',$schedules);			
+			$this->set('date_label', date('D n/d/Y',strtotime($this->request->data['date']['start_date'])).' - '.date('D n/d/Y',strtotime($this->request->data['date']['end_date'])));
+			$this->set('start_date',date('n/d/Y', strtotime($this->request->data['date']['start_date'])));
+			$this->set('end_date',date('n/d/Y', strtotime($this->request->data['date']['end_date'])));		
+		}
 	}
 	public function search_customers()
 	{

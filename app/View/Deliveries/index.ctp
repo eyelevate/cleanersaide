@@ -51,7 +51,7 @@ echo $this->Html->script(array(
 				</div>
 			</div>
 			<div class="row">
-				<a href="/deliveries/forgot" style="font-style: italic">Forgot Login Information? - Click Here</a>
+				<a href="/users/forgot" style="font-style: italic">Forgot Login Information? - Click Here</a>
 			</div>
 			<div class="row">
 				<a class="btn btn-danger btn-large" href="/users/frontend_logout">Logout</a>

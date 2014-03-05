@@ -1,13 +1,37 @@
 <?php
 //add scripts to header
-echo $this->Html->script(array('admin/events.js'),FALSE);
+echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 
 ?>
 
 
 <div class="row-fluid">
+	<div class="well well-small clearfix">
+		<h1 class="heading">Date Query</h1>
+		<form action="/admins/index" method="post">
+			<div class="control-group pull-left" style="margin-right:15px;">
+				<label class="control-label">Start Date</label>
+				<div class="input-append">
+					<input id="start_date" class="datepicker1" type="text" value="<?php echo $start_date;?>" name="date[start_date]" readonly="true" style="cursor:pointer; background-color:#ffffff"/>
+					<span id="start_date_calendar" class="add-on"><i class="icon-calendar"></i></span>
+				</div>
+			</div>
+			<div class="control-group pull-left" style="margin-right:15px;">
+				<label class="control-label">End Date</label>
+				<div class="input-append">
+					<input id="end_date" class="datepicker1" type="text" value="<?php echo $end_date;?>" name="date[end_date]" readonly="true" style="cursor:pointer; background-color:#ffffff"/>
+					<span id="end_date_calendar" class="add-on"><i class="icon-calendar"></i></span>
+				</div>
+			</div>
+			<br class="span12"/>
+			<div class="control-group">
+				<label class="control-label"></label>
+				<input type="submit" value="Submit" class="btn btn-primary"/>
+			</div>
+		</form>
+	</div>
 	<div class="well well-small">
-		<h1 class="heading">Delivery Summary - <?php echo date('D n/d/Y');?></h1>
+		<h1 class="heading">Delivery Summary - <?php echo $date_label;?></h1>
 		<div id="side_accordion-delivery" class="accordion">
 			
 			
@@ -82,7 +106,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 		<a href="/deliveries" class="btn btn-info" target="_blank">Create Delivery</a>
 	</div>
 	<div class="well well-small">
-		<h1 class="heading">Drop Off Summary - <?php echo date('D n/d/Y');?></h1>
+		<h1 class="heading">Drop Off Summary - <?php echo $date_label;?></h1>
 		<table class="table table-bordered table-condensed table-hover">
 			<thead>
 				<tr>
@@ -261,7 +285,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 								<tr>
 									<th>Invoice ID</th>
 									<th>Customer ID</th>
-									<th>Items</th>
+									<th class="span1">Items</th>
 									<th>Qty</th>
 									<th>Pretax</th>
 									<th>Tax</th>
@@ -292,9 +316,9 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 											}
 											//switch qty
 											if($item_qty > 1){
-												$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
 											} else {
-												$item_list .= '<span class="badge">'.$item_name.'</span>';
+												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
 											}
 										}						
 									}
@@ -337,7 +361,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 								<tr>
 									<th>Invoice ID</th>
 									<th>Customer ID</th>
-									<th>Items</th>
+									<th class="span1">Items</th>
 									<th>Qty</th>
 									<th>Pretax</th>
 									<th>Tax</th>
@@ -367,9 +391,9 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 											}
 											//switch qty
 											if($item_qty > 1){
-												$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
 											} else {
-												$item_list .= '<span class="badge">'.$item_name.'</span>';
+												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
 											}
 										}						
 									}
@@ -412,7 +436,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 								<tr>
 									<th>Invoice ID</th>
 									<th>Customer ID</th>
-									<th>Items</th>
+									<th class="span1">Items</th>
 									<th>Qty</th>
 									<th>Pretax</th>
 									<th>Tax</th>
@@ -442,9 +466,9 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 											}
 											//switch qty
 											if($item_qty > 1){
-												$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
 											} else {
-												$item_list .= '<span class="badge">'.$item_name.'</span>';
+												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
 											}
 										}						
 									}
@@ -487,7 +511,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 								<tr>
 									<th>Invoice ID</th>
 									<th>Customer ID</th>
-									<th>Items</th>
+									<th class="span1">Items</th>
 									<th>Qty</th>
 									<th>Pretax</th>
 									<th>Tax</th>
@@ -517,9 +541,9 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 											}
 											//switch qty
 											if($item_qty > 1){
-												$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
 											} else {
-												$item_list .= '<span class="badge">'.$item_name.'</span>';
+												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
 											}
 										}						
 									}
@@ -562,7 +586,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 								<tr>
 									<th>Invoice ID</th>
 									<th>Customer ID</th>
-									<th>Items</th>
+									<th class="span1">Items</th>
 									<th>Qty</th>
 									<th>Pretax</th>
 									<th>Tax</th>
@@ -592,9 +616,9 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 											}
 											//switch qty
 											if($item_qty > 1){
-												$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
 											} else {
-												$item_list .= '<span class="badge">'.$item_name.'</span>';
+												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
 											}
 										}						
 									}
@@ -629,7 +653,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 		</div>
 	</div>
 	<div class="well well-small">
-		<h1 class="heading">Pickup Summary - <?php echo date('D n/d/Y');?></h1>
+		<h1 class="heading">Pickup Summary - <?php echo $date_label;?></h1>
 		<table class="table table-bordered table-condensed table-hover">
 			<thead>
 				<tr>
@@ -808,7 +832,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 								<tr>
 									<th>Invoice ID</th>
 									<th>Customer ID</th>
-									<th>Items</th>
+									<th class="span1">Items</th>
 									<th>Qty</th>
 									<th>Pretax</th>
 									<th>Tax</th>
@@ -839,9 +863,9 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 											}
 											//switch qty
 											if($item_qty > 1){
-												$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
 											} else {
-												$item_list .= '<span class="badge">'.$item_name.'</span>';
+												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
 											}
 										}						
 									}
@@ -884,7 +908,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 								<tr>
 									<th>Invoice ID</th>
 									<th>Customer ID</th>
-									<th>Items</th>
+									<th class="span1">Items</th>
 									<th>Qty</th>
 									<th>Pretax</th>
 									<th>Tax</th>
@@ -914,9 +938,9 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 											}
 											//switch qty
 											if($item_qty > 1){
-												$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
 											} else {
-												$item_list .= '<span class="badge">'.$item_name.'</span>';
+												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
 											}
 										}						
 									}
@@ -959,7 +983,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 								<tr>
 									<th>Invoice ID</th>
 									<th>Customer ID</th>
-									<th>Items</th>
+									<th class="span1">Items</th>
 									<th>Qty</th>
 									<th>Pretax</th>
 									<th>Tax</th>
@@ -989,9 +1013,9 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 											}
 											//switch qty
 											if($item_qty > 1){
-												$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
 											} else {
-												$item_list .= '<span class="badge">'.$item_name.'</span>';
+												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
 											}
 										}						
 									}
@@ -1034,7 +1058,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 								<tr>
 									<th>Invoice ID</th>
 									<th>Customer ID</th>
-									<th>Items</th>
+									<th class="span1">Items</th>
 									<th>Qty</th>
 									<th>Pretax</th>
 									<th>Tax</th>
@@ -1064,9 +1088,9 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 											}
 											//switch qty
 											if($item_qty > 1){
-												$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
 											} else {
-												$item_list .= '<span class="badge">'.$item_name.'</span>';
+												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
 											}
 										}						
 									}
@@ -1109,7 +1133,7 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 								<tr>
 									<th>Invoice ID</th>
 									<th>Customer ID</th>
-									<th>Items</th>
+									<th class="span1">Items</th>
 									<th>Qty</th>
 									<th>Pretax</th>
 									<th>Tax</th>
@@ -1139,9 +1163,9 @@ echo $this->Html->script(array('admin/events.js'),FALSE);
 											}
 											//switch qty
 											if($item_qty > 1){
-												$item_list .= '<span class="badge">('.$item_qty.') '.$item_name.'</span>'; 
+												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
 											} else {
-												$item_list .= '<span class="badge">'.$item_name.'</span>';
+												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
 											}
 										}						
 									}

@@ -31,6 +31,7 @@ $cakeDescription = __d('Eyelevate', 'Jays Cleaners');
 		<!-- Mobile Specific Metas
   ================================================== -->
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="author" content="Jays Cleaners" />
 	<?php
 	if (isset($meta_keywords)) {
 		echo $this->Html->meta('keywords',$meta_keywords);
@@ -175,6 +176,42 @@ $cakeDescription = __d('Eyelevate', 'Jays Cleaners');
 							?> 
 						</ul>
 					</div>
+
+				<select id="select_menu" onchange="location = this.value">
+					<option>Main Menu</option>
+			    <?php
+    			foreach ($primary_nav as $key => $value) {
+    				
+					$mainHeader = $key;
+					if($mainHeader=='Home'){
+					?>
+					<optgroup label="Home">
+						<option value="/">Home</option>	
+					</optgroup>
+					
+					<?php
+					} else {
+					?>
+					<optgroup label="<?php echo $mainHeader;?>">
+					<?php
+					if($primary_nav[$mainHeader]['next'] != 'empty'){ 
+						foreach ($primary_nav[$mainHeader]['next'] as $key=>$value) {
+							$name = $primary_nav[$mainHeader]['next'][$key]['name'];
+							$url = $primary_nav[$mainHeader]['next'][$key]['url'];
+							?>
+							<option value="<?php echo str_replace('/index','',$url);?>">&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $name;?></option>
+							<?php
+						}
+					}					
+					?>	
+					</optgroup>
+					<?php						
+					}
+
+
+				}	
+				?>		    
+				</select>					
 				</div>
 			</div>
 		<?php 

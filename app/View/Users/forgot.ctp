@@ -37,12 +37,12 @@ echo $this->TwitterBootstrap->flashes(array(
 
 
 	<div class="row">
-		<p>To reset your password please submit in your username. An email with instructions will be sent to the email address under this account.</p>
+		<p>To reset your password please submit in your email address you used to create the account. An email with instructions will be sent to for further instructions.</p>
 		<div class="twelve columns alpha">
 			<?php
 			echo $this->Form->create();
-			echo $this->Form->input('username');
-			echo $this->Form->submit('Reset Password');
+			echo $this->Form->input('email');
+			echo $this->Form->submit('Reset Password',array('class'=>'btn btn-primary'));
 			echo $this->Form->end();
 			?>
 		</div>

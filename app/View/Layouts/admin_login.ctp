@@ -19,14 +19,18 @@
 if (!isset($username)) {
 	$username = 'You are not logged in.';
 } 
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Cleanersaide</title>	
+		<?php
+		if(!isset($title_for_layout)){
+			$title_for_layout = 'Cleanersaide';
+		}
+		?>
+		<title><?php echo $title_for_layout;?></title>	
 
 		<?php 
 		echo $this->fetch('meta');
@@ -34,7 +38,7 @@ if (!isset($username)) {
 		echo $this->Html->css(array(
 			// 'bootstrap/bootstrap', 
 			// 'bootstrap/bootstrap-responsive', 
-			// 'admin/black', 
+			// 'admin/red', 
 			// 'admin/style', 
 			// 'js/admin/plugins/jBreadcrumbs/css/BreadCrumb', //breadcrumbs
 			// 'js/admin/plugins/qtip2/jquery.qtip.min', //tooltips
@@ -42,24 +46,26 @@ if (!isset($username)) {
 			// 'js/admin/plugins/google-code-prettify/prettify', //code prettifier
 			// 'js/admin/plugins/sticky/sticky', //notifications
 			// 'js/admin/plugins/splashy/splashy', //splashy icons **NO SUCH FILE**
+			// 'js/admin/plugins/datepicker/datepicker', //flags **NO SUCH FILE**
 			// 'js/admin/plugins/fullcalendar/fullcalendar_gebo', //calendar
 			// 'js/admin/plugins/datepicker/datepicker', //datepicker
-			// 'js/admin/plugins/jquery.treeview/jquery.treeview.css'
+			// 'js/admin/plugins/fullcalendar/fullcalendar_gebo' //full calendar
+			// 'js/admin/plugins/jquery.treeview/jquery.treeview.css
 			
 		));
 		
 		//compressed all of the files above to reduce http requests for development.
 		echo $this->Html->css(array(
-			'admin/compressed_development', 
+			'compressed_development', 
 		));
 		echo $this->fetch('css');
 		?>
 		<!-- Favicons
 		================================================== -->
-		<link rel="shortcut icon" href="/img/frontend/favicon.ico">			
+		<link rel="shortcut icon" href="/img/frontend/favicon.ico">	
 		<!-- John's CSS for test Admin functions -->
 		
-		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans" />
 
 		<!--[if lte IE 8]>
 		<link rel="stylesheet" href="css/ie.css" />
@@ -71,9 +77,11 @@ if (!isset($username)) {
 		<script>
 			// hide all elements & show preloader
 			document.documentElement.className += 'js';
+					
 		</script>
 	</head>
 	<body>
+
 		<div id="loading_layer" style="display:none"><img src="/img/admin/ajax_loader.gif" alt="" />
 		</div>
 
@@ -83,40 +91,59 @@ if (!isset($username)) {
 				<div class="navbar navbar-fixed-top">
 					<div class="navbar-inner">
 						<div class="container-fluid">
-							<a class="brand" href="/admins"><i class="icon-home icon-white"></i>Jays Cleaners</a>
+							<a class="brand" href="/admins" style="line-height: 40px;">Cleanersaide</a>
 							<ul class="nav user_menu pull-right">
 								<li class="hidden-phone hidden-tablet">
 									<div class="nb_boxes clearfix"></div>
 								</li>
+								<?php
+								if(isset($rewards_display)){
+									if($reward_status == 2){
+										$reward_title = 'Reward Points <span class="label label-inverse" style="font-size:larger;">'.$reward_points.'</span> <b class="caret"></b>';
+									} else {
+										$reward_title = 'Reward Program Not Activated <b class="caret"></b>';
+									}
+								?>
 								<li class="divider-vertical hidden-phone hidden-tablet"></li>
 								<li class="dropdown">
-									<a href="#" class="dropdown-toggle nav_condensed" data-toggle="dropdown"><i class="flag-gb"></i> <b class="caret"></b></a>
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $reward_title;?> </a>
 									<ul class="dropdown-menu">
+										<?php
+										if($reward_status == 1){
+										?>
 										<li>
-											<a href="javascript:void(0)"><i class="flag-de"></i> Deutsch</a>
+											<a href="/rewards/activate/<?php echo $customer_id;?>">Activate Reward Program</a>
+										</li>
+										<?php
+										} else {
+										?>
+										<li>
+											<a href="/rewards/view/<?php echo $customer_id;?>">Rewards History</a>
 										</li>
 										<li>
-											<a href="javascript:void(0)"><i class="flag-fr"></i> Français</a>
+											<a href="/rewards/deactivate/<?php echo $customer_id;?>">De-activate Rewards Program</a>
 										</li>
-										<li>
-											<a href="javascript:void(0)"><i class="flag-es"></i> Español</a>
-										</li>
-										<li>
-											<a href="javascript:void(0)"><i class="flag-ru"></i> Pусский</a>
-										</li>
+										<?php	
+										}
+										?>
+										
 									</ul>
 								</li>
+								<?php	
+								}
+								?>
+								
+								
 								<li class="divider-vertical hidden-phone hidden-tablet"></li>
 								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="/img/admin/user-avatar.png" alt="" class="user_avatar" /> <?php echo $username;?> <b class="caret"></b></a>
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $username;?> 
+									<?php 
+										if ($username != "You are not logged in.") {
+											echo '<b class="caret"></b>';
+										} 
+									?>
+									</a>
 									<ul class="dropdown-menu">
-										<li>
-											<a href="user_profile.html">My Profile</a>
-										</li>
-										<li>
-											<a href="javascrip:void(0)">Another action</a>
-										</li>
-										<li class="divider"></li>
 										<li>
 											<a href="/admins/logout">Log Out</a>
 										</li>
@@ -134,11 +161,20 @@ if (!isset($username)) {
 			<!-- main content -->
 			<div id="contentwrapper">
 				<div class="main_content">
+					<!-- any flash messages goes here -->
+					<?php
+					echo $this->TwitterBootstrap->flashes(array(
+					    "auth" => true,
+					    "closable"=>true
+					    )
+					);
+					?>
 					<?php echo $this -> fetch('content'); ?>
 
 				</div>
 			</div>
 
+			<!-- sidebar -->
 
 <?php
  echo $this -> Html -> script(array(//a lot of this is more than we need, but I will optimize later JFD 10/9
@@ -160,10 +196,12 @@ if (!isset($username)) {
 	'admin/jquery.imagesloaded.min.js', 'admin/jquery.wookmark.js', //multi-column layout
 	'admin/jquery.mediaTable.min.js', //responsive table
 	'admin/jquery.peity.min.js', //small charts
-	'admin/plugins/flot/jquery.flot.min.js', 'admin/plugins/flot/jquery.flot.resize.min.js', 'admin/plugins/flot/jquery.flot.pie.min.js', //charts
+	'admin/plugins/visualize/jquery.visualize.js', //charts
 	'admin/plugins/fullcalendar/fullcalendar.min.js', //calendar
-	'admin/plugins/list_js/list.min.js', 'admin/plugins/list_js/plugins/paging/list.paging.js', //sortable/filterable list
+	'admin/plugins/list_js/list.min.js', 'admin/plugins/list_js/plugins/paging/list.paging.js', //sortable/filterable lists
 	'admin/plugins/tiny_mce/jquery.tinymce.js', //tinymce and the file uploader
+	'admin/plugins/plupload/js/plupload.full.js',
+	'admin/plugins/plupload/js/jquery.plupload.queue/jquery.plupload.queue.full.js',
 	'admin/plugins/datepicker/bootstrap-datepicker.min.js',
 	'admin/plugins/stepy/js/jquery.stepy.min.js', 
 	'admin/dashboard.js', //global JS functions	
@@ -174,10 +212,13 @@ if (!isset($username)) {
 	echo $this->fetch('script');
  ?>
 
-		<script>
+		<script type="text/javascript">
 			$(document).ready(function() {
 				//* show all elements & remove preloader
 				setTimeout('$("html").removeClass("js")', 250);
+				setTimeout(function(){
+					$("#searchCustomerInput").focus();	
+				}, 1000)
 			});
 		</script>
 

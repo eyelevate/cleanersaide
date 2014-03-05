@@ -125,7 +125,13 @@ class PagesController extends AppController {
 
 		$contents = $this->Page_content->find('all',array('conditions'=>array('page_id'=>'1')));
 		
-		$this->set('contents',$contents);			
+		$this->set('contents',$contents);	
+		
+		//meta keywords
+		$meta_keywords = 'dry cleaning, drycleaning,laundry, toxin-free, eco-friendly, seattle, pick-up, delivery, shirt laundry, cleaning, cleaners, roosevelt, alterations';
+		$meta_description = 'Free Pick-up and Delivery to your home or office, to local seattle neighborhoods';
+		$this->set('meta_keywords',$meta_keywords);
+		$this->set('meta_description',$meta_description);		
 	    // session_unset();     // unset $_SESSION variable for the run-time 
 	    // session_destroy();   // destroy session data in storage		
 	}

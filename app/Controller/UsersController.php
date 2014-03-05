@@ -225,10 +225,11 @@ class UsersController extends AppController {
 		
 		
 		if($this->request->is('post')){
-			$username = $this->request->data['User']['username'];
+			//$username = $this->request->data['User']['username'];
+			$user_email = $this->request->data['User']['email'];
 			
 			//find the users email address
-			$find = $this->User->find('all',array('conditions'=>array('username'=>$username)));
+			$find = $this->User->find('all',array('conditions'=>array('contact_email'=>$user_email)));
 			if(count($find)>0){
 				//parse through the array to get the necessary data
 				foreach ($find as $f) {
@@ -239,7 +240,7 @@ class UsersController extends AppController {
 					//start the email process	
 					$link = 'https://www.jayscleaners.com/users/reset/'.$random_token;	//this must be changed when pushed to the server		
 					$sendTo = $email;
-					$from = array('info@jayscleaners.com'=>'admin'); //must change this 
+					$from = array('passwords@jayscleaners.com'=>'admin'); //must change this 
 					$subject = 'Forgotten Password';
 					$Email = new CakeEmail('gmail');
 					$Email->emailFormat('html')
