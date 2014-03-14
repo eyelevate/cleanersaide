@@ -1,0 +1,131 @@
+/* 
+Max width before this PARTICULAR table gets nasty
+This query will take effect for any screen smaller than 760px
+and also iPads specifically.
+*/
+@media 
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
+		
+
+	
+	
+	/* Force table to not be like tables anymore */
+	#deliveryTable table, #deliveryTable thead, #deliveryTable tbody, #deliveryTable th, #deliveryTable td, #deliveryTable tr { 
+		display: block; 
+	}
+	
+	/* Hide table headers (but not display: none;, for accessibility) */
+	#deliveryTable thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+	
+	#deliveryTable tr { border: 1px solid #ccc; }
+	
+	#deliveryTable td { 
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 50%; 
+	}
+	
+	#deliveryTable td:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+	}	
+	/*
+	Label the delivery table
+	*/
+	#deliveryTable td:nth-of-type(1):before { content: "Customer ID"; }
+	#deliveryTable td:nth-of-type(2):before { content: "First Name"; }
+	#deliveryTable td:nth-of-type(3):before { content: "Last Name"; }
+	#deliveryTable td:nth-of-type(4):before { content: "Phone"; }
+	#deliveryTable td:nth-of-type(5):before { content: "Zipcode"; }
+	#deliveryTable td:nth-of-type(6):before { content: "Pickup Date"; }
+	#deliveryTable td:nth-of-type(7):before { content: "Dropoff Date"; }
+	#deliveryTable td:nth-of-type(8):before { content: "Special Instructions"; }
+	#deliveryTable td:nth-of-type(9):before { content: "Profile ID"; }
+	#deliveryTable td:nth-of-type(10):before { content: "Payment ID"; }
+	#deliveryTable td:nth-of-type(11):before { content: "Action"; }
+
+	/* Force table to not be like tables anymore */
+	.invoiceTable table, .invoiceTable thead, .invoiceTable tbody, .invoiceTable th, .invoiceTable td, .invoiceTable tr { 
+		display: block; 
+	}
+	
+	/* Hide table headers (but not display: none;, for accessibility) */
+	.invoiceTable thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+		c
+	}
+	
+	.invoiceTable tr { 
+		clear:both;
+		border: 1px solid #ccc; 
+	}
+	
+	.invoiceTable td { 
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 50%; 
+		clear:both;
+	}
+	
+	.invoiceTable td:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+		clear:both;
+	}
+	/*
+	Label the dropoff Invoice Table
+	*/
+	.invoiceTable td:nth-of-type(1):before { content: "Invoice ID"; }
+	.invoiceTable td:nth-of-type(2):before { content: "Customer ID"; }
+	.invoiceTable td:nth-of-type(3):before { content: "Items"; }
+	.invoiceTable td:nth-of-type(4):before { content: "Qty"; }
+	.invoiceTable td:nth-of-type(5):before { content: "Pretax"; }
+	.invoiceTable td:nth-of-type(6):before { content: "Tax"; }
+	.invoiceTable td:nth-of-type(7):before { content: "Total"; }
+	.invoiceTable td:nth-of-type(8):before { content: "Dropoff"; }
+	.invoiceTable td:nth-of-type(9):before { content: "Due"; }
+
+	/* Smartphones (portrait and landscape) ----------- */
+	@media only screen
+	and (min-device-width : 320px)
+	and (max-device-width : 480px) {
+		body { 
+			padding: 0; 
+			margin: 0; 
+			width: 320px; }
+		}
+	
+	/* iPads (portrait and landscape) ----------- */
+	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+		body { 
+			width: 495px; 
+		}
+	}	
+	
+	
+	
+	
+}

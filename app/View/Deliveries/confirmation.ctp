@@ -3,7 +3,8 @@
 $this->Html->css(array(
 	'../js/frontend/plugins/jquery-ui/css/ui-lightness/jquery-ui-1.10.1.custom', //generic jquery-ui css file (lightness)
 	'frontend/bootstrap-form',
-	'frontend/bootstrap-toggle-buttons'
+	'frontend/bootstrap-toggle-buttons',
+	'frontend/mobile_devices_tables'
 	),
 	'stylesheet',
 	array('inline'=>false)
@@ -27,7 +28,7 @@ $pickup_date = date('D n/d/Y',strtotime($deliveries['Schedule']['pickup_date']))
 <div class="container">
 	<div class="well well-small sixteen columns alpha">
 		<h2>Delivery Information</h2>
-		<table class="table table-bordered span8">
+		<table class="table table-bordered">
 
 			<tr >
 				<th>Full Name</th>

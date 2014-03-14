@@ -6,9 +6,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<?php echo $this->Html->charset(); ?>
+	<?php 
+		echo $this->Html->charset(); 
+		
+		$cakeDescription = __d('Eyelevate', 'Jays Cleaners');
+	?>
 	<title>
-		<?php echo $title_for_layout; ?>
+		<?php echo $cakeDescription ?> |
+		<?php echo $title_for_layout; ?> |
+		<?php echo 'Expert Toxin-Free Dry Cleaning and Alterations. Free pick up and delivery to Seattle neighborhoods!';?>
 	</title>
 	<?php
 		//set meta data here SEO
@@ -160,9 +166,16 @@
 			  	<div id="footer_nav">
 			  		<a class="pull-left" href="/Terms-of-Service-and-Privacy" >Terms & Privacy</a>
 			  		<a class="pull-left" href="/Contact-Us" >Contact Us</a>
-					<a class="pull-right" target="blank"href="http://ssl.comodo.com/"/><img src="/img/frontend/comodo.png"/></a>
+					<a class="pull-right" target="blank"href="http://ssl.comodo.com/" style="margin:0px;"/><img src="/img/frontend/comodo.png"/></a>
 			  	</div>
-			</div>	  
+			</div>	
+			<a target="_blank" href="https://www.google.com/maps/place/Jay's+Dry+Cleaners+Roosevelt/@47.6756139,-122.3198324,17z/data=!4m7!1m4!3m3!1s0x5490146eff972b9f:0xfb49846026dc31f2!2s801+NE+65th+St!3b1!3m1!1s0x0:0x930183a6eaae85fe">
+				<span>Jays Dry Cleaners Roosevelt</span> |
+				<em>801 NE 65th St., Suite B</em> |
+				<em>Seattle, WA 98115</em> |
+				<em>(206) 453-5930</em> |
+				<span>jayscleaners@gmail.com</span>
+			</a>  
 		  </div>
 		</div>
 	</div>
@@ -171,7 +184,7 @@
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-48780051-1', 'jaysdrycleaners.com');
+  ga('create', 'UA-48780051-1', 'jayscleaners.com');
   ga('send', 'pageview');
 </script>
 </body>

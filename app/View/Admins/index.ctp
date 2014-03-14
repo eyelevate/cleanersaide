@@ -1,4 +1,11 @@
 <?php
+//CSS Files
+$this->Html->css(array(
+	'admin/admin_index_mobile_tables'
+	),
+	'stylesheet',
+	array('inline'=>false)
+);
 //add scripts to header
 echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 
@@ -44,7 +51,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 				</div>	
 				<div class="accordion-body collapse" id="collapse-delivery">			
 					<div class="accordion-inner">
-						<table class="table table-bordered table-condensed table-hover">
+						<table id="deliveryTable" class="table table-bordered table-condensed table-hover">
 							<thead>
 								<tr>
 									<th>Customer ID</th>
@@ -107,7 +114,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 	</div>
 	<div class="well well-small">
 		<h1 class="heading">Drop Off Summary - <?php echo $date_label;?></h1>
-		<table class="table table-bordered table-condensed table-hover">
+		<table class="summaryTable table table-bordered table-condensed table-hover">
 			<thead>
 				<tr>
 					<th>Name</th>
@@ -280,7 +287,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 				</div>	
 				<div class="accordion-body collapse" id="collapse-Dry_Clean">			
 					<div class="accordion-inner">
-						<table class="table table-bordered table-condensed table-striped table-hover">
+						<table class="invoiceTable table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th>Invoice ID</th>
@@ -356,7 +363,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 				</div>	
 				<div class="accordion-body collapse" id="collapse-Laundry">			
 					<div class="accordion-inner">
-						<table class="table table-bordered table-condensed table-striped table-hover">
+						<table class="invoiceTable table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th>Invoice ID</th>
@@ -431,7 +438,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 				</div>	
 				<div class="accordion-body collapse" id="collapse-Household">			
 					<div class="accordion-inner">
-						<table class="table table-bordered table-condensed table-striped table-hover">
+						<table class="invoiceTable table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th>Invoice ID</th>
@@ -506,7 +513,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 				</div>	
 				<div class="accordion-body collapse" id="collapse-Alteration">			
 					<div class="accordion-inner">
-						<table class="table table-bordered table-condensed table-striped table-hover">
+						<table class="invoiceTable table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th>Invoice ID</th>
@@ -581,7 +588,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 				</div>	
 				<div class="accordion-body collapse" id="collapse-Other">			
 					<div class="accordion-inner">
-						<table class="table table-bordered table-condensed table-striped table-hover">
+						<table class="invoiceTable table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th>Invoice ID</th>
@@ -654,7 +661,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 	</div>
 	<div class="well well-small">
 		<h1 class="heading">Pickup Summary - <?php echo $date_label;?></h1>
-		<table class="table table-bordered table-condensed table-hover">
+		<table class="summaryTable table table-bordered table-condensed table-hover">
 			<thead>
 				<tr>
 					<th>Name</th>
@@ -827,7 +834,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 				</div>	
 				<div class="accordion-body collapse" id="collapse-pickup-dryclean">			
 					<div class="accordion-inner">
-						<table class="table table-bordered table-condensed table-striped table-hover">
+						<table class="invoiceTable table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th>Invoice ID</th>
@@ -903,7 +910,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 				</div>	
 				<div class="accordion-body collapse" id="collapse-pickup-laundry">			
 					<div class="accordion-inner">
-						<table class="table table-bordered table-condensed table-striped table-hover">
+						<table class="invoiceTable table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th>Invoice ID</th>
@@ -978,7 +985,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 				</div>	
 				<div class="accordion-body collapse" id="collapse-pickup-household">			
 					<div class="accordion-inner">
-						<table class="table table-bordered table-condensed table-striped table-hover">
+						<table class="invoiceTable table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th>Invoice ID</th>
@@ -1053,7 +1060,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 				</div>	
 				<div class="accordion-body collapse" id="collapse-pickup-alteration">			
 					<div class="accordion-inner">
-						<table class="table table-bordered table-condensed table-striped table-hover">
+						<table class="invoiceTable table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th>Invoice ID</th>
@@ -1128,7 +1135,7 @@ echo $this->Html->script(array('admin/admin_index.js'),FALSE);
 				</div>	
 				<div class="accordion-body collapse" id="collapse-pickup-other">			
 					<div class="accordion-inner">
-						<table class="table table-bordered table-condensed table-striped table-hover">
+						<table class="invoiceTable table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th>Invoice ID</th>

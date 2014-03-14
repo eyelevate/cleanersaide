@@ -25,7 +25,7 @@ $cakeDescription = __d('Eyelevate', 'Jays Cleaners');
 	<title>
 		<?php echo $cakeDescription ?> |
 		<?php echo $title_for_layout; ?> |
-		<?php echo 'We Deliver';?>
+		<?php echo ' Expert Toxin-Free Dry Cleaning and Alterations. Free pick up and delivery to Seattle neighborhoods!';?>
 	</title>
 	
 		<!-- Mobile Specific Metas
@@ -234,6 +234,7 @@ $cakeDescription = __d('Eyelevate', 'Jays Cleaners');
 
 			<?php echo $this->fetch('content'); ?>
 		<div class="clear"></div>
+
 	</div>
 </div> <!-- Wrapper::END -->
 
@@ -241,11 +242,20 @@ $cakeDescription = __d('Eyelevate', 'Jays Cleaners');
 <div id="footer">
   <div class="footer_btm container">
   	<div class="footer_btm_inner">  
-	  	<div id="footer_nav" class="sixteen columns alpha">
+	  	<div id="footer_nav" class="sixteen columns alpha" style="padding-bottom:25px; padding-top:25px;">
 	  		<a class="pull-left" href="/Terms-of-Service-and-Privacy" >Terms & Privacy</a>
 	  		<a class="pull-left" href="/Contact-Us" >Contact Us</a>
-			<a class="pull-right" target="blank"href="http://ssl.comodo.com/"/><img src="/img/frontend/comodo.png"/></a>
+	  		
 	  	</div>
+	  	<div class="pull-left" style="padding-top:25px;">
+			<a style="margin-top:25px;" target="_blank" href="https://www.google.com/maps/place/Jay's+Dry+Cleaners+Roosevelt/@47.6756139,-122.3198324,17z/data=!4m7!1m4!3m3!1s0x5490146eff972b9f:0xfb49846026dc31f2!2s801+NE+65th+St!3b1!3m1!1s0x0:0x930183a6eaae85fe">
+				<span>@<?php echo date('Y');?> Jays Dry Cleaners Roosevelt</span> |
+				<em>801 NE 65th St., Suite B</em> |
+				<em>Seattle, WA 98115</em> |
+				<em>(206) 453-5930</em>
+			</a>	  		
+	  	</div>
+	  	<a class="pull-left" target="blank"href="http://ssl.comodo.com/" style="margin:0px; padding:0px;"/><img src="/img/frontend/comodo.png"/></a>
 	</div>	  
   </div>
 </div>
@@ -254,7 +264,7 @@ $cakeDescription = __d('Eyelevate', 'Jays Cleaners');
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-48780051-1', 'jaysdrycleaners.com');
+  ga('create', 'UA-48780051-1', 'jayscleaners.com');
   ga('send', 'pageview');
 </script>
 </body>

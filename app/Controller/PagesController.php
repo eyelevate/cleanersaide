@@ -784,6 +784,8 @@ class PagesController extends AppController {
  */
 	public function url($urlFirst = null,$urlSecond = null, $urlThird = null, $urlFourth = null, $urlFifth = null)
 	{
+		$this->set('title_for_layout',$urlFirst);
+		
 		//set the url parameters to match db url names
 		$url = $this->Page->fixUrl($urlFirst, $urlSecond, $urlThird, $urlFourth, $urlFifth);
 

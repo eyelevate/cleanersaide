@@ -8,7 +8,9 @@
 //CSS Files
 $this->Html->css(array(
 	'../js/frontend/plugins/jquery-ui/css/ui-lightness/jquery-ui-1.10.1.custom', //generic jquery-ui css file (lightness)
-	'frontend/bootstrap-form'
+	'frontend/bootstrap-form',
+	'../js/frontend/plugins/jquery.bxslider/jquery.bxslider',
+	'frontend/home'
 	),
 	'stylesheet',
 	array('inline'=>false)
@@ -16,6 +18,7 @@ $this->Html->css(array(
 //JS Files
 echo $this->Html->script(array(
 	'frontend/plugins/jquery-ui/js/jquery-ui-1.10.1.custom.js', //jquery-ui js file
+	'frontend/plugins/jquery.bxslider/jquery.bxslider.min.js',
 	'frontend/home.js',
 	'frontend/bootstrap-tabs.min.js'
 	),
@@ -44,7 +47,7 @@ $(document).ready(function() {
 
 	<div class="row no_bm">
 		<div id="slider_holder" class="sixteen columns">
-
+				
 				<div id="trip_planner">
 					<div class="trip_planner_title">Schedule a free delivery</div>
 						<ul class="nav nav-pills" id="myTab">
@@ -124,21 +127,34 @@ $(document).ready(function() {
 							  </div>
 						</div>
 					</div>
-
-				<div id="sequence" class="nomobile">
-					<div id="homeBodyDiv1" class="span6 pull-left">
+					<div class="nomobile">
 						
-					</div>
-					<div id="homeBodyDiv2" class="span6 pull-left">
-						<br/><br/>
-						<p id="homeBody1">Toxin-Free</p>
-						<p id="homeBody2">Eco-Friendly</p>
-						<p id="homeBody3">Cleaning</p>
-					</div>						
+						<ul class="bxslider">
+							<li>
+								<div id="homeBodyDiv1" class="span6 pull-left"></div>
+								<div id="homeBodyDiv2" class="span6 pull-left">
+									<br/><br/>
+									<p id="homeBody1">Toxin-Free</p>
+									<p id="homeBody2">Eco-Friendly</p>
+									<p id="homeBody3">Cleaning</p>
+								</div>									
+							</li>
+							<li>
+								<div id="homeBodyDiv1" class="span6 pull-left"></div>
+								<div id="" class="span6 pull-left">
+									<br/><br/>
+									<h2>About Us</h2>
+									<p id="aboutUsTextFront" class="text">
+										Jays Dry Cleaners has been serving Seattle for over 35 years.  We are locally-owned and family-operated and provide the highest quality toxin-free, eco-friendly dry cleaning and laundry services for all your clothing and household needs.<br/><br/> We also offer expert alteration services and free pick up and delivery to local Seattle neighborhood homes and offices.	
+									</p>
+									
+								</div>								
+							</li>
+						</ul>
 
-				</div>
+					</div>
 		</div>
-		<!-- Sequence Slider::END-->
+		<!-- MUslider Slider::END-->
 	</div>
 
 	<div class="container">
