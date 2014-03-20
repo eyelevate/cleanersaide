@@ -1,5 +1,6 @@
 <?php
 //CSS Files
+
 $this->Html->css(array(
 	'admin/admin_index_mobile_tables'
 	),
@@ -7,7 +8,7 @@ $this->Html->css(array(
 	array('inline'=>false)
 );
 //add scripts to header
-echo $this->Html->script(array('admin/admin_index.js'),FALSE);
+echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/bootstrap-datepicker.min.js'),FALSE);
 
 ?>
 

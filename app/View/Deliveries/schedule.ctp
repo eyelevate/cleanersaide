@@ -1,6 +1,7 @@
 <?php
 echo $this->Html->script(array(
 	'admin/plugins/jquerypriceformat/jquery.price_format.1.7.min.js',
+	'admin/plugins/datepicker/bootstrap-datepicker.min.js',
 	'admin/plugins/phone_mask/phone_mask.js',
 	'admin/deliveries_schedule.js'),FALSE);
 ?>

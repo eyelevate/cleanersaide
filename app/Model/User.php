@@ -298,6 +298,7 @@ class User extends AppModel {
 	    // return our finished random string
 	    return $random_string;
 	}
+	
 		
 	
 	// public function convertOldUserToNew()

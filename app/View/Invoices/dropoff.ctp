@@ -1,7 +1,7 @@
 <?php
 $this->Html->css(array('admin/invoices_dropoff'),'stylesheet', array('inline' => false)); 
 //add scripts to header
-echo $this->Html->script(array('admin/invoices_dropoff.js'),FALSE);
+echo $this->Html->script(array('admin/plugins/datepicker/bootstrap-datepicker.min.js','admin/invoices_dropoff.js'),FALSE);
 
 $tax_rate  = 0;
 if(!empty($taxes)){

@@ -20,7 +20,7 @@ class GroupsController extends AppController {
 	    parent::beforeFilter();
 		$this->set('username',AuthComponent::user('username'));
 		//
-		$this->Auth->allow();		
+		$this->Auth->deny();		
 		$this->Auth->authError = 'You do not have access to this page.';
 	}
 /**

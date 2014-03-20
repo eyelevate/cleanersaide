@@ -78,6 +78,7 @@ class InvoicesController extends AppController {
 			foreach ($users as $u) {
 				$reward_status = $u['User']['reward_status'];
 				$reward_points = $u['User']['reward_points'];
+		
 				if(is_null($reward_points)){
 					$reward_points = 0;
 				}
@@ -668,5 +669,5 @@ class InvoicesController extends AppController {
 
 	}
 
-
+	
 }

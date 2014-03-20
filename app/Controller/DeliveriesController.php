@@ -1013,7 +1013,7 @@ class DeliveriesController extends AppController {
 					}
 					$user_update['User']['profile_id'] = $profile_id['customerProfileId'];
 					$user_update['User']['ccnum'] = $ccnum;
-					$user_update['User']['exp_num'] = $exp_num;
+					$user_update['User']['exp_month'] = $exp_num;
 					$user_update['User']['exp_year'] = $exp_year;
 					$create_payment_id = $this->AuthorizeNet->createPaymentProfile($user_update,$profile_id);
 					switch($create_payment_id['status']){
@@ -1415,6 +1415,168 @@ class DeliveriesController extends AppController {
 				// $this->request->data['Delivery']['date'] = $date;	
 				// return $this->finish($this->request->data);			
 			}
+		}
+	}
+	public function new_delivery($id = null)
+	{
+		//set the admin navigation
+		$page_url = '/deliveries/new_delivery';
+		$admin_nav = $this->Menu_item->arrangeByTiers($this->Session->read('Admin.menu_id'));	
+		$admin_check = $this->Menu_item->menuActiveHeaderCheck($page_url, $admin_nav);
+		$this->set('admin_nav',$admin_nav);
+		$this->set('admin_pages',$page_url);
+		$this->set('admin_check',$admin_check);
+		//select layout
+		$this->layout = 'admin';
+		
+		
+		$fields = array('User.contact_zip','User.profile_id','User.payment_id');
+		$users = $this->User->read($fields,$id);
+		if(count($users)>0){
+			foreach ($users as $u) {
+				$zipcode = $u['contact_zip'];
+				$profile_id = $u['profile_id'];
+				$payment_id = $u['payment_id'];
+			}
+		} else {
+			$zipcode = '';
+			$profile_id = '';
+			$payment_id = '';
+		}
+		$_SESSION['Delivery']['User']['id']= $id;
+		$_SESSION['Delivery']['User']['contact_zip'] = $zipcode;
+
+		$base_routes = $this->Delivery->routes($zipcode,$_SESSION['company_id']);
+		$find_routes = $this->Delivery->view_schedule($this->Delivery->routes($zipcode,$_SESSION['company_id']));
+		$month = date('m');
+		$year = date('Y');
+		$route_schedule = $this->Schedule->create_pickup_schedule($base_routes,$_SESSION['company_id'],$month, $year);
+		
+		if(count($find_routes)>0){
+			$this->set('route_status','1');
+			$this->set('routes',$find_routes);
+		} else {
+			$this->set('route_status','0');
+			$this->set('routes',array());
+		}
+		$this->set('route_schedule',$route_schedule);		
+		$this->set('zipcode',$zipcode);
+		$this->set('profile_id',$profile_id);
+		$this->set('payment_id',$payment_id);
+		$this->set('customer_id',$id);
+		
+		if($this->request->is('post')){
+			//create token to save
+			$original_string = 'abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+			$token = $this->Delivery->get_random_string($original_string, 8);		
+			$user_update = array();
+			$user_update['User']['token'] = $token;	
+			$session_error = 0;
+			$profile_id = $this->request->data['Delivery']['profile_id'];
+			$payment_id = $this->request->data['Delivery']['payment_id'];
+			$this->request->data['Schedule']['pickup_date'] = date('Y-m-d',strtotime($this->request->data['Schedule']['pickup_date'])).' 00:00:00';
+			$this->request->data['Schedule']['dropoff_date'] = date('Y-m-d',strtotime($this->request->data['Schedule']['dropoff_date'])).' 00:00:00';
+			
+			$form = $this->request->data;
+			
+			//process payment_id and save into db, if set then skip
+			$fields = array(
+				'User.first_name',
+				'User.last_name',
+				'User.contact_address',
+				'User.contact_city',
+				'User.contact_state',
+				'User.contact_zip',
+				'User.contact_phone',
+				'User.contact_email',
+				'User.special_instructions'
+			);
+			$users = $this->User->read($fields,$id);
+			if(count($users)>0){
+				foreach ($users as $u) {
+					$first_name = $u['first_name'];
+					$last_name = $u['last_name'];
+					$address = $u['contact_address'];
+					$city = $u['contact_city'];
+					$state = $u['contact_state'];
+					$zipcode = $u['contact_zip'];
+					$phone = $u['contact_phone'];
+					$email = $u['contact_email'];
+					$special_instructions = $u['special_instructions'];
+				}
+			}
+			if(!empty($profile_id) && isset($profile_id) && $profile_id != 0){
+				if(empty($payment_id) || is_null($payment_id) || $payment_id == 0){
+					$user_data = array();
+
+					$user_data['User'] = array(
+						'company_id'=>$_SESSION['company_id'],
+						'id'=>$id,
+						'first_name'=>$first_name,
+						'last_name'=>$last_name,
+						'contact_address'=>$address,
+						'contact_city'=>$city,
+						'contact_state'=>$state,
+						'contact_zip'=>$zipcode,
+						'contact_phone'=>$phone,
+						'contact_email'=>$email,
+						'ccnum'=>preg_replace("/[^0-9]/","",$this->request->data['Payment']['ccnum']),
+						'exp_month'=>preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_month']),
+						'exp_year'=>preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_year'])
+					);
+
+					$create_payment_id = $this->AuthorizeNet->createPaymentProfile($user_data,$profile_id);
+					switch($create_payment_id['status']){
+						case 'approved':
+		
+							$user_update['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];	
+							switch($this->request->data['Payment']['saved_profile']){
+								case 'Yes': //we will delete the payment id and payment profile
+								$user_update['User']['payment_status'] = 2;
+								break;
+									
+								default: //we will delete the payment id and payment profile after delivery completion
+								$user_update['User']['payment_status'] = 1;
+								break;
+							}								
+						break;
+							
+						case 'rejected': //rejected create session and redirect now
+							$session_errors++;
+							$this->Session->setFlash(__($create_payment_id['response']),'default',array(),'error');
+							
+						break;
+					}
+						
+				}						
+			}
+
+			$this->User->id = $id;
+			if($this->User->save($user_update)){
+
+				//once payment_id is set process schedule
+				switch($this->request->data['Delivery']['type']){
+					case '0': //dropoff only
+						//create delivery schedule
+						$schedules = $this->Schedule->addDropoffSchedule($_SESSION['company_id'], $id, $this->request->data['Schedule'],$special_instructions, $token);					
+					break;
+					
+					case '1': //pickup only
+						//create delivery schedule
+						$schedules = $this->Schedule->addPickupSchedule($_SESSION['company_id'], $id, $this->request->data['Schedule'],$special_instructions, $token);					
+					break;
+					
+					default: //both dropoff and pickup
+						//create delivery schedule
+						$schedules = $this->Schedule->addSchedule($_SESSION['company_id'], $id, $this->request->data['Schedule'],$special_instructions, $token);					
+					break;
+				}
+				$this->Session->setFlash(__('You have successfully saved a new delivery schedule.'),'default',array(),'success');		
+				$this->redirect(array('controller'=>'invoices','action'=>'index',$id));		
+			} else {
+				$this->Session->setFlash(__('There was an error saving the user information, please udpate the form and try again'),'default',array(),'error');
+			};	
+
 		}
 	}
 }

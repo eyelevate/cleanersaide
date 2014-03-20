@@ -72,8 +72,17 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 			?>
 			<form action="/invoices/dropoff/<?php echo $customer_id;?>" method="post">
 				<input value="" name="" type="hidden"/>
-				<input class="btn btn-success" type="submit" value="Drop Off"/>
+				<input class="btn btn-large btn-success" type="submit" value="Drop Off"/>
+				<?php
+				if(isset($profile_id) && !empty($profile_id)){
+				?>
+				<a href="/deliveries/new_delivery/<?php echo $customer_id;?>" class="btn btn-large btn-primary pull-right">Set Delivery</a>
+				<?php	
+				}
+				?>
+				
 			</form>
+			
 			<?php
 			}
 			?>
@@ -181,7 +190,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 			<div class="formRow">
 				<form action="/invoices/pickup" method="post">
 					<input value="<?php echo $customer_id;?>" name="data[customer_id]" type="hidden"/>
-					<input class="btn btn-primary" type="submit" value="Pickup"/>
+					<input class="btn btn-large btn-primary" type="submit" value="Pickup"/>
 				</form>
 			</div>	
 			<?php

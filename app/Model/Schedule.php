@@ -440,7 +440,59 @@ class Schedule extends AppModel {
 		$this->id = $si_id;
 		$this->save($schedules);		
 	}	
+
+	public function addDropoffSchedule($company_id, $customer_id, $data, $special_instructions, $token)
+	{
+		$schedules = array();
+		$schedules['Schedule'] = array(
+			'company_id'=>$company_id,
+			'customer_id'=>$customer_id,
+			'pickup_date'=>NULL,
+			'pickup_delivery_id'=>NULL,
+			'dropoff_date'=>$data['dropoff_date'],
+			'dropoff_delivery_id'=>$data['dropoff_time'],
+			'special_instructions'=>$special_instructions,
+			'type'=>'backend',
+			'token'=>$token,
+			'status'=>1,
+		);
+		$this->save($schedules);			
+	}
 	
+	public function addPickupSchedule($company_id, $customer_id, $data, $special_instructions, $token)
+	{
+		$schedules = array();
+		$schedules['Schedule'] = array(
+			'company_id'=>$company_id,
+			'customer_id'=>$customer_id,
+			'pickup_date'=>$data['pickup_date'],
+			'pickup_delivery_id'=>$data['pickup_time'],
+			'dropoff_date'=>NULL,
+			'dropoff_delivery_id'=>NULL,
+			'special_instructions'=>$special_instructions,
+			'type'=>'backend',
+			'token'=>$token,
+			'status'=>1,
+		);
+		$this->save($schedules);			
+	}
+	public function addBothSchedule($company_id, $customer_id, $data, $special_instructions, $token)
+	{
+		$schedules = array();
+		$schedules['Schedule'] = array(
+			'company_id'=>$company_id,
+			'customer_id'=>$customer_id,
+			'pickup_date'=>$data['pickup_date'],
+			'pickup_delivery_id'=>$data['pickup_time'],
+			'dropoff_date'=>$data['dropoff_date'],
+			'dropoff_delivery_id'=>$data['dropoff_time'],
+			'special_instructions'=>$special_instructions,
+			'type'=>'backend',
+			'token'=>$token,
+			'status'=>1,
+		);
+		$this->save($schedules);			
+	}
 	public function createDeliveryScheduleForCsv($pickup, $dropoff)
 	{
 		$delivery = array();

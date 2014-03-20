@@ -170,17 +170,129 @@ class UsersController extends AppController {
 			throw new NotFoundException(__('Invalid user'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
+			
+			$payments = $this->request->data['Payment'];
+			$profile_check = $this->request->data['Payment']['profile_status'];
+			$payment_check = $this->request->data['Payment']['delivery_setup'];
+			$profile_id = $this->request->data['User']['profile_id'];
+			$payment_id = $this->request->data['User']['payment_id'];
+
+			$this->request->data['User']['id'] = $id;
+			$this->request->data['User']['company_id'] = $_SESSION['company_id'];
+			$session_errors = 0;
+			
+			switch($profile_check){
+				case '1':
+					if(empty($profile_id) || is_null($orofile_id) || $profile_id == 0){
+						$profiles = $this->AuthorizeNet->createProfile($this->request->data);
+						//save profile id
+						switch($profiles['status']){
+							case 'approved':
+								$profile_id = $profiles['customerProfileId'];
+								$this->request->data['User']['profile_id'] = $profile_id;
+										
+							break;
+								
+							case 'rejected':
+								$session_errors++;
+								$this->Session->setFlash(__($profiles['response']),'default',array(),'error');
+								
+							break;
+						}
+					}	
+					switch($payment_check){
+						case '1': //yes
+							//$this->request->data = $this->User->editPaymentProfile($this->request->data);
+							
+							if(empty($profile_id) || is_null($orofile_id) || $profile_id == 0){
+								$profiles = $this->AuthorizeNet->createProfile($this->request->data);
+								//save profile id
+								switch($profiles['status']){
+									case 'approved':
+										$profile_id = $profiles['customerProfileId'];
+										$this->request->data['User']['profile_id'] = $profile_id;
+												
+									break;
+										
+									case 'rejected':
+										$session_errors++;
+										$this->Session->setFlash(__($profiles['response']),'default',array(),'error');
+										
+									break;
+								}
+							}
+		
+							if(!empty($profile_id) && isset($profile_id) && $profile_id != 0){
+								if(empty($payment_id) || is_null($payment_id) || $payment_id == 0){
+									$user_update = array();
+									$user_update['User'] = array(
+										'company_id'=>$_SESSION['company_id'],
+										'id'=>$id,
+										'first_name'=>$this->request->data['User']['first_name'],
+										'last_name'=>$this->request->data['User']['last_name'],
+										'contact_address'=>$this->request->data['User']['contact_address'],
+										'contact_city'=>$this->request->data['User']['contact_city'],
+										'contact_state'=>$this->request->data['User']['contact_state'],
+										'contact_zip'=>$this->request->data['User']['contact_zip'],
+										'contact_phone'=>$this->request->data['User']['contact_phone'],
+										'contact_email'=>$this->request->data['User']['contact_email'],
+										'ccnum'=>preg_replace("/[^0-9]/","",$this->request->data['Payment']['ccnum']),
+										'exp_month'=>preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_month']),
+										'exp_year'=>preg_replace("/[^0-9]/","",$this->request->data['Payment']['exp_year'])
+									);
+			
+									$create_payment_id = $this->AuthorizeNet->createPaymentProfile($user_update,$profile_id);
+									switch($create_payment_id['status']){
+										case 'approved':
+						
+											$this->request->data['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];		
+											switch($this->request->data['Payment']['saved_profile']){
+												case 'Yes': //we will delete the payment id and payment profile
+												$this->request->data['User']['payment_status'] = 2;
+												break;
+													
+												default: //we will delete the payment id and payment profile after delivery completion
+												$this->request->data['User']['payment_status'] = 1;
+												break;
+											}								
+										break;
+											
+										case 'rejected': //rejected create session and redirect now
+											$session_errors++;
+											$this->Session->setFlash(__($create_payment_id['response']),'default',array(),'error');
+											
+										break;
+									}
+									
+												
+								}						
+							}
+							
+		
+						break;
+					}									
+				break;
+			}
+			
+			
+
+			unset($this->request->data['Payment']);
 			if ($this->User->save($this->request->data)) {
-				$this->Session->setFlash(__('The user has been saved'),'default',array(),'success');
-				$this->redirect(array('action' => 'index'));
+				if($session_errors>0){
+					$this->redirect(array('controller'=>'users','action'=>'edit',$id));
+				} else {
+					$this->Session->setFlash(__('The user has been saved'),'default',array(),'success');
+					$this->redirect(array('controller'=>'invoices','action' => 'index',$id));					
+				}
+
 			} else {
 				$this->Session->setFlash(__('The user could not be saved. Please, try again.'),'default',array(),'error');
+				$this->redirect(array('controller'=>'users','action'=>'edit',$id));
 			}
 		} else {
 			$this->request->data = $this->User->read(null, $id);
 		}
-		$groups = $this->User->Group->find('list');
-		$this->set(compact('groups'));
+
 	}
 
 /**

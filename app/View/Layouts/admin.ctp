@@ -295,7 +295,8 @@ if (!isset($username)) {
 	'admin/plugins/tiny_mce/jquery.tinymce.js', //tinymce and the file uploader
 	'admin/plugins/plupload/js/plupload.full.js',
 	'admin/plugins/plupload/js/jquery.plupload.queue/jquery.plupload.queue.full.js',
-	'admin/plugins/datepicker/bootstrap-datepicker.min.js',
+	//'admin/plugins/datepicker/bootstrap-datepicker.min.js',
+	
 	'admin/plugins/stepy/js/jquery.stepy.min.js', 
 	'admin/dashboard.js', //global JS functions	
 	'admin/forms.js', //global JS functions

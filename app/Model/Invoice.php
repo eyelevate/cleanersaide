@@ -608,15 +608,7 @@ class Invoice extends AppModel {
 		}
 		$idx++;			
 		$invoice[$idx] ='------------------------------------------';
-		$idx++;
-		$invoice[$idx] = '               Total Pretax: $'.$total_bt.' '.$this->_NewLine();
-		$idx++;
-		$invoice[$idx] = '                  Total Tax: $'.$total_tax.' '.$this->_NewLine();
-		$idx++;
-		$invoice[$idx] = '             Total Discount: $'.$total_discount.' '.$this->_NewLine();
-		$idx++;
-		$invoice[$idx] = '                Total Price: $'.$total_at.' '.$this->_NewLine();
-		$idx++;
+
 		$invoice[$idx] = '               Total Pieces: '.$quantity.' '.$this->_NewLine();
 		$idx++;
 		$invoice[$idx] = '\x1b\x4d\1 '.$this->_CenterBody().' '.$this->_NewLine();
