@@ -6,6 +6,27 @@ App::uses('AppModel', 'Model');
 class Invoice extends AppModel {
     public $name = 'Invoice';
 	
+	
+	public function colors()
+	{
+		$colors = array(
+			'Black' => '#000000',
+			'White' => '#ffffff',
+			'Gray' =>'gray',
+			'Multi' => 'multi',
+			'Red' => 'red',
+			'Green' => 'green',
+			'Yellow' => 'yellow',
+			'Blue' => 'blue',
+			'Tan' => 'tan',
+			'Pink' =>'pink',
+			'Purple'=>'purple',
+			'Brown'=>'brown'
+			
+		);
+		return $colors;
+	}
+	
 	public function invoice_complete($data)
 	{
 		$company_id = $_SESSION['company_id'];
@@ -82,7 +103,6 @@ class Invoice extends AppModel {
 					$sum_quantity += $ivalue['quantity'];
 					$sum_before_tax += $ivalue['before_tax'];
 					$items[$ikey] = $ivalue;
-					
 				}
 				
 				
@@ -311,12 +331,6 @@ class Invoice extends AppModel {
 			}
 			$idx++;			
 			$invoice[$key][$idx] = '-----------------------------------------------';
-			$idx++;
-			$invoice[$key][$idx] = '               Total Pretax: $'.$pretax.' '.$this->_NewLine();
-			$idx++;
-			$invoice[$key][$idx] = '                  Total Tax: $'.$tax.' '.$this->_NewLine();
-			$idx++;
-			$invoice[$key][$idx] = '                Total Price: $'.$total.' '.$this->_NewLine();
 			$idx++;
 			$invoice[$key][$idx] = '               Total Pieces: '.$quantity.' '.$this->_NewLine();
 			$idx++;

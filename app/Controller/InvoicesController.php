@@ -124,8 +124,7 @@ class InvoicesController extends AppController {
 		
 				
 		// //get colors
-		// $colors = $this->Color->find('all',array('conditions'=>array('company_id'=>$company_id)));
-		
+		$colors = $this->Invoice->colors();
 		//get basic due date
 		$due = date('n/d/Y',strtotime($this->Invoice->date_due()));
 		
@@ -134,6 +133,7 @@ class InvoicesController extends AppController {
 		$this->set('taxes',$taxes);
 		$this->set('customer_id',$id);
 		$this->set('due_date',$due);
+		$this->set('colors',$colors);
 		
 			
 	}

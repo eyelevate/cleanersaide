@@ -376,24 +376,14 @@ class Inventory_item extends AppModel {
 					$after_tax += $data[$key]['Invoice']['total'];
 					$tax += $data[$key]['Invoice']['tax'];
 					$item_id = $ivalue['item_id'];
-					$inventory_items = $this->find('all',array('conditions'=>array('id'=>$ikey)));
-					if(count($inventory_items)>0){
-						foreach($inventory_items as $iinv){
-							$inventory_id = $iinv['Inventory_item']['inventory_id'];
-						}
-					} else {
-						$inventory_id = 0;
-					}
-					
-					$inventories = ClassRegistry::init('Inventory')->find('all',array('conditions'=>array('id'=>$inventory_id)));
-					if(count($inventories)>0){
-						foreach($inventories as $inv){
-							$inventory_name = $inv['Inventory']['name'];
-						}
-					} else {
-						$inventory_name = '';
-					}
-					
+					$fields = array('inventory_id');
+					$inventory_items = $this->read($fields, $ikey);
+					$inventory_id = (count($inventory_items)>0) ? $inventory_items['Inventory_item']['inventory_id'] : 0;
+
+					$fields = array('name');
+					$inventories = ClassRegistry::init('Inventory')->read($fields, $inventory_id);
+					$inventory_name = (count($inventories)>0) ? $inventories['Inventory']['name'] : '';
+
 					$split_invoices[$inventory_name][$idx] = $value['Invoice'];
 					
 					

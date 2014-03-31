@@ -88,11 +88,28 @@ echo $this->Html->script(array(
 			$inventory_id = $value['inventory_id'];
 			$invoice_id = $value['invoice_id'];
 			$quantity = $value['quantity'];
+			$items = (count(json_decode($value['items'],true)) >0) ? json_decode($value['items'],true) : array();
+			$tag_quantity = 0;
+			if(count($items)>0){
+				foreach ($items as $ikey => $ivalue) {
+					$tags_individual = $ivalue['quantity'];
+					$item_id = $ivalue['item_id'];
+					switch($item_id){
+						case '2':
+							$tag_quantity += ($tags_individual * 2);
+						break;
+						
+						default:
+							$tag_quantity += $ivalue['quantity'];			
+						break;
+					}
+				}
+			}
 			if($inventory_id != 2){
-				for ($i=1; $i <= $quantity+1; $i++) {
+				for ($i=1; $i <= $tag_quantity+1; $i++) {
 					$frames++;
 					$timer += $i * 500;
-					if($i == $quantity+1){
+					if($i == $tag_quantity+1){
 					?>
 					<iframe style="height:75px; width:350px;" src=""></iframe>		
 					<script type="text/javascript">
