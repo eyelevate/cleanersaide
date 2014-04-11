@@ -135,31 +135,31 @@ class Invoice extends AppModel {
 		$day = date('D',strtotime($today));
 		switch($day){
 			case 'Mon':
-				$due = 2;
+				$due = 2; //wed
 			break;
 			
 			case 'Tue':
-				$due = 2;
+				$due = 2; //thur
 			break;
 				
 			case 'Wed':
-				$due = 2;
+				$due = 2; //fri
 			break;
 			
 			case 'Thu':
-				$due = 2;
+				$due = 4; //mon
 			break;
 				
 			case 'Fri':
-				$due = 3;
+				$due = 4; //tue
 			break;
 				
 			case 'Sat':
-				$due = 4;
+				$due = 4; //wed
 			break;
 				
 			case 'Sun':
-				$due = 3;
+				$due = 3; //wed
 			break;
 		}
 		
