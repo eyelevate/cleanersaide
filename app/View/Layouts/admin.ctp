@@ -26,9 +26,8 @@ if (!isset($username)) {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<?php
-		if(!isset($title_for_layout)){
-			$title_for_layout = 'Cleanersaide';
-		}
+		$title_for_layout = (!isset($title_for_layout)) ? 'Cleanersaide' : $title_for_layout;
+
 		?>
 		<title><?php echo $title_for_layout;?></title>	
 
@@ -97,12 +96,9 @@ if (!isset($username)) {
 									<div class="nb_boxes clearfix"></div>
 								</li>
 								<?php
+								
 								if(isset($rewards_display)){
-									if($reward_status == 2){
-										$reward_title = 'Reward Points <span class="label label-inverse" style="font-size:larger;">'.$reward_points.'</span> <b class="caret"></b>';
-									} else {
-										$reward_title = 'Reward Program Not Activated <b class="caret"></b>';
-									}
+									$reward_title = ($reward_status == 2) ? 'Reward Points <span class="label label-inverse" style="font-size:larger;">'.$reward_points.'</span> <b class="caret"></b>' : 'Reward Program Not Activated <b class="caret"></b>';
 								?>
 								<li class="divider-vertical hidden-phone hidden-tablet"></li>
 								<li class="dropdown">
@@ -137,11 +133,7 @@ if (!isset($username)) {
 								<li class="divider-vertical hidden-phone hidden-tablet"></li>
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $username;?> 
-									<?php 
-										if ($username != "You are not logged in.") {
-											echo '<b class="caret"></b>';
-										} 
-									?>
+									<?php if ($username != "You are not logged in.") { echo '<b class="caret"></b>';} ?>
 									</a>
 									<ul class="dropdown-menu">
 										<li>
@@ -183,7 +175,7 @@ if (!isset($username)) {
 							<div class="sidebar_inner">
 								<? if(isset($admin_nav)){ ?>
 								<form id="searchForm" action="/admins/search_customers" class="input-append" method="post" >
-									<input id="searchCustomerInput" autocomplete="on" name="query" placeholder="Phone / Last Name / ID" class="search_query input-medium" size="16" type="text" placeholder="Search..." />
+									<input id="searchCustomerInput" name="query" placeholder="Phone / Last Name / ID" class="input-medium" size="16" type="text" placeholder="Search..." />
 									<button id="searchButton" type="submit" class="btn">
 										<i class="icon-search"></i>
 									</button>
@@ -200,16 +192,9 @@ if (!isset($username)) {
 										$name = $admin_nav[$mainHeader]['name'];
 										$url = str_replace('/index','',$admin_nav[$mainHeader]['url']);
 										$icon = $admin_nav[$mainHeader]['icon'];
-										$collapse_id = $collapse_id+1;
-										if($admin_check == $name){
-											$firstClass = 'accordion-toggle';
-											$secondClass = 'accordion-body in collapse';
-											//debug($admin_nav[$mainHeader]['next']);
-										} else {
-											$firstClass = 'accordion-toggle collapsed';
-											$secondClass = 'accordion-body collapse';
-											//debug($admin_nav[$mainHeader]['next']);
-										}
+										$collapse_id++;
+										$firstClass =($admin_check == $name) ? 'accordion-toggle' : 'accordion-toggle collapsed';
+										$secondClass = ($admin_check == $name) ?  'accordion-body in collapse' : 'accordion-body collapse';
 										?>
 										<div class="accordion-group">
 											<div class="accordion-heading">
@@ -224,15 +209,8 @@ if (!isset($username)) {
 															$name = $admin_nav[$mainHeader]['next'][$key]['name'];
 															$url = $admin_nav[$mainHeader]['next'][$key]['url'];
 															$icon = $admin_nav[$mainHeader]['next'][$key]['icon'];
-															if(isset($admin_pages)){
-																if($url == $admin_pages){
-																	$selected = 'active';	
-																} else {
-																	$selected = 'notactive';
-																}
-															} else {
-																$selected = 'notactive';
-															}
+															$selected = (isset($admin_pages) && $url == $admin_pages) ? 'active' : 'notactive';	
+		
 															switch ($url) {
 																case 'Sub Header':
 																?>
