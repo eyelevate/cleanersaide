@@ -162,15 +162,12 @@ class UsersController extends AppController {
 		$this->set('admin_check',$admin_check);
 		//select layout
 		$this->layout = 'admin';
-
-
 		//set user id
 		$this->User->id = $id;
 		if (!$this->User->exists()) {
 			throw new NotFoundException(__('Invalid user'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
-			
 			$payments = $this->request->data['Payment'];
 			$profile_check = $this->request->data['Payment']['profile_status'];
 			$payment_check = $this->request->data['Payment']['delivery_setup'];
@@ -180,10 +177,10 @@ class UsersController extends AppController {
 			$this->request->data['User']['id'] = $id;
 			$this->request->data['User']['company_id'] = $_SESSION['company_id'];
 			$session_errors = 0;
-			
+
 			switch($profile_check){
 				case '1':
-					if(empty($profile_id) || is_null($orofile_id) || $profile_id == 0){
+					if(empty($profile_id) || is_null($profile_id) || $profile_id == 0){
 						$profiles = $this->AuthorizeNet->createProfile($this->request->data);
 						//save profile id
 						switch($profiles['status']){
@@ -194,17 +191,27 @@ class UsersController extends AppController {
 							break;
 								
 							case 'rejected':
-								$session_errors++;
-								$this->Session->setFlash(__($profiles['response']),'default',array(),'error');
+								$duplicate_id = str_replace(array('A duplicate record with ID ',' already exists.'),array('','') , $profiles['response']);
+								//check if is numeric
+								if(is_numeric($duplicate_id)){
+									$this->process_delete_profile($duplicate_id);
+									$profiles = $this->AuthorizeNet->createProfile($this->request->data);
+									$profile_id = $profiles['customerProfileId'];
+									$this->request->data['User']['profile_id'] = $profile_id;
+								} else {
+									$session_errors++;
+									$this->Session->setFlash(__($profiles['response']),'default',array(),'error');									
+								}
 								
 							break;
 						}
 					}	
+					
+					
 					switch($payment_check){
 						case '1': //yes
 							//$this->request->data = $this->User->editPaymentProfile($this->request->data);
-							
-							if(empty($profile_id) || is_null($orofile_id) || $profile_id == 0){
+							if(empty($profile_id) || is_null($profile_id) || $profile_id == 0){
 								$profiles = $this->AuthorizeNet->createProfile($this->request->data);
 								//save profile id
 								switch($profiles['status']){
@@ -244,17 +251,10 @@ class UsersController extends AppController {
 									$create_payment_id = $this->AuthorizeNet->createPaymentProfile($user_update,$profile_id);
 									switch($create_payment_id['status']){
 										case 'approved':
-						
-											$this->request->data['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];		
-											switch($this->request->data['Payment']['saved_profile']){
-												case 'Yes': //we will delete the payment id and payment profile
-												$this->request->data['User']['payment_status'] = 2;
-												break;
-													
-												default: //we will delete the payment id and payment profile after delivery completion
-												$this->request->data['User']['payment_status'] = 1;
-												break;
-											}								
+											
+											$this->request->data['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];
+											
+							
 										break;
 											
 										case 'rejected': //rejected create session and redirect now
@@ -564,17 +564,17 @@ class UsersController extends AppController {
 	public function process_delete_profile($id)
 	{
 		$delete_status = $this->AuthorizeNet->deletePaymentProfile($id);
-		switch($delete_status){
-			case 1:
-				$this->Session->setFlash(__('There was an error deleting your profile, please contact us for assistance.'),'default',array(),'error');
-			break;
-				
-			case 2:
-				$this->Session->setFlash(__('Successfully deleted profile.'),'default',array(),'success');		
-			break;
-		}
+		// switch($delete_status){
+			// case 1:
+				// $this->Session->setFlash(__('There was an error deleting your profile, please contact us for assistance.'),'default',array(),'error');
+			// break;
+// 				
+			// case 2:
+				// $this->Session->setFlash(__('Successfully deleted profile.'),'default',array(),'success');		
+			// break;
+		// }
 		
-		$this->redirect('/');
+		//$this->redirect($this->referer());
 		
 	}
 	

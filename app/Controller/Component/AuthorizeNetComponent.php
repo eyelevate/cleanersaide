@@ -61,13 +61,10 @@ Class AuthorizeNetComponent extends Component {
 		$response = $this->send_xml_request($content);
 
 		$parsedresponse = $this->parse_api_response($response);
-		if ("Ok" == $parsedresponse->messages->resultCode) {
-			$profile['status'] = 'approved';
-			$profile['customerProfileId'] = htmlspecialchars($parsedresponse->customerProfileId);
-		} else {
-			$profile['status'] = 'rejected';
-			$profile['response'] = (string) $parsedresponse->messages->message->text;
-		}
+		$profile['customerProfileId'] = htmlspecialchars($parsedresponse->customerProfileId);
+		$profile['status'] = ("Ok" == $parsedresponse->messages->resultCode) ? 'approved' : 'rejected';
+		$profile['response'] = ("Ok" == $parsedresponse->messages->resultCode) ? '' : (string) $parsedresponse->messages->message->text;
+
 		return $profile;
 	}
 	
@@ -131,6 +128,7 @@ Class AuthorizeNetComponent extends Component {
 
 		} else {
 			$profile['status'] = 'rejected';
+			debug(htmlspecialchars($parsedresponse->customerPaymentProfileId));
 			$profile['field'] = $this->errorField($parsedresponse->messages->message->code);
 			$profile['response'] = (string) $parsedresponse->messages->message->text;
 		}
