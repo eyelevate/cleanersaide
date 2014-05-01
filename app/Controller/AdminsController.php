@@ -130,7 +130,7 @@ class AdminsController extends AppController {
 		//get invoice dropoff data
 		$today_beginning = date('Y-m-d ').'00:00:00';
 		$today_end = date('Y-m-d ').'23:59:59';
-		$today_conditions = array('created BETWEEN ? AND ?' =>array($today_beginning, $today_end),'status <'=>'3');
+		$today_conditions = array('created BETWEEN ? AND ?' =>array($today_beginning, $today_end));
 		$today = $this->Invoice->find('all',array('conditions'=>$today_conditions));
 		$split_invoices = $this->Inventory_item->today_invoices($today);
 		$this->set('split_invoices',$split_invoices);
@@ -151,7 +151,7 @@ class AdminsController extends AppController {
 			//get invoice dropoff data
 			$today_beginning = date('Y-m-d ', strtotime($this->request->data['date']['start_date'])).'00:00:00';
 			$today_end = date('Y-m-d ', strtotime($this->request->data['date']['end_date'])).'23:59:59';
-			$today_conditions = array('created BETWEEN ? AND ?' =>array($today_beginning, $today_end),'status <='=>'2');
+			$today_conditions = array('created BETWEEN ? AND ?' =>array($today_beginning, $today_end));
 			$today = $this->Invoice->find('all',array('conditions'=>$today_conditions));
 			$split_invoices = $this->Inventory_item->today_invoices($today);
 			$this->set('split_invoices',$split_invoices);
