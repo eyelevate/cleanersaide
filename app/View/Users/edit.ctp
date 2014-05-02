@@ -7,7 +7,7 @@ echo $this->Html->script(array(
 
 <div class="users form">
 <h1 class="heading"><?php echo __('Edit User'); ?></h1>
-<?php echo $this->Form->create('User'); ?>
+<?php echo $this->Form->create('User', array('novalidate' => true)); ?>
 	<fieldset class="well well-small">
 	<?php
 		echo $this->Form->input('id');
@@ -167,6 +167,6 @@ echo $this->Html->script(array(
 			</div>
 		</div>
 	</fieldset>
-<?php echo $this->Form->end(__('Save Changes')); ?>
+<?php echo $this->Form->end(__('Save Changes'),array('formnovalidate' => true)); ?>
 </div>
 

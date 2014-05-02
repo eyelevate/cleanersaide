@@ -277,7 +277,7 @@ class UsersController extends AppController {
 			
 
 			unset($this->request->data['Payment']);
-			if ($this->User->save($this->request->data)) {
+			if ($this->User->save($this->request->data, array('validate'=>false))) {
 				if($session_errors>0){
 					$this->redirect(array('controller'=>'users','action'=>'edit',$id));
 				} else {
