@@ -1263,11 +1263,11 @@ class DeliveriesController extends AppController {
 		$start = (isset($_SESSION['finish_date'])) ? date('Y-m-d',strtotime($_SESSION['finish_date'])).' 00:00:00' : date('Y-m-d').' 00:00:00';
 		$end = (isset($_SESSION['finish_date'])) ? date('Y-m-d', strtotime($_SESSION['finish_date'])).' 23:59:59' : date('Y-m-d').' 23:59:59';		
 		$date = (isset($_SESSION['finish_date'])) ? $_SESSION['finish_date'] : date('n/d/Y');	
-		$finish_status = 3;
+
 
 		$conditions_pickup= array('Schedule.pickup_date BETWEEN ? AND ?' => array($start,$end));
 		$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
-		$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($start,$end),'status'=>$finish_status);
+		$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($start,$end));
 		$day_dropoff = $this->Schedule->find('all',array('conditions'=>$conditions_dropoff));
 		$prepare_schedule_today = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
 		$this->set('date',$date);
@@ -1280,7 +1280,7 @@ class DeliveriesController extends AppController {
 			$date = date('n/d/Y',strtotime($this->request->data['Delivery']['date']));
 			$conditions_pickup= array('Schedule.pickup_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end));
 			$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
-			$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end),'status'=>$finish_status);
+			$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($delivery_start,$delivery_end));
 			$day_dropoff = $this->Schedule->find('all',array('conditions'=>$conditions_dropoff));
 
 			$prepare_schedule_date = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
