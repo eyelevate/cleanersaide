@@ -1264,6 +1264,7 @@ class DeliveriesController extends AppController {
 		$end = (isset($_SESSION['finish_date'])) ? date('Y-m-d', strtotime($_SESSION['finish_date'])).' 23:59:59' : date('Y-m-d').' 23:59:59';
 		$date = (isset($_SESSION['finish_date'])) ? $_SESSION['finish_date'] : date('n/d/Y');	
 
+
 		$conditions_pickup= array('Schedule.pickup_date BETWEEN ? AND ?' => array($start,$end));
 		$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
 		$conditions_dropoff= array('Schedule.dropoff_date BETWEEN ? AND ?' => array($start,$end));
