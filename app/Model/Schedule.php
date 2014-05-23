@@ -346,7 +346,7 @@ class Schedule extends AppModel {
 				$invdx = -1;
 				$invoice_ids = array();
 				$inv_total = 0;
-				$invoices = ClassRegistry::init('Invoice')->find('all',array('conditions'=>array('customer_id'=>$customer_id,'company_id'=>$_SESSION['company_id'],'status <'=>5)));		
+				$invoices = ClassRegistry::init('Invoice')->find('all',array('conditions'=>array('customer_id'=>$customer_id,'company_id'=>$_SESSION['company_id'],'status <'=>3)));		
 				if(count($invoices)>0){
 					foreach ($invoices as $inv) {
 						$invdx++;

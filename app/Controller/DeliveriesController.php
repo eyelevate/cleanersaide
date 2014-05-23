@@ -1260,15 +1260,9 @@ class DeliveriesController extends AppController {
 		$this->set('admin_pages',$page_url);
 		$this->set('admin_check',$admin_check);		
 		$company_id = 1;	
-		if(isset($_SESSION['finish_date'])){
-			$start = date('Y-m-d',strtotime($_SESSION['finish_date'])).' 00:00:00';
-			$end = date('Y-m-d', strtotime($_SESSION['finish_date'])).' 23:59:59';	
-			$date = $_SESSION['finish_date'];			
-		} else {
-			$start = date('Y-m-d').' 00:00:00';
-			$end = date('Y-m-d').' 23:59:59';	
-			$date = date('n/d/Y');
-		}
+		$start = (isset($_SESSION['finish_date'])) ? date('Y-m-d',strtotime($_SESSION['finish_date'])).' 00:00:00' : date('Y-m-d').' 00:00:00';
+		$end = (isset($_SESSION['finish_date'])) ? date('Y-m-d', strtotime($_SESSION['finish_date'])).' 23:59:59' : date('Y-m-d').' 23:59:59';
+		$date = (isset($_SESSION['finish_date'])) ? $_SESSION['finish_date'] : date('n/d/Y');	
 
 		$conditions_pickup= array('Schedule.pickup_date BETWEEN ? AND ?' => array($start,$end));
 		$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
