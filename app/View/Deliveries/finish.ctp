@@ -47,62 +47,33 @@ echo $this->Form->create();
 				foreach ($tvalue as $ttkey => $ttvalue) {
 					$type = $ttkey; //what type of dropoff or pickup
 					foreach ($ttvalue as $tttkey => $tttvalue) {
-					
 						$idx++;
 						$customer_id = $ttvalue[$tttkey]['customer_id'];
 						$schedule_id = $ttvalue[$tttkey]['schedule_id'];
 						$schedule_status = $ttvalue[$tttkey]['status'];
-						$route_name = $ttvalue[$tttkey]['route_name'];
+						$route_name = (isset($ttvalue[$tttkey]['route_name'])) ? $ttvalue[$tttkey]['route_name'] : '';
 						$zipcode = $ttvalue[$tttkey]['zipcode'];
 						$first_name = $ttvalue[$tttkey]['first_name'];
 						$last_name = $ttvalue[$tttkey]['last_name'];
 						$phone = $ttvalue[$tttkey]['phone'];	
-						$start_time = $ttvalue[$tttkey]['start_time'];
-						$end_time = $ttvalue[$tttkey]['end_time'];
+						$start_time = (isset($ttvalue[$tttkey]['start_time'])) ? $ttvalue[$tttkey]['start_time'] : '';
+						$end_time = (isset($ttvalue[$tttkey]['end_time'])) ? $ttvalue[$tttkey]['end_time'] : '';
 						$time_range = $start_time.' - '.$end_time;
 						$address = $ttvalue[$tttkey]['address'];
-						if(!empty($ttvalue[$tttkey]['suite'])){
-							$suite = '#'.$ttvalue[$tttkey]['suite'];	
-						} else {
-							$suite = '';
-						}
-						
-					
+						$suite = (!empty($ttvalue[$tttkey]['suite'])) ? '#'.$ttvalue[$tttkey]['suite'] : '';	
 						$city = $ttvalue[$tttkey]['city'];
 						$state = $ttvalue[$tttkey]['state'];
 						$delivery_address = $address.' '.$suite.'<br/>'.ucfirst($city).', '.ucwords($state);
 						$country = "USA";
 						$email = $ttvalue[$tttkey]['email'];
-						if(is_null($ttvalue[$tttkey]['special_instructions']) || empty($ttvalue[$tttkey]['special_instructions'])){
-							$special_instructions = $ttvalue[$tttkey]['default_special_instructions'];
-						} else {
-							$special_instructions = $ttvalue[$tttkey]['special_instructions'];
-						}
+						$special_instructions = (is_null($ttvalue[$tttkey]['special_instructions']) || empty($ttvalue[$tttkey]['special_instructions'])) ? $ttvalue[$tttkey]['default_special_instructions'] : $ttvalue[$tttkey]['special_instructions'];
 						$suite = $ttvalue[$tttkey]['suite'];
-						if(isset($ttvalue[$tttkey]['total'])){
-							$total = '$'.$ttvalue[$tttkey]['total'];	
-						} else {
-							$total = '';
-						}
-						if(isset($ttvalue[$tttkey]['invoices'])){
-							$invoices = $ttvalue[$tttkey]['invoices'];	
-						} else {
-							$invoices = array();
-						}
+						$total = (isset($ttvalue[$tttkey]['total'])) ? '$'.$ttvalue[$tttkey]['total'] : '';	
+						$invoices = (isset($ttvalue[$tttkey]['invoices'])) ? $ttvalue[$tttkey]['invoices'] : array();
+
 						switch($type){
 							case 'Pickup':
-								switch($schedule_status){
-									case '1': //ready to pickup
-									
-										$delivery_status_style = 'style="background-color:#bceaff;"';
-		
-									break;
-										
-									case '2': //ready to dropoff
-										$delivery_status_style = 'style="background-color:#e5e5e5; color:#5e5e5e;"';
-									break;
-	
-								}									
+								$delivery_status_style = ($schedule_status == 1) ? 'style="background-color:#bceaff;"' : 'style="background-color:#e5e5e5; color:#5e5e5e;"';								
 							break;
 							default:
 								switch($schedule_status){
@@ -112,9 +83,7 @@ echo $this->Form->create();
 									case '2': //ready to dropoff
 										$delivery_status_style = 'style="background-color:#c4ffbc;"';
 									break;
-										
 									case '3': //finished and paid
-
 										$delivery_status_style = 'style="background-color:#e5e5e5; color:#5e5e5e;"';
 									break;
 								}										

@@ -8,7 +8,7 @@ App::uses('CakeEmail','Network/Email'); //cakes email class
 class DeliveriesController extends AppController {
 
 	public $name = 'Deliveries';
-	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Delivery','Schedule','Payment','Transaction');
+	public $uses = array('User','Group','Page','Menu','Menu_item','Admin','Delivery','Schedule','Payment','Transaction','Invoice');
 
 	public $helpers = array('Csv'); 
 
@@ -83,26 +83,11 @@ class DeliveriesController extends AppController {
 			unset($_SESSION['guest_form']); //remove session
 		}
 		
-		if(isset($_SESSION['login'])){
-			$login = $_SESSION['login'];
-		} else {
-			$login = 'No';
-		}
-		if(isset($_SESSION['success'])){
-			$success = $_SESSION['success'];
-		} else {
-			$success = 'Not Set';
-		}
-		if(isset($_SESSION['customers'])){
-			$customers = $_SESSION['customers'];
-		} else {
-			$customers = '';
-		}
-		if(isset($_SESSION['customer_id'])){
-			$customer_id = $_SESSION['customer_id'];
-		} else {
-			$customer_id = '';
-		}
+		$login = (isset($_SESSION['login'])) ? $_SESSION['login'] : 'No';
+		$success = (isset($_SESSION['success'])) ? $_SESSION['success'] : 'Not Set';
+		$customers = (isset($_SESSION['customers'])) ? $_SESSION['customers'] : '';
+		$customer_id = (isset($_SESSION['customer_id'])) ? $_SESSION['customer_id'] : '';
+
 		$this->set('login',$login);
 		$this->set('success',$success);
 		$this->set('customers',$customers);
@@ -1264,6 +1249,21 @@ class DeliveriesController extends AppController {
 		$end = (isset($_SESSION['finish_date'])) ? date('Y-m-d', strtotime($_SESSION['finish_date'])).' 23:59:59' : date('Y-m-d').' 23:59:59';
 		$date = (isset($_SESSION['finish_date'])) ? $_SESSION['finish_date'] : date('n/d/Y');	
 
+		// $trans = $this->Transaction->find('all');
+		// if(count($trans)>0){
+			// foreach ($trans as $tran) {
+				// $invoices = json_decode($tran['Transaction']['invoices'],true);
+				// if(count($invoices)>0){
+					// foreach ($invoices as $inv) {
+						// $invoice_id = $inv['invoice_id'];
+						// $inv_update = array();
+						// $inv_update['Invoice']['status'] = 3;
+						// $this->Invoice->id = $invoice_id;
+						// $this->Invoice->save($inv_update);
+					// }
+				// }
+			// }
+		// }
 
 		$conditions_pickup= array('Schedule.pickup_date BETWEEN ? AND ?' => array($start,$end));
 		$day_pickup = $this->Schedule->find('all',array('conditions'=>$conditions_pickup));
@@ -1284,7 +1284,6 @@ class DeliveriesController extends AppController {
 			$day_dropoff = $this->Schedule->find('all',array('conditions'=>$conditions_dropoff));
 
 			$prepare_schedule_date = $this->Schedule->setSchedule($day_pickup, $day_dropoff);
-			
 			$this->set('date',$date);
 			$this->set('today',$prepare_schedule_date);	
 
@@ -1308,6 +1307,7 @@ class DeliveriesController extends AppController {
 			$payment_status = $this->request->data['Schedule']['payment_status'];
 			$total = $this->request->data['Schedule']['total'];
 			$new_status = $this->request->data['Schedule']['status'];
+			$invoices = (!empty($this->request->data['Schedule']['invoices'])) ? json_decode($this->request->data['Schedule']['invoices'],true) : array();
 			$this->request->data['Schedule']['invoices'] = json_decode($this->request->data['Schedule']['invoices'],true);
 			$payment_data = $this->request->data;
 			unset($this->request->data['Schedule']);
@@ -1320,7 +1320,16 @@ class DeliveriesController extends AppController {
 				$payment_status = $this->AuthorizeNet->createTransaction($payment_data);
 				$_SESSION['finish_date'] = $date;
 				$this->redirect(array('controller'=>'deliveries','action'=>'finish'));
-		
+				//update statuses in invoice table
+				if(count($invoices) > 0) {
+					foreach ($invoices as $inv) {
+						$invoice_id = $inv['invoice_id'];
+						$invoice_save = array();
+						$invoice_save['Invoice']['status'] = $new_status;
+						$this->Invoice->id = $invoice_id;
+						$this->Invoice->save($invoice_save);
+					}
+				}
 			}
 
 		}
@@ -1359,6 +1368,16 @@ class DeliveriesController extends AppController {
 				$this->redirect(array('controller'=>'deliveries','action'=>'finish'));
 				// $this->request->data['Delivery']['date'] = $date;	
 				// return $this->finish($this->request->data);		
+				
+				if(count($this->request->data['Schedule']['invoices'])>0){
+					foreach ($this->request->data['Schedule']['invoices'] as $inv) {
+						$invoice_id = $inv['invoice_id'];
+						$invoice_update = array();
+						$invoice_update['Invoice']['status'] = 2;
+						$this->Invoice->id = $invoice_id;
+						$this->Invoice->save($invoice_update);
+					}
+				}
 			}
 		}
 	}
@@ -1525,15 +1544,8 @@ class DeliveriesController extends AppController {
 						case 'approved':
 		
 							$user_update['User']['payment_id'] = $create_payment_id['customerPaymentProfileId'];	
-							switch($this->request->data['Payment']['saved_profile']){
-								case 'Yes': //we will delete the payment id and payment profile
-								$user_update['User']['payment_status'] = 2;
-								break;
-									
-								default: //we will delete the payment id and payment profile after delivery completion
-								$user_update['User']['payment_status'] = 1;
-								break;
-							}								
+							$user_update['User']['payment_status'] = ($this->request->data['Payment']['saved_profile']== 2) ? 2 : 1;
+							
 						break;
 							
 						case 'rejected': //rejected create session and redirect now
