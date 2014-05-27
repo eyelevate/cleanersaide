@@ -208,12 +208,12 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 				</tr>				
 				<?php	
 			}
-			if(isset($split_invoices['Alteration']) && count($split_invoices['Alteration'])>0){
+			if(isset($split_invoices['Alterations']) && count($split_invoices['Alterations'])>0){
 				$qty = 0;
 				$before_tax = 0;
 				$tax = 0;
 				$after_tax = 0;
-				foreach ($split_invoices['Alteration'] as $key => $value) {
+				foreach ($split_invoices['Alterations'] as $key => $value) {
 					$qty += $value['quantity'];
 					$before_tax += $value['pretax'];
 					$tax += $value['tax'];
@@ -277,7 +277,7 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 		$count_dry_clean = isset($split_invoices['Dry Clean']) ? count($split_invoices['Dry Clean']) : 0;
 		$count_laundry = isset($split_invoices['Laundry']) ? count($split_invoices['Laundry']) : 0;
 		$count_household = isset($split_invoices['Household']) ? count($split_invoices['Household']) : 0;
-		$count_alteration = isset($split_invoices['Alteration']) ? count($split_invoices['Alteration']) : 0;
+		$count_alteration = isset($split_invoices['Alterations']) ? count($split_invoices['Alterations']) : 0;
 		$count_other = isset($split_invoices['Other']) ? count($split_invoices['Other']) : 0;
 		?>
 		<div id="side_accordion-reports" class="accordion">
@@ -317,17 +317,9 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 										foreach ($items as $item) {
 											$item_qty = $item['quantity'];
 											$item_name = $item['name'];
-											if(isset($item['colors'])){
-												$item_colors = $item['colors'];	
-											} else {
-												$item_colors = '';
-											}
-											//switch qty
-											if($item_qty > 1){
-												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
-											} else {
-												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
-											}
+											$item_colors = (isset($item['colors'])) ? $item['colors'] : '';	
+											$item_list .= ($item_qty > 1) ? '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>' : '<span class="badge pull-left">'.$item_name.'</span>'; 
+
 										}						
 									}
 									$quantity = $value['quantity'];
@@ -392,17 +384,8 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 										foreach ($items as $item) {
 											$item_qty = $item['quantity'];
 											$item_name = $item['name'];
-											if(isset($item['colors'])){
-												$item_colors = $item['colors'];	
-											} else {
-												$item_colors = '';
-											}
-											//switch qty
-											if($item_qty > 1){
-												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
-											} else {
-												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
-											}
+											$item_colors = (isset($item['colors'])) ? $item['colors'] : '';	
+											$item_list .= ($item_qty > 1) ? '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>' : '<span class="badge pull-left">'.$item_name.'</span>';
 										}						
 									}
 									$quantity = $value['quantity'];
@@ -467,17 +450,8 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 										foreach ($items as $item) {
 											$item_qty = $item['quantity'];
 											$item_name = $item['name'];
-											if(isset($item['colors'])){
-												$item_colors = $item['colors'];	
-											} else {
-												$item_colors = '';
-											}
-											//switch qty
-											if($item_qty > 1){
-												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
-											} else {
-												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
-											}
+											$item_colors = (isset($item['colors'])) ? $item['colors'] : '';	
+											$item_list .= ($item_qty > 1) ? '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>' : '<span class="badge pull-left">'.$item_name.'</span>';
 										}						
 									}
 									$quantity = $value['quantity'];
@@ -530,9 +504,9 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 							</thead>
 							<tbody>
 							<?php
-							if(isset($split_invoices['Alteration']) && count($split_invoices['Alteration'])>0){
+							if(isset($split_invoices['Alterations']) && count($split_invoices['Alterations'])>0){
 								
-								foreach ($split_invoices['Alteration'] as $key => $value) {
+								foreach ($split_invoices['Alterations'] as $key => $value) {
 									$invoice_id = sprintf('%06d',$value['invoice_id']);
 									$customer_id = $value['customer_id'];
 									//create items string
@@ -542,17 +516,8 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 										foreach ($items as $item) {
 											$item_qty = $item['quantity'];
 											$item_name = $item['name'];
-											if(isset($item['colors'])){
-												$item_colors = $item['colors'];	
-											} else {
-												$item_colors = '';
-											}
-											//switch qty
-											if($item_qty > 1){
-												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
-											} else {
-												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
-											}
+											$item_colors = (isset($item['colors'])) ? $item['colors'] : '';	
+											$item_list .= ($item_qty > 1) ? '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>' : '<span class="badge pull-left">'.$item_name.'</span>';
 										}						
 									}
 									$quantity = $value['quantity'];
@@ -617,17 +582,8 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 										foreach ($items as $item) {
 											$item_qty = $item['quantity'];
 											$item_name = $item['name'];
-											if(isset($item['colors'])){
-												$item_colors = $item['colors'];	
-											} else {
-												$item_colors = '';
-											}
-											//switch qty
-											if($item_qty > 1){
-												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
-											} else {
-												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
-											}
+											$item_colors = (isset($item['colors'])) ? $item['colors'] : '';	
+											$item_list .= ($item_qty > 1) ? '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>' : '<span class="badge pull-left">'.$item_name.'</span>';
 										}						
 									}
 									$quantity = $value['quantity'];
@@ -755,12 +711,12 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 				</tr>				
 				<?php	
 			}
-			if(isset($pickup_invoices['Alteration']) && count($pickup_invoices['Alteration'])>0){
+			if(isset($pickup_invoices['Alterations']) && count($pickup_invoices['Alterations'])>0){
 				$qty = 0;
 				$before_tax = 0;
 				$tax = 0;
 				$after_tax = 0;
-				foreach ($pickup_invoices['Alteration'] as $key => $value) {
+				foreach ($pickup_invoices['Alterations'] as $key => $value) {
 					$qty += $value['quantity'];
 					$before_tax += $value['pretax'];
 					$tax += $value['tax'];
@@ -824,7 +780,7 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 		$count_dry_clean = isset($pickup_invoices['Dry Clean']) ? count($pickup_invoices['Dry Clean']) : 0;
 		$count_laundry = isset($pickup_invoices['Laundry']) ? count($pickup_invoices['Laundry']) : 0;
 		$count_household = isset($pickup_invoices['Household']) ? count($pickup_invoices['Household']) : 0;
-		$count_alteration = isset($pickup_invoices['Alteration']) ? count($pickup_invoices['Alteration']) : 0;
+		$count_alteration = isset($pickup_invoices['Alterations']) ? count($pickup_invoices['Alterations']) : 0;
 		$count_other = isset($pickup_invoices['Other']) ? count($pickup_invoices['Other']) : 0;
 		?>
 		<div id="side_accordion-pickup" class="accordion">
@@ -864,17 +820,8 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 										foreach ($items as $item) {
 											$item_qty = $item['quantity'];
 											$item_name = $item['name'];
-											if(isset($item['colors'])){
-												$item_colors = $item['colors'];	
-											} else {
-												$item_colors = '';
-											}
-											//switch qty
-											if($item_qty > 1){
-												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
-											} else {
-												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
-											}
+											$item_colors = (isset($item['colors'])) ? $item['colors'] : '';	
+											$item_list .= ($item_qty > 1) ? '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>' : '<span class="badge pull-left">'.$item_name.'</span>';
 										}						
 									}
 									$quantity = $value['quantity'];
@@ -939,17 +886,8 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 										foreach ($items as $item) {
 											$item_qty = $item['quantity'];
 											$item_name = $item['name'];
-											if(isset($item['colors'])){
-												$item_colors = $item['colors'];	
-											} else {
-												$item_colors = '';
-											}
-											//switch qty
-											if($item_qty > 1){
-												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
-											} else {
-												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
-											}
+											$item_colors = (isset($item['colors'])) ? $item['colors'] : '';	
+											$item_list .= ($item_qty > 1) ? '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>' : '<span class="badge pull-left">'.$item_name.'</span>';
 										}						
 									}
 									$quantity = $value['quantity'];
@@ -1014,17 +952,8 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 										foreach ($items as $item) {
 											$item_qty = $item['quantity'];
 											$item_name = $item['name'];
-											if(isset($item['colors'])){
-												$item_colors = $item['colors'];	
-											} else {
-												$item_colors = '';
-											}
-											//switch qty
-											if($item_qty > 1){
-												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
-											} else {
-												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
-											}
+											$item_colors = (isset($item['colors'])) ? $item['colors'] : '';	
+											$item_list .= ($item_qty > 1) ? '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>' : '<span class="badge pull-left">'.$item_name.'</span>';
 										}						
 									}
 									$quantity = $value['quantity'];
@@ -1077,9 +1006,9 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 							</thead>
 							<tbody>
 							<?php
-							if(isset($pickup_invoices['Alteration']) && count($pickup_invoices['Alteration'])>0){
+							if(isset($pickup_invoices['Alterations']) && count($pickup_invoices['Alterations'])>0){
 								
-								foreach ($pickup_invoices['Alteration'] as $key => $value) {
+								foreach ($pickup_invoices['Alterations'] as $key => $value) {
 									$invoice_id = sprintf('%06d',$value['invoice_id']);
 									$customer_id = $value['customer_id'];
 									//create items string
@@ -1089,17 +1018,8 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 										foreach ($items as $item) {
 											$item_qty = $item['quantity'];
 											$item_name = $item['name'];
-											if(isset($item['colors'])){
-												$item_colors = $item['colors'];	
-											} else {
-												$item_colors = '';
-											}
-											//switch qty
-											if($item_qty > 1){
-												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
-											} else {
-												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
-											}
+											$item_colors = (isset($item['colors'])) ? $item['colors'] : '';	
+											$item_list .= ($item_qty > 1) ? '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>' : '<span class="badge pull-left">'.$item_name.'</span>';
 										}						
 									}
 									$quantity = $value['quantity'];
@@ -1164,17 +1084,8 @@ echo $this->Html->script(array('admin/admin_index.js','admin/plugins/datepicker/
 										foreach ($items as $item) {
 											$item_qty = $item['quantity'];
 											$item_name = $item['name'];
-											if(isset($item['colors'])){
-												$item_colors = $item['colors'];	
-											} else {
-												$item_colors = '';
-											}
-											//switch qty
-											if($item_qty > 1){
-												$item_list .= '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>'; 
-											} else {
-												$item_list .= '<span class="badge pull-left">'.$item_name.'</span>';
-											}
+											$item_colors = (isset($item['colors'])) ? $item['colors'] : '';	
+											$item_list .= ($item_qty > 1) ? '<span class="badge pull-left">('.$item_qty.') '.$item_name.'</span>' : '<span class="badge pull-left">'.$item_name.'</span>';
 										}						
 									}
 									$quantity = $value['quantity'];

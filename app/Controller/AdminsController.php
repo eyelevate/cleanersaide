@@ -137,6 +137,7 @@ class AdminsController extends AppController {
 		$pickup_conditions = array('modified BETWEEN ? AND ?' =>array($today_beginning, $today_end),'status'=>'3');
 		$pickup = $this->Invoice->find('all',array('conditions'=>$pickup_conditions));
 		$pickup_invoices = $this->Inventory_item->today_invoices($pickup);
+
 		$this->set('pickup_invoices',$pickup_invoices);
 		//get delivery data
 		$schedules = $this->Schedule->regexDisplay($this->Schedule->find('all',array('conditions'=>$today_conditions)));

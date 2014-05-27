@@ -1257,9 +1257,8 @@ class DeliveriesController extends AppController {
 					// foreach ($invoices as $inv) {
 						// $invoice_id = $inv['invoice_id'];
 						// $inv_update = array();
-						// $inv_update['Invoice']['status'] = 3;
 						// $this->Invoice->id = $invoice_id;
-						// $this->Invoice->save($inv_update);
+						// $this->Invoice->query('update invoices set status=3 where invoice_id="'.$invoice_id.'"');
 					// }
 				// }
 			// }
@@ -1324,10 +1323,8 @@ class DeliveriesController extends AppController {
 				if(count($invoices) > 0) {
 					foreach ($invoices as $inv) {
 						$invoice_id = $inv['invoice_id'];
-						$invoice_save = array();
-						$invoice_save['Invoice']['status'] = $new_status;
-						$this->Invoice->id = $invoice_id;
-						$this->Invoice->save($invoice_save);
+
+						$this->Invoice->query('update invoices set status= '.$new_status.' where invoice_id='.$invoice_id.'');
 					}
 				}
 			}
@@ -1372,10 +1369,8 @@ class DeliveriesController extends AppController {
 				if(count($this->request->data['Schedule']['invoices'])>0){
 					foreach ($this->request->data['Schedule']['invoices'] as $inv) {
 						$invoice_id = $inv['invoice_id'];
-						$invoice_update = array();
-						$invoice_update['Invoice']['status'] = 2;
-						$this->Invoice->id = $invoice_id;
-						$this->Invoice->save($invoice_update);
+
+						$this->Invoice->query('update invoices set status = 2 where invoice_id='.$invoice_id.'');
 					}
 				}
 			}
