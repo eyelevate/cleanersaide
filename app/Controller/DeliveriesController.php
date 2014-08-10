@@ -534,23 +534,10 @@ class DeliveriesController extends AppController {
 			$user_update['User']['token'] = $token; //add the token
 			$company_id = 1; //set to 1 for now change if we have multiple stores
 			$saved_payment_profile = $this->request->data['Payment']['saved_profile'];
-			if(isset($this->request->data['Payment']['payment_status'])){
-				$payment_status = $this->request->data['Payment']['payment_status'];	
-			} else {
-				$payment_status = 'No';
-			}
+			$payment_status = (isset($this->request->data['Payment']['payment_status'])) ? $this->request->data['Payment']['payment_status'] : 'No';	
 			
-			switch($payment_status){
-				case 'Yes': //we will keep the payment id and payment profile
-				$user_update['User']['payment_status'] = 2;
-				
-				break;
-					
-				case 'No': //we will delete the payment id and payment profile after delivery completion
-				$user_update['User']['payment_status'] = 1;
-				break;
-					
-			}		
+			//'2' we will keep the payment id and profile || '1' we will delete after payment
+			$user_update['User']['payment_status'] = ($payment_status == 'Yes') ? 2 : 1;
 
 			$phone = preg_replace("/[^0-9]/","",$_SESSION['Delivery']['User']['contact_phone']); //strip phone to just numbers
 			if(!empty($_SESSION['Delivery']['User']['id'])){
@@ -565,10 +552,10 @@ class DeliveriesController extends AppController {
 						$payment_id = $u['User']['payment_id'];
 					}
 				}	
-				if($profile_id != null && $profile_id != 0 && $profile_id != ''){
+				if(isset($profile_id) && $profile_id != 0){
 
 					//check payment
-					if($payment_id != null && $payment_id != 0 && $payment_id != ''){ //there is a payment id and a profile id just save and send email 
+					if(isset($payment_id) && $payment_id != 0){ //there is a payment id and a profile id just save and send email 
 
 						$delivery_string = $this->Delivery->deliveryString($customer_id, $_SESSION['Delivery'], $token);
 						//create delivery schedule

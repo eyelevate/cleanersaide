@@ -250,7 +250,7 @@ Class AuthorizeNetComponent extends Component {
 				// . "</b>.<br><br>";
 			switch($payment_status){ //check payment status, delete from database and authorizeNet if customer wishes to delete
 				case '1': //delete payment id
-					$this->deletePaymentProfile($payment_id);
+					$this->deletePaymentProfile($profile_id);
 				
 					$user_delete = array();
 					$user_delete['profile_id'] = null;
