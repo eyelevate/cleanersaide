@@ -1,0 +1,54 @@
+John's buglist
+
+
+--------------------------------------------------------------------------------
+--GENERAL-----------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+BACKEND:		MED		Forced user timeout does not always force return to login
+IE:	 			MED		Fix visual bugs on internet explorer, check all buttons to see if they work properly. Check for javascript errors.
+
+--------------------------------------------------------------------------------
+--FERRIES-----------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+GENERAL:		LOW		Flash notifications sometimes seem to linger for an additional screen?
+GENERAL:		LOW 	Calendar and some lists require a horizontal scrollbar on iPad and other mobile devices
+
+ADD SCHEDULE: 	NOTE 	Driver comes free with vehicle - save for reservations?
+
+
+--------------------------------------------------------------------------------
+--HOTELS------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+EDIT HOTELS:	MED		When there are validation errors on (for example) Step 2, hitting save does not show a flash navigation, or any way of notifying where the errors are.
+EDIT HOTELS:	HIGH	Delete and Add room & room schedules function
+
+--------------------------------------------------------------------------------
+--ATTRACTIONS-------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+ADD ATTR:		HIGH	Add Per-time scheduler with cloning
+ADD ATTR:		MED		Add New Age Range does not clone values
+ADD ATTR:		LOW		New Age Range fields do not have formatted fields (gross rates don't automatically change, etc)
+ADD ATTR:		HIGH	Add New Schedule doesn't work with add age range
+
+
+--------------------------------------------------------------------------------
+--PACKAGES----------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+GENERAL:		MED		Create new status system for Hotels, Rooms, Attractions, and Tickets.
+
+
+--------------------------------------------------------------------------------
+--SETTINGS-------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+USERS:			LOW		No styling on View User, View Group
+
+EXCHANGE:		LOW		Add a preview page to the exchange rate after updating rate
+
+INC UNITS:		NOTE 	Make sure in reservation implementations inc. unit calculation can't slip inbetween the hundreths unit
+INC UNITS:		MED		Validation needs to be redone. still errors

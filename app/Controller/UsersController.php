@@ -551,10 +551,11 @@ class UsersController extends AppController {
 			$this->request->data['User']['company_id'] = $_SESSION['company_id'];
 			$this->User->create();
 			if ($this->User->save($this->request->data)) {
-				$this->Session->setFlash(__('The user has been saved'));
-				$this->redirect(array('action' => 'index'));
+				$this->Session->setFlash(__('The user has been saved'),'default',array(),'success');
+				$customer_id = $this->User->getLastInsertID();
+				$this->redirect(array('controller'=>'invoices','action' => 'index',$customer_id));
 			} else {
-				$this->Session->setFlash(__('The user could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('The user could not be saved. Please, try again.'),'default',array(),'error');
 			}
 		}
 		$groups = $this->User->Group->find('list');

@@ -153,12 +153,19 @@
 	Router::connect('/transactions',array('controller'=>'transactions','action'=>'index'));
 	Router::connect('/transactions/:action',array('controller'=>'transactions'));
 	Router::connect('/transactions/:action/*',array('controller'=>'transactions'));
+	
+	//Parse Controller
+	Router::mapResources('parses');
+	Router::parseExtensions();
+	
 	/** MUST BE AT END **/
 
  	//Router::connect('/*', array('controller' => 'pages','action'=>'url'));
 	Router::connect('/*', array('controller' => 'pages','action'=>'url'));
 	Router::connect('/**', array('controller' => 'pages','action'=>'url'));
 	//Router::connect('/**/**', array('controller' => 'pages','action'=>'url'),array('pass' => 'slug'));	
+	
+	
 /**
  * Load all plugin routes.  See the CakePlugin documentation on 
  * how to customize the loading of plugin routes.
