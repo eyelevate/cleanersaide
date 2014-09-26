@@ -6,8 +6,7 @@ $(document).ready(function(){
 finish = {
 	datePicker: function(){
 		$("#deliveryDate").datepicker().on('changeDate', function(ev){
-  			$('#deliveryDate').datepicker('hide');
-
+  			$(this).datepicker('hide');
 		});
 	},
 	events: function(){

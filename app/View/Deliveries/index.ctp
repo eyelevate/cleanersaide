@@ -26,14 +26,8 @@ echo $this->Html->script(array(
 		<br/>
 		<?php
 		if($login == 'No'){
-			if($success == 'error'){
-				$errors = 'error';
-				$message = 'There was an error with your login';
-			} else {
-				$errors = '';
-				$message = '';
-				
-			}
+			$errors = ($success == 'error') ? 'error' : '';
+			$message = ($success == 'error') ? 'There was an error with your login' : '';
 		?>
 		<form method="post" action="/deliveries/process_login">		
 			<div class="row">
@@ -72,85 +66,30 @@ echo $this->Html->script(array(
 
 	<div class="eight columns omega well well-small" >
 		<?php
-		if(isset($form_errors['first_name'])){
-			$first_name_errors = 'error';
-			$first_name_error_message = $form_errors['first_name'][0];
-		} else {
-			$first_name_errors = '';
-			$first_name_error_message = '';			
-		}		
-		if(isset($form_errors['last_name'])){
-			$last_name_errors = 'error';
-			$last_name_error_message = $form_errors['last_name'][0];
-		} else {
-			$last_name_errors = '';
-			$last_name_error_message = '';			
-		}
-		if(isset($form_errors['contact_address'])){
-			$contact_address_errors = 'error';
-			$contact_address_error_message = $form_errors['contact_address'][0];
-		} else {
-			$contact_address_errors = '';
-			$contact_address_error_message = '';			
-		}
-		if(isset($form_errors['contact_city'])){
-			$contact_city_errors = 'error';
-			$contact_city_error_message = $form_errors['contact_city'][0];
-		} else {
-			$contact_city_errors = '';
-			$contact_city_error_message = '';			
-		}	
-		if(isset($form_errors['contact_state'])){
-			$contact_state_errors = 'error';
-			$contact_state_error_message = $form_errors['contact_state'][0];
-		} else {
-			$contact_state_errors = '';
-			$contact_state_error_message = '';			
-		}
-		if(isset($form_errors['contact_zip'])){
-			$contact_zip_errors = 'error';
-			$contact_zip_error_message = $form_errors['contact_zip'][0];
-		} else {
-			$contact_zip_errors = '';
-			$contact_zip_error_message = '';			
-		}	
-		if(isset($form_errors['contact_email'])){
-			$contact_email_errors = 'error';
-			$contact_email_error_message = $form_errors['contact_email'][0];
-		} else {
-			$contact_email_errors = '';
-			$contact_email_error_message = '';			
-		}		
-		if(isset($form_errors['phone'])){
-			$contact_phone_errors = 'error';
-			$contact_phone_error_message = $form_errors['starch'][0];
-		} else {
-			$contact_phone_errors = '';
-			$contact_phone_error_message = '';			
-		}
-		if(isset($form_errors['shirt'])){
-			$contact_shirt_errors = 'error';
-			$contact_shirt_error_message = $form_errors['shirt'][0];			
-		} else {
-			$contact_shirt_errors = '';
-			$contact_shirt_error_message = '';				
-		}		
-		if(isset($form_errors['starch'])){
-			$contact_starch_errors = 'error';
-			$contact_starch_error_message = $form_errors['starch'][0];			
-		} else {
-			$contact_starch_errors = '';
-			$contact_starch_error_message = '';				
-		}	
-		if(isset($form_errors['intercom'])){
-			$contact_intercom_errors = 'error';
-			$contact_intercom_error_message = $form_errors['intercom'][0];			
-		} else {
-			$contact_intercom_errors = '';
-			$contact_intercom_error_message = '';				
-		}	
+		$first_name_errors = (isset($form_errors['first_name'])) ? 'error' : '';
+		$first_name_error_message = (isset($form_errors['first_name'])) ? $form_errors['first_name'][0] : '';
+		$last_name_errors = (isset($form_errors['last_name'])) ? 'error' : '';
+		$last_name_error_message = (isset($form_errors['last_name'])) ? $form_errors['last_name'][0] : '';
+		$contact_address_errors = (isset($form_errors['contact_address'])) ? 'error' : '';
+		$contact_address_error_message = (isset($form_errors['contact_address'])) ? $form_errors['contact_address'][0] : '';
+		$contact_city_errors = (isset($form_errors['contact_city'])) ? 'error' : '';
+		$contact_city_error_message = (isset($form_errors['contact_city'])) ? $form_errors['contact_city'][0] : '';
+		$contact_state_errors = (isset($form_errors['contact_state'])) ? 'error' : '';
+		$contact_state_error_message = (isset($form_errors['contact_state'])) ? $form_errors['contact_state'][0] : '';
+		$contact_zip_errors = (isset($form_errors['contact_zip'])) ? 'error' : '';
+		$contact_zip_error_message = (isset($form_errors['contact_zip'])) ? $form_errors['contact_zip'][0] : '';
+		$contact_email_errors = (isset($form_errors['contact_email'])) ? 'error' : '';
+		$contact_email_error_message = (isset($form_errors['contact_email'])) ? $form_errors['contact_email'][0] : '';
+		$contact_phone_errors = (isset($form_errors['phone'])) ? 'error' : '';
+		$contact_phone_error_message = (isset($form_errors['phone'])) ? $form_errors['starch'][0] : '';
+		$contact_shirt_errors = (isset($form_errors['shirt'])) ? 'error' : '';
+		$contact_shirt_error_message = (isset($form_errors['shirt'])) ? $form_errors['shirt'][0] : '';
+		$contact_starch_errors = (isset($form_errors['starch'])) ? 'error' : '';
+		$contact_starch_error_message = (isset($form_errors['starch'])) ? $form_errors['starch'][0] : '';	
+		$contact_intercom_errors = (isset($form_errors['intercom'])) ? 'error' : '';
+		$contact_intercom_error_message = (isset($form_errors['intercom'])) ? $form_errors['intercom'][0] : '';
+	
 		if($login == 'Yes'){
-			
 			foreach ($customers as $c) {
 				$first_name = $c['User']['first_name'];
 				$last_name = $c['User']['last_name'];
@@ -163,80 +102,29 @@ echo $this->Html->script(array(
 				$zipcode = $c['User']['contact_zip'];
 				$intercom = $c['User']['intercom'];
 				$shirt_preference = $c['User']['shirt'];
-				$starch = $c['User']['starch'];
+				$starch = (isset($c['User']['starch']) && !empty($c['User']['starch'])) ? $c['User']['starch'] : 'none';
 				$special_instructions = $c['User']['special_instructions'];
 				
 			}
+
 			?>
 			<h3>Customer Login Information</h3>
 			<p class="alert alert-info">Please make sure all current data is up to date. Press next to select delivery/pickup time.</p>
 			<?php
 		} else {
-			if(!empty($customers) && count($customers)>0){
-				$first_name = $customers['User']['first_name'];
-				$last_name = $customers['User']['last_name'];
-				$phone = $customers['User']['contact_phone'];
-				$email = $customers['User']['contact_email'];
-				$street = $customers['User']['contact_address'];
-				$suite = $customers['User']['contact_suite'];
-				$city = $customers['User']['contact_city'];
-				$state = $customers['User']['contact_state'];
-				$zipcode = $customers['User']['contact_zip'];
-				$intercom = $customers['User']['intercom'];
-				$shirt_preference = $customes['User']['shirt'];
-				$starch = $customers['User']['starch'];
-				$special_instructions = $customers['User']['special_instructions'];					
-			} else {
-				if(isset($_SESSION['Delivery'])){
-					$first_name = $_SESSION['Delivery']['User']['first_name'];
-					$last_name = $_SESSION['Delivery']['User']['last_name'];
-					$phone = $_SESSION['Delivery']['User']['contact_phone'];
-					$zipcode = $_SESSION['Delivery']['User']['contact_zip'];
-					$email = $_SESSION['Delivery']['User']['contact_email'];
-					$street = $_SESSION['Delivery']['User']['contact_address'];
-					$suite = $_SESSION['Delivery']['User']['contact_suite'];
-					$city = $_SESSION['Delivery']['User']['contact_city'];
-					$state = $_SESSION['Delivery']['User']['contact_state'];
-					$intercom = $_SESSION['Delivery']['User']['intercom'];
-					$shirt_preference = $_SESSION['Delivery']['User']['shirt'];
-					$starch = $_SESSION['Delivery']['User']['starch'];
-					$special_instructions = $_SESSION['Delivery']['User']['special_instructions'];						
-				} else {
-					if(isset($guest_form)){
-						$first_name = $guest_form['User']['first_name'];
-						$last_name = $guest_form['User']['last_name'];
-						$phone = $guest_form['User']['contact_phone'];
-						$zipcode = $guest_form['User']['contact_zip'];
-						$email = $guest_form['User']['contact_email'];
-						$street = '';
-						$suite = '';
-						$city = '';
-						$state = '';
-						$intercom = '';
-						$shirt_preference = 'hanger';
-						$starch = 'none';
-						$special_instructions = '';	
-					} else {
-						$first_name = '';
-						$last_name = '';
-						$phone = '';
-						$email = '';
-						$street = '';
-						$suite = '';
-						$city = '';
-						$state = '';
-						$zipcode = '';
-						$intercom = '';
-						$shirt_preference = 'hanger';
-						$starch = 'none';
-						$special_instructions = '';						
-					}					
-				}
-
-				
-				
-			}
-
+			$first_name = (!empty($customers) && count($customers)>0) ? $customers['User']['first_name'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['first_name'] : (isset($guest_form)) ? $guest_form['User']['first_name'] : '';
+			$last_name = (!empty($customers) && count($customers)>0) ? $customers['User']['last_name'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['last_name'] : (isset($guest_form)) ? $guest_form['User']['last_name'] : '';
+			$phone = (!empty($customers) && count($customers)>0) ? $customers['User']['contact_phone'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['contact_phone'] : (isset($guest_form)) ? $guest_form['User']['contact_phone'] : '';
+			$zipcode = (!empty($customers) && count($customers)>0) ? $customers['User']['zipcode'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['contact_zip'] : (isset($guest_form)) ? $guest_form['User']['contact_zip'] : '';
+			$email = (!empty($customers) && count($customers)>0) ? $customers['User']['contact_email'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['contact_email'] : (isset($guest_form)) ? $guest_form['User']['contact_email'] : '';
+			$street = (!empty($customers) && count($customers)>0) ? $customers['User']['contact_address'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['contact_address'] : '';
+			$suite = (!empty($customers) && count($customers)>0) ? $customers['User']['contact_suite'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['contact_suite'] : '';
+			$city = (!empty($customers) && count($customers)>0) ? $customers['User']['contact_city'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['contact_city'] : '';
+			$state = (!empty($customers) && count($customers)>0) ? $customers['User']['contact_state'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['contact_state'] : ''; 
+			$intercom = (!empty($customers) && count($customers)>0) ? $customers['User']['intercom'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['intercom'] : '';
+			$shirt_preference = (!empty($customers) && count($customers)>0) ? $customes['User']['shirt'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['shirt'] : 'hanger';
+			$starch = (!empty($customers) && count($customers)>0) ? (isset($customers['User']['starch']) && !empty($customers['User']['starch'])) ? $customers['User']['starch'] : 'none' : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['starch'] : 'none';
+			$special_instructions = (!empty($customers) && count($customers)>0) ? $customers['User']['special_instructions'] : (isset($_SESSION['Delivery'])) ? $_SESSION['Delivery']['User']['special_instructions'] : '';
 			
 			?>
 			<h3>Guest Delivery Form</h3>	

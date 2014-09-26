@@ -11,7 +11,13 @@ echo $this->Html->script(array(
 	<fieldset class="well well-small">
 	<?php
 		echo $this->Form->input('id');
-		echo $this->Form->input('group_id');
+		echo $this->Form->input('group_id',array(
+			'label'=>'Admin Access? <span class="f_req">*</span>',
+			'div'=>array('class'=>'control-group'),
+			'after'=>'<span class="help-block"></span>',
+			'error'=>array('attributes' => array('class' => 'help-block')),
+		
+		));		
 		// echo $this->Form->input('username',array(
 			// 'div'=>array('class'=>'control-group'),		
 			// 'error'=>array('attributes' => array('class' => 'help-block')),

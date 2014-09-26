@@ -13,7 +13,7 @@ echo $this->Form->create();
 			<label>Select Delivery Date</label>
 			<form action="/deliveries/finish" method="post">
 			<div class="input-append">
-				<input id="deliveryDate" type="text" value="<?php echo $date;?>" name="data[Delivery][date]"/>
+				<input id="deliveryDate" type="text" value="<?php echo $date;?>" name="data[Delivery][date]" readonly="true"/>
 				<span class="add-on"><i class="icon-calendar"></i></span>
 				<a id="submitDeliveryForm" class="add-on" style="cursor:pointer;">Search</a>
 			</div>				

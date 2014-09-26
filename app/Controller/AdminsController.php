@@ -45,6 +45,10 @@ class AdminsController extends AppController {
 
 		
 		}	
+		unset($_SESSION['customer_id']);
+		unset($_SESSION['customers']);
+		unset($_SESSION['login']);
+		unset($_SESSION['error']);
 
 	}
 

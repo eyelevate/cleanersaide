@@ -106,7 +106,7 @@ class DeliveriesController extends AppController {
 				// $phone = preg_replace('/\D/', '', $this->request->data['User']['contact_phone']);
 				// $this->request->data['User']['contact_phone'] = $phone;
 				$this->request->data['User']['company_id'] = 1;
-				$this->request->data['User']['group_id'] = 5;
+				
 				if(!empty($customer_id)){ //this is a returning customer
 					//just update the user
 					$this->User->id = $customer_id;
@@ -122,6 +122,7 @@ class DeliveriesController extends AppController {
 					if(count($lookup)>0){ //this is already a customer move on to next page
 						$this->Session->setFlash(__('Thank you returning Guest. Please fill out the form below to set a date and time for delivery.'),'default',array(),'success');
 					} else { //create a new customer
+						$this->request->data['User']['group_id'] = 5;
 						$this->User->create();
 						if($this->User->save($this->request->data)){							
 							$this->Session->setFlash(__('Thank you new Guest. Please fill out the form below to set a date and time for delivery.'),'default',array(),'success');
@@ -328,7 +329,7 @@ class DeliveriesController extends AppController {
 			$username = $this->request->data['User']['username'];
 			$password = $this->Delivery->hashPasswords($this->request->data['User']['password']);
 			$group_id = 5;
-			$customers = $this->User->find('all',array('conditions'=>array('username'=>$username,'password'=>$password,'group_id'=>$group_id)));
+			$customers = $this->User->find('all',array('conditions'=>array('username'=>$username,'password'=>$password)));
 			if(count($customers)>0){
 				foreach ($customers as $c) {
 					$_SESSION['customer_id'] = $c['User']['id'];
@@ -816,8 +817,11 @@ class DeliveriesController extends AppController {
 						$customer_id = $cs['User']['id'];
 						$profile_id = $cs['User']['profile_id'];
 						$payment_id = $cs['User']['payment_id'];
+						// Check if existing schedule
 						
-						if(is_null($profile_id) || $profile_id ==0 || $profile_id == ''){ //this is a new member with no profile id
+						
+						
+						if(is_null($profile_id) || $profile_id ==0 || empty($profile_id)){ //this is a new member with no profile id
 							//create a profile id
 							$profiles = $this->AuthorizeNet->createProfile($customer_search[0]);
 							//save profile id

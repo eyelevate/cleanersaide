@@ -19,8 +19,13 @@ class GroupsController extends AppController {
 	public function beforeFilter() {
 	    parent::beforeFilter();
 		$this->set('username',AuthComponent::user('username'));
-		//
-		$this->Auth->deny();		
+
+		if(AuthComponent::user('Group.id') == 1) {
+			$this->Auth->allow('*');	
+		} else {
+			$this->Auth->deny('*');
+		}
+				
 		$this->Auth->authError = 'You do not have access to this page.';
 	}
 /**
@@ -40,7 +45,7 @@ class GroupsController extends AppController {
 		$this->set('admin_check',$admin_check);  			
 		//set variables
 		$group_id = AuthComponent::user('group_id');
-		if($group_id <3){	
+		if($group_id < 3){	
 			$group_main = $this->Group->find('all',array('conditions'=>array('id'=>1)));
 			$group_below = $this->Group->find('all',array('conditions'=>array('id >='=>1)));	
 			$this->set('admin_id',$group_id);
@@ -310,8 +315,7 @@ class GroupsController extends AppController {
  * 
  * @return void
  */	
-	public function build_acl($id= null) {
-		$this->layout = 'admin';
+	public function build_acl() {
 		//get the count of how much is in the aco table
 		$this->Aco->query('TRUNCATE TABLE acos');
 		//set the auto_increment to 1

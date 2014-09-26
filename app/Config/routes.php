@@ -99,7 +99,11 @@
 	Router::connect('/admins',array('controller'=>'admins','action'=>'index'));
 	Router::connect('/admins/:action',array('controller'=>'admins'));
 	Router::connect('/admins/:action/*',array('controller'=>'admins'));
-	
+
+	//admins Controller
+	Router::connect('/api',array('controller'=>'apis','action'=>'index'));
+	Router::connect('/api/:action',array('controller'=>'apis'));
+	Router::connect('/api/:action/*',array('controller'=>'apis'));	
 	//access controller
 	Router::connect('/access',array('controller'=>'access','action'=>'index'));
 	
@@ -155,7 +159,7 @@
 	Router::connect('/transactions/:action/*',array('controller'=>'transactions'));
 	
 	//Parse Controller
-	Router::mapResources('parses');
+	Router::mapResources('apis');
 	Router::parseExtensions();
 	
 	/** MUST BE AT END **/

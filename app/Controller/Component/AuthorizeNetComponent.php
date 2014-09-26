@@ -248,18 +248,21 @@ Class AuthorizeNetComponent extends Component {
 			// echo "A transaction was successfully created for customerProfileId <b>"
 				// . htmlspecialchars($_POST["customerProfileId"])
 				// . "</b>.<br><br>";
-			switch($payment_status){ //check payment status, delete from database and authorizeNet if customer wishes to delete
-				case '1': //delete payment id
-					$this->deletePaymentProfile($profile_id);
 				
-					$user_delete = array();
-					$user_delete['profile_id'] = null;
-					$user_delete['payment_status'] = null;
-					$user_delete['payment_id'] = null;
-					ClassRegistry::init('User')->id = $customer_id;
-					ClassRegistry::init('User')->save($user_delete);
-				break;
-			} 
+			$schedules_find = ClassRegistry::init("Schedule")->find('all',array('conditions'=>array('customer_id'=>$customer_id,'status <'=>'3')));
+			$schedules_check = (count($schedules_find) >0) ? true : false; // true means schedule exists
+			//check payment status, delete from database and authorizeNet if customer wishes to delete
+			if($schedules_check == false && $payment_status == 1) {
+				$this->deletePaymentProfile($profile_id);
+			
+				$user_delete = array();
+				$user_delete['profile_id'] = null;
+				$user_delete['payment_status'] = null;
+				$user_delete['payment_id'] = null;
+				ClassRegistry::init('User')->id = $customer_id;
+				ClassRegistry::init('User')->save($user_delete);				
+			}
+
 			//make a transaction entry
 			$pre_tax = 0;
 			$tax = 0;

@@ -167,6 +167,8 @@ class UsersController extends AppController {
 		if (!$this->User->exists()) {
 			throw new NotFoundException(__('Invalid user'));
 		}
+		$groups = $this->User->Group->find('list');
+		$this->set(compact('groups'));		
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$payments = $this->request->data['Payment'];
 			$profile_check = $this->request->data['Payment']['profile_status'];
@@ -341,29 +343,55 @@ class UsersController extends AppController {
 			$user_email = $this->request->data['User']['email'];
 			
 			//find the users email address
-			$find = $this->User->find('all',array('conditions'=>array('contact_email'=>$user_email)));
+			
+			$find = $this->User->find('all',array(
+				'conditions'=>array(
+					'OR'=>array(
+						'contact_email'=>$user_email,
+						'email'=>$user_email
+					)
+				)
+			));
+
+				
 			if(count($find)>0){
 				//parse through the array to get the necessary data
 				foreach ($find as $f) {
 					$user_id = $f['User']['id'];
-					$email = $f['User']['contact_email'];
-					//send the data to be processed for a valid email
-					$random_token = $this->User->emailForgottenPassword($email, $user_id);
-					//start the email process	
-					$link = 'https://www.jayscleaners.com/users/reset/'.$random_token;	//this must be changed when pushed to the server		
-					$sendTo = $email;
-					$from = array('passwords@jayscleaners.com'=>'admin'); //must change this 
-					$subject = 'Forgotten Password';
-					$Email = new CakeEmail('gmail');
-					$Email->emailFormat('html')
-						->template('forgot','forgot')
-						->viewVars(compact('link'))
-					    ->to($sendTo)
-					    ->from($from)
-						->subject($subject)
-					    ->send();
+					$contact_email = (isset($f['User']['contact_email'])) ? $f['User']['contact_email'] : false;
+					$regular_email = (isset($f['User']['email'])) ? $f['User']['email'] : false;
+					$email = ($contact_email == false) ? ($regular_email == false) ? false : $regular_email : $contact_email;
+					$username = (isset($f['User']['username'])) ? $f['User']['username'] : false;
+					if ($email != false & $username != false) {
+						//send the data to be processed for a valid email
+						$random_token = $this->User->emailForgottenPassword($email, $user_id);
+						//start the email process	
+						$link = 'https://www.jayscleaners.com/users/reset/'.$random_token;	//this must be changed when pushed to the server		
+						$sendTo = $email;
+						$from = array('passwords@jayscleaners.com'=>'admin'); //must change this 
+						$subject = 'Forgotten Password';
+						$Email = new CakeEmail('gmail');
+						$Email->emailFormat('html')
+							->template('forgot','forgot')
+							->viewVars(compact('link','username'))
+						    ->to($sendTo)
+						    ->from($from)
+							->subject($subject);
+						//simple try and cach. cakeemail throws and exception if there is an error. If caught run the backup server.
+						try
+						{
+							$Email->send();
+							$this->Session->setFlash(__('An email has been sent to your email address. Please follow the instructions inside your email to reset your password.'),'default',array(),'success');
+						} 
+						catch (SocketException $e)
+						{
+							$this->Session->setFlash($e,'default',array(),'error');	
+						}
+											
+					} 
+
 				}
-				$this->Session->setFlash(__('An email has been sent to your email address. Please follow the instructions inside your email to reset your password.'),'default',array(),'success');
+				
 			} else {
 				$this->Session->setFlash(__('There is no such user. Please try again.'),'default',array(),'error');
 			}
@@ -390,14 +418,13 @@ class UsersController extends AppController {
 			if(count($find_token) > 0){
 				foreach ($find_token as $t) {
 					$id = $t['User']['id'];
+					$username = $t['User']['username'];
 				}		
 			} else { //send them back with an expired token
 				$this->Session->setFlash(__('Your token has expired. In order to reset your password please try again.'),'default',array(),'error');
 				$this->redirect('/');
 			}			
 		}
-		
-
 		//if successful and user is able to post data. then run the script and reset their token and also their password
 		if($this->request->is('post')){
 			$this->User->id = $id;

@@ -22,7 +22,7 @@
 
         <tr>
           <td class="main" style="background-color: #ffffff;  color: #000000; font-family: arial; font-size: 12px; line-height: 150%; padding: 2px 18px;" bgcolor="#ffffff" valign="top" align="left">
-
+			<p style="color: #333333; font-family: arial,sans-serif; font-size: 15px; line-height: 150%; margin: 0 0 25px;"><strong>Username: </strong> <?php echo $username;?></p>
 			<p style="color: #333333; font-family: arial,sans-serif; font-size: 15px; line-height: 150%; margin: 0 0 25px;">To reset your password please click the following link to redirect you to enter in your new password. <a href="<?php echo $link;?>">Click Here</a></p>
 			
           </td>

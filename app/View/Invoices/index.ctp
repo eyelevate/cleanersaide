@@ -1,6 +1,6 @@
 <?php
 //add scripts to header
-echo $this->Html->script(array('admin/home.js'),FALSE);
+//echo $this->Html->script(array('admin/home.js'),FALSE);
 
 ?>
 
@@ -167,7 +167,7 @@ echo $this->Html->script(array('admin/home.js'),FALSE);
 							<td style="background-color:<?php echo $background_color;?>">$<?php echo $total;?></td>
 							<td style="background-color:<?php echo $background_color;?>">
 								<ul class="unstyled">
-									<li class="hide"><?php echo $this->Form->postLink(); ?></li>
+									<li class="hide"><?php echo $this->Form->postLink(__('Action')); ?></li>
 									<li class="pull-left" style="margin-right: 5px"><?php echo $this->Form->postLink(__('Reprint'), array('action' => 'reprint', $invoice_id), null, __('Are you sure you want to reprint Invoice #%s?', $invoice_id)); ?></li>
 									<li class="pull-left" style="margin-right:5px;"><?php echo $this->Form->postLink(__('Edit'), array('action' => 'edit', $invoice_id), null, __('Are you sure you want to edit Invoice #%s?', $invoice_id)); ?></li>
 									<li class="pull-left"><?php echo $this->Form->postLink(__('Cancel'), array('action' => 'cancel', $invoice_id), null, __('Are you sure you want to cancel Invoice #%s?', $invoice_id)); ?></li>
