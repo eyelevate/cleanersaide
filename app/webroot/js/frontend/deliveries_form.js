@@ -16,6 +16,8 @@ delivery = {
 			var day = $(this).attr('day');
 			selectable_days[ev] = day;
 		});
+
+		console.log(selectable_days);
 		$('.blackoutLi').each(function(ev){
 			var blackout = $(this).attr('blackout');
 			blackout_dates[ev] = blackout;
@@ -23,41 +25,49 @@ delivery = {
 		$(".pickupDate").datepicker({
 			minDate:0,
 			beforeShowDay: function(date){ 
-				date.setHours(7);
-				var current_datetotime = convertDateToPacific(new Date()).getTime();
-				var selected_datetotime = convertDateToPacific(date).getTime();
-
-
+				date.setHours(7); // Set the checkable hours to 7am (which is the cutoff time)
+				var current_datetotime = convertDateToPacific(new Date()).getTime(); // Current date
+				var selected_datetotime = convertDateToPacific(date).getTime(); // Selected date with cutoff
 				var date_string = jQuery.datepicker.formatDate('mm/dd/yy', date);
 				switch(selectable_days.length){
-					case 0:
-						
+					case 0: // There are no days set check only for blackout dates
         				returned_array = [blackout_dates.indexOf(date_string) == -1 ];
 					break;
-					
-					case 1:
-						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0],""];
-						
+					// There is at least one day set for the week. Make sure to check for cutoff first then check for individual dates and blackout
+					case 1: 
+						if(current_datetotime < selected_datetotime) {
+							returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0],""];
+						}	
 					break;
 					
 					case 2:
-						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1],""];
+						if(current_datetotime < selected_datetotime) {
+							returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1],""];
+						}
 					break;
 					
 					case 3:
-						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2],""];
+						if(current_datetotime < selected_datetotime) {
+							returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2],""];
+						}
 					break;
 					
 					case 4:
-						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3],""];
+						if(current_datetotime < selected_datetotime) {
+							returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3],""];
+						}
 					break;
 					
 					case 5:
-						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3] || date.getDay() == selectable_days[4],""];
+						if(current_datetotime < selected_datetotime) {
+							returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3] || date.getDay() == selectable_days[4],""];
+						}
 					break;
 					
 					case 6:
-						returned_array = [current_datetotime <= selected_datetotime && blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3] || date.getDay() == selectable_days[4] || selectable_days[5],""];
+						if(current_datetotime < selected_datetotime) {
+							returned_array = [blackout_dates.indexOf(date_string) == -1 && date.getDay() == selectable_days[0] || date.getDay() == selectable_days[1] || date.getDay() == selectable_days[2] || date.getDay() == selectable_days[3] || date.getDay() == selectable_days[4] || selectable_days[5],""];
+						}
 					break;
 				}
 				return returned_array;
